@@ -1,0 +1,16 @@
+A funcionalidade foi totalmente implementada.
+
+Resumo da funcionalidade implementada:
+
+Criação da função jogaCantoAleatorio no servidor (TTT.java), faz uma jogada aleatória dando prioridade aos cantos, se estes se encontrarem todos ocupados, joga noutra posição livre aleatória.
+Implementação da função na interface.
+Alteração do cliente para fazer a chamada remota à função jogaCantoAleatorio(), no servidor, caso se jogue "201".
+
+
+Instruções:
+
+Na pasta contract, correr o comando "mvn install".
+Na pasta server, correr o comando "mvn compile exec:java". Isto irá colocar o servidor em funcionamento.
+Na pasta client, correr o comando "mvn compile exec:java". Isto irá colocar o cliente em funcionamento.
+
+No terminal onde está a correr o cliente pode agora jogar-se o jogo, introduzindo o número da quadrícula onde queremos jogar, ou 0 para recarregar o tabuleiro, ou 201 para jogar aleatoriamente.
