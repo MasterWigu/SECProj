@@ -1,6 +1,7 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>example</groupId>
@@ -8,11 +9,11 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<!--<parent>
+	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.2.RELEASE</version>
-	</parent>-->
+	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,6 +37,10 @@
 
 		<version.org.webjars.bootstrap>3.3.7-1</version.org.webjars.bootstrap>
 		<version.org.webjars.jquery>3.1.1</version.org.webjars.jquery>
+
+		<version.fenixframework>2.6.2</version.fenixframework>
+		<fenix.framework.codeGeneratorClassName>pt.ist.fenixframework.backend.jvstmojb.codeGenerator.FenixCodeGeneratorOneBoxPerObject</fenix.framework.codeGeneratorClassName>
+		<fenix.framework.backend>jvstm-ojb</fenix.framework.backend>
 
 		<!-- Coverage -->
 		<version.jacoco.maven.plugin>0.8.2</version.jacoco.maven.plugin>
@@ -105,83 +110,6 @@
 						<target>${maven.compiler.target}</target>
 					</configuration>
 				</plugin>
-
-
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${version.jacoco.maven.plugin}</version>
-					<configuration>
-						<destFile>${basedir}/target/coverage-reports/jacoco.exec</destFile>
-						<dataFile>${basedir}/target/coverage-reports/jacoco.exec</dataFile>
-						<excludes>
-							<exclude>**/dataobjects/**</exclude>
-							<exclude>**/exception/**</exclude>
-							<exclude>**/interfaces/**</exclude>
-
-						</excludes>
-					</configuration>
-					<executions>
-						<execution>
-							<id>init-jacoco</id>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>default-report</id>
-							<phase>prepare-package</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>agent-check</id>
-							<goals>
-								<goal>check</goal>
-							</goals>
-							<configuration>
-								<rules>
-									<rule>
-										<element>BUNDLE</element>
-										<limits>
-											<limit>
-												<counter>CLASS</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.class.ratio}</minimum>
-											</limit>
-											<limit>
-												<counter>INSTRUCTION</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.instruction.ratio}</minimum>
-											</limit>
-											<limit>
-												<counter>METHOD</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.method.ratio}</minimum>
-											</limit>
-											<limit>
-												<counter>BRANCH</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.branch.ratio}</minimum>
-											</limit>
-											<limit>
-												<counter>COMPLEXITY</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.complexity.ratio}</minimum>
-											</limit>
-											<limit>
-												<counter>LINE</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>${coverage.line.ratio}</minimum>
-											</limit>
-										</limits>
-									</rule>
-								</rules>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -239,29 +167,6 @@
 			<version>${version.org.webjars.jquery}</version>
 		</dependency>
 
-		<!-- Fénix
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>fenix-framework-core-api</artifactId>
-			<version>${version.fenixframework}</version>
-		</dependency>
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>fenix-framework-core-consistency-predicates</artifactId>
-			<version>${version.fenixframework}</version>
-		</dependency>
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>fenix-framework-backend-${fenix.framework.backend}-runtime</artifactId>
-			<version>${version.fenixframework}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.47</version>
-		</dependency>
--->
 		<!-- Tests -->
 
 		<dependency>
@@ -335,25 +240,11 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>fenixedu-maven-repository</id>
-			<url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>fenixedu-maven-repository</id>
-			<url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<modules>
-		<module>ttt-rmi-server</module>
-		<module>ttt-rmi-client</module>
-		<module>ttt-rmi-interface</module>
+		<module>interface</module>
+		<module>server</module>
+		<module>client</module>
 	</modules>
 
 </project>
-
