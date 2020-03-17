@@ -1,8 +1,7 @@
 package commonClasses;
 
 import java.io.Serializable;
-import java.rmi.*;
-import java.security.PublicKey;
+import java.util.Arrays;
 
 
 public class Announcement implements Serializable {
@@ -10,11 +9,13 @@ public class Announcement implements Serializable {
     private int id;
     private char[] message;
     private User creator;
+    private int board; // 0 if personal, 1 if general
 
-    public Announcement(int aid, char[] mss, User crt) {
+    public Announcement(int aid, char[] mss, User crt, int br) {
         id = aid;
         message = mss;
         creator = crt;
+        board = br;
     }
 
 
@@ -26,7 +27,15 @@ public class Announcement implements Serializable {
         return creator;
     }
 
+    public int getBoard() {
+        return board;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public String toString() {
+        return "Announcement:\n    Id: " + id +  "\n    Creator: " + creator + "\n    Board: " + board + "\n    Message: " + Arrays.toString(message);
     }
 }
