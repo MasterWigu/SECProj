@@ -6,23 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SEC_proj" />
-        <module name="ttt-rmi-interface" />
-        <module name="ttt-rmi-client" />
-      </profile>
-      <profile name="Annotation profile for SEC_proj" enabled="true">
-        <sourceOutputDir name="../library/target/generated-sources/annotations" />
-        <sourceTestOutputDir name="../library/target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="ttt-rmi-server" />
+        <module name="SEC_proj_client" />
+        <module name="SEC_proj_server" />
+        <module name="SEC_proj_commClass" />
+        <module name="SEC_proj_lib" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="SEC_proj" target="1.8" />
-      <module name="ttt-rmi" target="1.8" />
-      <module name="ttt-rmi-client" target="1.8" />
-      <module name="ttt-rmi-interface" target="7" />
-      <module name="ttt-rmi-server" target="7" />
-    </bytecodeTargetLevel>
   </component>
 </project>

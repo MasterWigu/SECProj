@@ -5,7 +5,7 @@
     <!-- http://maven.apache.org/pom.html#Quick_Overview -->
 
     <groupId>example</groupId>
-    <artifactId>SEC_proj</artifactId>
+    <artifactId>SEC_proj_lib</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -22,6 +22,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>example</groupId>
+            <artifactId>SEC_proj_commClass</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

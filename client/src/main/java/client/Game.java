@@ -1,4 +1,6 @@
-package ttt;
+package client;
+
+import library.ICommLib;
 
 import java.rmi.*;
 import java.rmi.server.*;
@@ -7,14 +9,14 @@ import java.util.Scanner;
 
 /** This is the client of the Tic Tac Toe game. */
 public class Game {
-	TTTService ttt = null;
+	ICommLib ttt = null;
 	Scanner keyboardSc;
 	int winner = 0;
 	int player = 1;
 
 	public Game() throws RemoteException, Exception {
 		keyboardSc = new Scanner(System.in);
-		ttt = (TTTService) Naming.lookup("//localhost:8000/TTTService");
+		ttt = (ICommLib) Naming.lookup("//localhost:8000/ICommlib");
 		System.out.println("Found server");
 	}
 
@@ -29,7 +31,7 @@ public class Game {
 		} while ((play > 9 || play < 0) && play != 201);
 		return play;
 	}
-
+/*
 	public void playGame() throws RemoteException {
 		int play;
 		boolean playAccepted;
@@ -55,7 +57,7 @@ public class Game {
 		} while (winner == -1);
 		System.out.println(ttt.currentBoard());
 	}
-
+*/
 	public void congratulate() {
 		if (winner == 2)
 			System.out.printf("\nHow boring, it is a draw\n");
@@ -66,14 +68,15 @@ public class Game {
 	public static void main(String[] args) {
 		try {
 			Game g = new Game();
-			g.playGame();
-			g.congratulate();
+			//g.playGame();
+			//g.congratulate();
 		} catch (RemoteException e) {
             System.out.println("TTTService: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Lookup: " + e.getMessage());
         }
-
-		
 	}
+
+
+
 }

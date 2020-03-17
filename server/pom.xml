@@ -5,7 +5,7 @@
     <!-- http://maven.apache.org/pom.html#Quick_Overview -->
 
     <groupId>example</groupId>
-    <artifactId>SEC_proj</artifactId>
+    <artifactId>SEC_proj_server</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -18,13 +18,18 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <mainclass>ttt.TTTServer</mainclass>
+        <mainclass>server.DPASServer</mainclass>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>example</groupId>
-            <artifactId>ttt-rmi-interface</artifactId>
+            <artifactId>SEC_proj_commClass</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>example</groupId>
+            <artifactId>SEC_proj_lib</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

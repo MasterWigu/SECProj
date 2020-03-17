@@ -1,18 +1,19 @@
 package server;
 
-import java.rmi.*;
+import library.ICommLib;
+
 import java.rmi.registry.*;
 
-public class TTTServer {
+public class DPASServer {
     public static void main(String args[]){
         int registryPort = 8000;
         System.out.println("Main OK");
         try{
-            TTTService aTTTService = new TTT();
+            ICommLib aDPASService = new DPASService();
             System.out.println("After create");
 
             Registry reg = LocateRegistry.createRegistry(registryPort);
-            reg.rebind("TTTService", aTTTService);
+            reg.rebind("DPASService", aDPASService);
 
             // A more realistic would be having an autonomous RMI Registry
             // available at the default port
@@ -22,7 +23,7 @@ public class TTTServer {
             //
             // Naming.rebind("ShapeList", aShapelist);
 
-            System.out.println("TTT server ready");
+            System.out.println("DPAS server ready");
 
             System.out.println("Awaiting connections");
             System.out.println("Press enter to shutdown");
@@ -30,7 +31,7 @@ public class TTTServer {
             System.exit(0);
 
         }catch(Exception e) {
-            System.out.println("TTT server main " + e.getMessage());
+            System.out.println("DPAS server main " + e.getMessage());
         }
     }
 }
