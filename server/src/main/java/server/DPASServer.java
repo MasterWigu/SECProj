@@ -1,8 +1,12 @@
 package server;
 
-import library.ICommLib;
+import library.Interfaces.ICommLib;
+import library.Interfaces.ISocketProcessor;
+import library.SocketServer;
 
-import java.rmi.registry.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 
 public class DPASServer {
     public static void main(String args[]){
@@ -10,25 +14,17 @@ public class DPASServer {
         System.out.println("Main OK");
         try{
             ICommLib aDPASService = new DPASService();
-            System.out.println("After create");
 
-            Registry reg = LocateRegistry.createRegistry(registryPort);
-            reg.rebind("DPASService", aDPASService);
+            ISocketProcessor processor = new ServerEndpoint(aDPASService);
 
-            // A more realistic would be having an autonomous RMI Registry
-            // available at the default port
-            // (implies defining a 'codebase' to allow the RMI Registry
-            // to remotely obtain the interfaces for the
-            // objects that will be registered):
-            //
-            // Naming.rebind("ShapeList", aShapelist);
+            SocketServer serverListener = new SocketServer(processor, registryPort);
+            serverListener.createWorker();
 
-            System.out.println("DPAS server ready");
+            BufferedReader reader =  new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("press <enter> to shutdown");
+            reader.readLine();
 
-            System.out.println("Awaiting connections");
-            System.out.println("Press enter to shutdown");
-            System.in.read();
-            System.exit(0);
+            serverListener.stop();
 
         }catch(Exception e) {
             System.out.println("DPAS server main " + e.getMessage());

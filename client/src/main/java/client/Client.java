@@ -4,7 +4,7 @@ import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
-import library.ICommLib;
+import library.Interfaces.ICommLib;
 
 import java.rmi.*;
 import java.security.PublicKey;
@@ -132,7 +132,7 @@ public class Client {
 		}
 	}
 
-	private void printPrivateBoard() throws RemoteException{
+	private void printPrivateBoard() {
 		boolean finish = false;
 		String line;
 		User user = null;

@@ -4,7 +4,7 @@ import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
-import library.ICommLib;
+import library.Interfaces.ICommLib;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
