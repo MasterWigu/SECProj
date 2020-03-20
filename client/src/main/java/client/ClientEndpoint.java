@@ -5,15 +5,20 @@ import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Packet;
+import library.PacketSigner;
 import library.SocketClient;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Arrays;
 
 public class ClientEndpoint {
     private SocketClient socketClient;
+    private PrivateKey clientPrivateKey;
 
-    public ClientEndpoint(String h, int p){
+    public ClientEndpoint(String h, int p, PrivateKey cpk){
         socketClient = new SocketClient(h, p);
+        clientPrivateKey = cpk;
     }
 
 
@@ -25,7 +30,7 @@ public class ClientEndpoint {
         request.setUsername(username);
 
         Packet response = socketClient.sendFunction(request);
-        return response.getMessage().toString();
+        return Arrays.toString(response.getMessage());
     }
 
 
@@ -84,8 +89,17 @@ public class ClientEndpoint {
         request.setId(id);
 
         Packet response = socketClient.sendFunction(request);
-        // TODO im confused - this needs confirmation
-        // where is the list of announcements
+
+        Announcement ann;
+        if (response.getFunction() == Packet.Func.GET_ANN_ID) {
+            ann = response.getAnnouncements()[0];
+        } else {
+            throw new AnnouncementNotFoundException();
+        }
+
+        if (ann == null) {
+            throw new AnnouncementNotFoundException();
+        }
         return null;
     }
 

@@ -31,7 +31,7 @@ public class Packet implements Serializable {
     private String username;
 
     private long timestamp;
-    private String sign;
+    private byte[] sign;
 
     public Func getFunction() {
         return function;
@@ -105,12 +105,12 @@ public class Packet implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public String getSign() {
+    public byte[] getSign() {
         return sign;
     }
 
-    public void setSign() {
-        this.sign = "AAAA"; //TODO create signature
+    public void setSign(byte[] signature) {
+        this.sign = signature;
     }
 
 }

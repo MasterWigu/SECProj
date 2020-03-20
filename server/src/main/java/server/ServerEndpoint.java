@@ -67,9 +67,8 @@ public class ServerEndpoint implements ISocketProcessor {
                 try {
                     Announcement ann = aDPASService.getAnnouncementById(packet.getId());
                     response = new Packet();
-                    response.setMessage(ann.getMessage());
-                    response.setUser(ann.getCreator());
-                    response.setId(ann.getId());
+                    response.setFunction(GET_ANN_ID);
+                    response.setAnnouncements(new Announcement[]{ann});
                 } catch (AnnouncementNotFoundException e){
                     response = new Packet();
                     response.setFunction(USER_NOT_FOUND);
