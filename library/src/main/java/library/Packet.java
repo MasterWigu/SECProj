@@ -17,7 +17,8 @@ public class Packet implements Serializable {
         READ_GENERAL,
         GET_ANN_ID,
         GET_USER_ID,
-        ERROR
+        ERROR,
+        USER_NOT_FOUND
     }
 
     private Func function;
