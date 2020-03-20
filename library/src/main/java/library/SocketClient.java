@@ -1,8 +1,5 @@
 package library;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import sun.plugin2.message.Message;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,11 +31,12 @@ public class SocketClient {
             //Send
             outStream = new ObjectOutputStream(sendSocket.getOutputStream());
             outStream.writeObject(message);
-            outStream.close();
 
             //Receive
             inputStream = new ObjectInputStream(sendSocket.getInputStream());
             response = (Packet) inputStream.readObject();
+
+            outStream.close();
             inputStream.close();
 
             sendSocket.close();

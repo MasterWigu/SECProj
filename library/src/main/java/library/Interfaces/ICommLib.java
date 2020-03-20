@@ -1,16 +1,15 @@
 package library.Interfaces;
 
-import java.rmi.*;
 import java.security.PublicKey;
 import commonClasses.*;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
 
 
-public interface ICommLib extends Remote {
+public interface ICommLib {
     String register(PublicKey key, String username);
 
-    String post(PublicKey key, char[] message, Announcement[] a) throws RemoteException, UserNotFoundException;
+    String post(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException;
 
     String postGeneral(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException;
 

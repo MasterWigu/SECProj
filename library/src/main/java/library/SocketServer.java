@@ -31,9 +31,11 @@ public class SocketServer {
     void start() {
         try {
             serverSocket = new ServerSocket(port);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        working = true;
 
         while (working) {
             listenWork();
@@ -55,7 +57,6 @@ public class SocketServer {
     public void listenWork() {
         try {
             Socket tempSocket = serverSocket.accept();
-
             ObjectOutputStream out = new ObjectOutputStream(tempSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(tempSocket.getInputStream());
 

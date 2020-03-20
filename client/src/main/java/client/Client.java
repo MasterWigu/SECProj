@@ -6,7 +6,6 @@ import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 
-import java.rmi.*;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,23 +17,25 @@ public class Client {
 	private ICommLib DPASService;
 	private PublicKey publicKey;
 	private Scanner keyboardSc;
+	private ClientEndpoint clientEndpoint;
 
 	private Client() throws Exception {
 		keyboardSc = new Scanner(System.in);
-
 		//publicKey = PublicKeyReader.get("pk.pem");
 		publicKey = null;
-		DPASService = (ICommLib) Naming.lookup("//localhost:8000/DPASService");
+		clientEndpoint = new ClientEndpoint("localhost", 8000);
+		//DPASService = (ICommLib) Naming.lookup("//localhost:8000/DPASService");
+		System.out.println("Client Construtor in");
 		System.out.println("Found server");
 	}
 
 
-	private void login() throws RemoteException {
-		DPASService.register(publicKey, "test");
+	private void login() {
+		clientEndpoint.register(publicKey, "test");
 	}
 
 
-	private void work() throws RemoteException {
+	private void work() {
 		int choice = 0;
 		while (choice != 9) {
 			printMenu();
@@ -78,7 +79,7 @@ public class Client {
 		return choice;
 	}
 
-	private void post(int board) throws RemoteException {
+	private void post(int board) {
 		boolean accept = false;
 		String message = "";
 		String line = "";
@@ -111,7 +112,7 @@ public class Client {
 			} else {
 				try {
 					System.out.println("ASdasllala");
-					announcements.add(DPASService.getAnnouncementById(ann));
+					announcements.add(clientEndpoint.getAnnouncementById(ann));
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");
 				}
@@ -121,10 +122,10 @@ public class Client {
 
 		try {
 			if (board == 1) {
-				DPASService.postGeneral(publicKey, message.toCharArray(), announcements.toArray(new Announcement[0]));
+				clientEndpoint.postGeneral(publicKey, message.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println("Announcement successfully posted to general board.");
 			} else {
-				DPASService.post(publicKey, line.toCharArray(), announcements.toArray(new Announcement[0]));
+				clientEndpoint.post(publicKey, line.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println("---------------- Posting to personal board -----------------");
 			}
 		} catch (UserNotFoundException e) {
@@ -143,7 +144,7 @@ public class Client {
 			line = keyboardSc.nextLine();
 			int uid = Integer.getInteger(line);
 			try {
-				user = DPASService.getUserById(uid);
+				user = clientEndpoint.getUserById(uid);
 				finish = true;
 			} catch (UserNotFoundException e) {
 				System.out.println("Invalid user id, please try again.");
@@ -161,14 +162,14 @@ public class Client {
 
 		System.out.println("------------ Printing Personal Board of user "+ user.getId() + " -------------");
 		try {
-			printAnnouncements(DPASService.read(user.getPk(), numAnn));
+			printAnnouncements(clientEndpoint.read(user.getPk(), numAnn));
 		} catch (UserNotFoundException e) {
 			// Impossible
 			System.out.println(Arrays.toString(e.getStackTrace()));
 		}
 	}
 
-	private void printPublicBoard() throws RemoteException{
+	private void printPublicBoard() {
 		System.out.println("-------------------- Read General Board --------------------");
 		System.out.print("Enter number of announcements to print: [0 to print all]");
 		int numAnn = keyboardSc.nextInt();
@@ -180,7 +181,7 @@ public class Client {
 
 		System.out.println("------------------ Printing General Board ------------------");
 
-		printAnnouncements(DPASService.readGeneral(numAnn));
+		printAnnouncements(clientEndpoint.readGeneral(numAnn));
 
 	}
 
@@ -201,9 +202,8 @@ public class Client {
 			Client c = new Client();
 			c.login();
 			c.work();
-		} catch (RemoteException e) {
-            System.out.println("DPASService: " + e.getMessage());
         } catch (Exception e) {
+			e.printStackTrace();
             System.out.println("Lookup: " + e.getMessage());
         }
 	}

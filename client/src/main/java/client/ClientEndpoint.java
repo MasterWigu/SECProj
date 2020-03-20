@@ -7,11 +7,15 @@ import commonClasses.exceptions.UserNotFoundException;
 import library.Packet;
 import library.SocketClient;
 
-import java.rmi.RemoteException;
 import java.security.PublicKey;
 
 public class ClientEndpoint {
-    private SocketClient socketClient = new SocketClient("localhost", 8000);
+    private SocketClient socketClient;
+
+    public ClientEndpoint(String h, int p){
+        socketClient = new SocketClient(h, p);
+    }
+
 
     public String register(PublicKey key, String username) {
         Packet request = new Packet();
@@ -25,7 +29,7 @@ public class ClientEndpoint {
     }
 
 
-    public String post(PublicKey key, char[] message, Announcement[] a) throws RemoteException, UserNotFoundException {
+    public String post(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException {
         return null;
     }
 

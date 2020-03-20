@@ -12,11 +12,9 @@ import java.io.ObjectOutputStream;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.rmi.*;
-import java.rmi.server.UnicastRemoteObject;
 
 
-public class DPASService extends UnicastRemoteObject implements ICommLib {
+public class DPASService implements ICommLib {
 
 	private List<Announcement> announcements;
 	private List<User> users;
@@ -28,7 +26,7 @@ public class DPASService extends UnicastRemoteObject implements ICommLib {
 
 
 
-	DPASService() throws RemoteException {
+	DPASService() {
 		announcements = new ArrayList<>();
 		users = new ArrayList<>();
 		usersFileLock = new Object();

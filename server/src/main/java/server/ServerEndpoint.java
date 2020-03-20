@@ -20,6 +20,6 @@ public class ServerEndpoint implements ISocketProcessor {
         if (packet.getFunction() == Packet.Func.REGISTER) {
             aDPASService.register(packet.getKey(), packet.getUsername());
         }
-        return null;
+        return packet;
     }
 }

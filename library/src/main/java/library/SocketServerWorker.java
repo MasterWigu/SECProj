@@ -11,8 +11,8 @@ import java.net.Socket;
 public class SocketServerWorker implements Runnable {
     private SocketServer socketServer;
 
-    public SocketServerWorker(SocketServer socketServer) {
-        socketServer = socketServer;
+    public SocketServerWorker(SocketServer ss) {
+        socketServer = ss;
     }
 
 
