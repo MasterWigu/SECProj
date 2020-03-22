@@ -16,7 +16,8 @@ public class PacketSigner {
     public static boolean verify(Packet p) {
         PublicKey pk = p.getKey();
         long currTime = System.currentTimeMillis();
-        if (abs(currTime - p.getTimestamp()) > 500) {
+        if (abs(currTime - p.getTimestamp()) > 5000) {
+            System.out.println("TIME: " + (currTime - p.getTimestamp()));
             return false;
         }
         System.out.println("Time diff: " + (currTime - p.getTimestamp()));
