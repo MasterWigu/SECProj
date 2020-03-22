@@ -15,24 +15,20 @@ import static java.lang.Math.abs;
 public class PacketSigner {
     public static boolean verify(Packet p) {
         PublicKey pk = p.getKey();
-        long currTime = System.currentTimeMillis();
-        if (abs(currTime - p.getTimestamp()) > 5000) {
-            System.out.println("TIME: " + (currTime - p.getTimestamp()));
-            return false;
-        }
-        System.out.println("Time diff: " + (currTime - p.getTimestamp()));
+            long currTime = System.currentTimeMillis();
+            if (abs(currTime - p.getTimestamp()) > 5000) {
+                return false;
+            }
 
-        byte[] signature = p.getSign();
+            byte[] signature = p.getSign();
 
-        p.setSign(null);
-        byte[] hash = getHash(p);
+            p.setSign(null);
+            byte[] hash = getHash(p);
 
-        //TODO retirar
-        if (pk == null) {
-            System.out.println("DEBUG: pk is null");
-            System.out.println("HASH: " + Arrays.toString(hash));
-            System.out.println("SIGN: " + Arrays.toString(signature));
-            return Arrays.equals(hash, signature);
+            //TODO retirar
+            if (pk == null) {
+                System.out.println("DEBUG: pk is null");
+                return Arrays.equals(hash, signature);
         }
 
         byte[] messageHash = null;

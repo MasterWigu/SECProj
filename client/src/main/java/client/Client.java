@@ -3,8 +3,8 @@ package client;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
-import library.Interfaces.ICommLib;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -15,22 +15,18 @@ import java.util.Scanner;
 
 /** This is the client of the Tic Tac Toe game. */
 public class Client {
-	private ICommLib DPASService;
-	private PublicKey serverPublicKey;
 	private PublicKey clientPublicKey;
-	private PrivateKey clientPrivateKey;
 	private Scanner keyboardSc;
 	private ClientEndpoint clientEndpoint;
 
-	private Client() throws Exception {
+	private Client() {
 		keyboardSc = new Scanner(System.in);
 		//publicKey = PublicKeyReader.get("pk.pem");
-		serverPublicKey = null;
-		clientPrivateKey = null;
+		PublicKey serverPublicKey = null;
+		PrivateKey clientPrivateKey = null;
 		clientPublicKey = null;
 
-		clientEndpoint = new ClientEndpoint("casawigu.ddns.net", 10250, clientPrivateKey, serverPublicKey);
-		//DPASService = (ICommLib) Naming.lookup("//localhost:8000/DPASService");
+		clientEndpoint = new ClientEndpoint("localhost", 10250, clientPrivateKey, serverPublicKey);
 		System.out.println("Client Construtor in");
 		System.out.println("Found server");
 	}
@@ -113,7 +109,6 @@ public class Client {
 			int ann = Integer.valueOf(line);
 
 			if (ann == 0) {
-				System.out.println("ASDASD");
 				finish = true;
 			} else {
 				try {
@@ -155,6 +150,8 @@ public class Client {
 			} catch (UserNotFoundException e) {
 				System.out.println("Invalid user id, please try again.");
 				finish = false;
+			} catch (CommunicationError e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -195,11 +192,12 @@ public class Client {
 
 	private void printAnnouncements(Announcement[] announcements) {
 		for (Announcement a : announcements) {
-			System.out.println("----------- Announcement -----------");
-			System.out.println("From: " + a.getCreator().getId());
-			System.out.println("Message:");
-			System.out.println(a.getMessage());
-			System.out.println("--------- End Announcement ---------");
+			//System.out.println("----------- Announcement -----------");
+			//System.out.println("From: " + a.getCreator().getId());
+			//System.out.println("Message:");
+			//System.out.println(a.getMessage());
+			//System.out.println("--------- End Announcement ---------");
+			System.out.println(a);
 		}
 	}
 

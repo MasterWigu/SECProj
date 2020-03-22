@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.PrivateKey;
 
 public class SocketServer {
@@ -75,6 +76,9 @@ public class SocketServer {
 
             out.writeObject(response);
             tempSocket.close();
+
+        } catch (SocketException e) {
+            System.out.println("Socket closed.");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

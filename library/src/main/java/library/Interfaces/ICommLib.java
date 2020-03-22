@@ -9,9 +9,9 @@ import commonClasses.exceptions.UserNotFoundException;
 public interface ICommLib {
     String register(PublicKey key, String username);
 
-    String post(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException;
+    String post(PublicKey key, char[] message, Announcement[] a, long time) throws UserNotFoundException;
 
-    String postGeneral(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException;
+    String postGeneral(PublicKey key, char[] message, Announcement[] a, long time) throws UserNotFoundException;
 
     Announcement[] read(PublicKey key, int number) throws UserNotFoundException;
 

@@ -3,6 +3,7 @@ package client;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Packet;
 import library.PacketSigner;
@@ -19,6 +20,7 @@ public class ClientEndpoint {
     public ClientEndpoint(String h, int p, PrivateKey cpk, PublicKey spk){
         socketClient = new SocketClient(h, p, spk);
         clientPrivateKey = cpk;
+
     }
 
 
@@ -102,20 +104,31 @@ public class ClientEndpoint {
         if (ann == null) {
             throw new AnnouncementNotFoundException();
         }
-        return null;
+        return ann;
     }
 
 
-    public User getUserById(PublicKey key, int id) throws UserNotFoundException {
+    public User getUserById(PublicKey key, int id) throws UserNotFoundException, CommunicationError {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_USER_ID);
         request.setId(id);
         request.setKey(key);
 
-        // TODO im confused - this needs confirmation
-        // where is the list of users
+        Packet response = socketClient.sendFunction(request,clientPrivateKey);
 
-        return null;
+        User user;
+        if (response.getFunction() == Packet.Func.GET_USER_ID) {
+            user = response.getUser();
+        } else if (response.getFunction() == Packet.Func.USER_NOT_FOUND) {
+            throw new UserNotFoundException();
+        } else {
+            throw new CommunicationError();
+        }
+
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        return user;
     }
 }
