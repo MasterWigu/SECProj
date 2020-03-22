@@ -16,8 +16,8 @@ public class ClientEndpoint {
     private SocketClient socketClient;
     private PrivateKey clientPrivateKey;
 
-    public ClientEndpoint(String h, int p, PrivateKey cpk){
-        socketClient = new SocketClient(h, p);
+    public ClientEndpoint(String h, int p, PrivateKey cpk, PublicKey spk){
+        socketClient = new SocketClient(h, p, spk);
         clientPrivateKey = cpk;
     }
 
@@ -29,7 +29,7 @@ public class ClientEndpoint {
         request.setKey(key);
         request.setUsername(username);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return Arrays.toString(response.getMessage());
     }
 
@@ -42,7 +42,7 @@ public class ClientEndpoint {
         request.setMessage(message);
         request.setAnnouncements(a);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getMessage().toString();
     }
 
@@ -54,7 +54,7 @@ public class ClientEndpoint {
         request.setMessage(message);
         request.setAnnouncements(a);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getMessage().toString();
     }
 
@@ -66,29 +66,31 @@ public class ClientEndpoint {
         request.setKey(key);
         request.setNumberOfAnnouncements(number);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getAnnouncements();
     }
 
 
-    public Announcement[] readGeneral(int number) {
+    public Announcement[] readGeneral(PublicKey key, int number) {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.READ_GENERAL);
         request.setNumberOfAnnouncements(number);
+        request.setKey(key);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getAnnouncements();
     }
 
 
-    public Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException {
+    public Announcement getAnnouncementById(PublicKey key, int id) throws AnnouncementNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_ANN_ID);
         request.setId(id);
+        request.setKey(key);
 
-        Packet response = socketClient.sendFunction(request);
+        Packet response = socketClient.sendFunction(request,clientPrivateKey);
 
         Announcement ann;
         if (response.getFunction() == Packet.Func.GET_ANN_ID) {
@@ -104,11 +106,12 @@ public class ClientEndpoint {
     }
 
 
-    public User getUserById(int id) throws UserNotFoundException {
+    public User getUserById(PublicKey key, int id) throws UserNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_USER_ID);
         request.setId(id);
+        request.setKey(key);
 
         // TODO im confused - this needs confirmation
         // where is the list of users

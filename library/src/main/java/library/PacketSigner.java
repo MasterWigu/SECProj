@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.security.*;
+import java.util.Arrays;
+
 import static java.lang.Math.abs;
 
 public class PacketSigner {
@@ -17,13 +19,23 @@ public class PacketSigner {
         if (abs(currTime - p.getTimestamp()) > 500) {
             return false;
         }
+        System.out.println("Time diff: " + (currTime - p.getTimestamp()));
 
         byte[] signature = p.getSign();
 
         p.setSign(null);
         byte[] hash = getHash(p);
 
+        //TODO retirar
+        if (pk == null) {
+            System.out.println("DEBUG: pk is null");
+            System.out.println("HASH: " + Arrays.toString(hash));
+            System.out.println("SIGN: " + Arrays.toString(signature));
+            return Arrays.equals(hash, signature);
+        }
+
         byte[] messageHash = null;
+
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, pk);
@@ -34,11 +46,18 @@ public class PacketSigner {
             System.out.println("Invalid private key!");
         }
 
-        return messageHash == hash;
+        return Arrays.equals(messageHash, hash);
     }
 
     public static Packet sign(Packet p, PrivateKey pk) {
+        //Insert timestamp
+        p.setTimestamp(System.currentTimeMillis());
+
         byte[] hash = getHash(p);
+        if (pk == null) {
+            p.setSign(hash);
+            return p;
+        }
 
         byte[] signature = null;
         try {
@@ -56,8 +75,6 @@ public class PacketSigner {
     }
 
     private static byte[] getHash(Packet p) {
-        //Insert timestamp
-        p.setTimestamp(System.currentTimeMillis());
 
         //Create signature
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

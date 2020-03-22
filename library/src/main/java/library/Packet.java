@@ -31,7 +31,7 @@ public class Packet implements Serializable {
     private String username;
 
     private long timestamp;
-    private byte[] sign;
+    private byte[] sign = null;
 
     public Func getFunction() {
         return function;

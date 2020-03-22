@@ -7,18 +7,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.PrivateKey;
 
 public class SocketServer {
 
+    private PrivateKey serverPrivateKey;
     private ServerSocket serverSocket;
     private ISocketProcessor processor;
     private int port;
     private boolean working;
 
-    public SocketServer(ISocketProcessor pr, int p) {
+    public SocketServer(ISocketProcessor pr, int p, PrivateKey pk) {
         processor = pr;
         port = p;
         working = false;
+        serverPrivateKey = pk;
     }
 
     public void createWorker() {
@@ -61,7 +64,14 @@ public class SocketServer {
             ObjectInputStream in = new ObjectInputStream(tempSocket.getInputStream());
 
             Packet request = (Packet) in.readObject();
+            if (!PacketSigner.verify(request)) {
+                System.out.println("Error verifying packet!");
+                return;
+            }
+
+
             Packet response = processor.doOperation(request);
+            response = PacketSigner.sign(response, serverPrivateKey);
 
             out.writeObject(response);
             tempSocket.close();

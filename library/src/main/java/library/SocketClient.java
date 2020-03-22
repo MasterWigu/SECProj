@@ -4,24 +4,29 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class SocketClient {
     private String host;
     private int port;
+    private PublicKey serverPublicKey;
 
-    public SocketClient(String h, int p) {
+    public SocketClient(String h, int p, PublicKey pk) {
+        serverPublicKey = pk;
         host = h;
         port = p;
     }
 
-    public Packet sendFunction(Packet message) {
+    public Packet sendFunction(Packet message, PrivateKey pk) {
         try {
-            Socket sendSocket = new Socket(host, port);
-
             if (host == null || port == 0 || message == null) {
                 System.out.println("Invalid arguments");
                 //throw new IllegalArgumentException();
             }
+
+            message = PacketSigner.sign(message, pk);
+            Socket sendSocket = new Socket(host, port);
 
             ObjectOutputStream outStream = null;
             ObjectInputStream inputStream = null;
@@ -40,6 +45,12 @@ public class SocketClient {
             inputStream.close();
 
             sendSocket.close();
+
+
+            if (!PacketSigner.verify(response)) {
+                System.out.println("Message verify error!");
+                return null;
+            }
 
             return response;
         } catch (IOException | ClassNotFoundException e) {

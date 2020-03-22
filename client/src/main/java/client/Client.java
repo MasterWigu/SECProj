@@ -6,6 +6,7 @@ import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,15 +16,20 @@ import java.util.Scanner;
 /** This is the client of the Tic Tac Toe game. */
 public class Client {
 	private ICommLib DPASService;
-	private PublicKey publicKey;
+	private PublicKey serverPublicKey;
+	private PublicKey clientPublicKey;
+	private PrivateKey clientPrivateKey;
 	private Scanner keyboardSc;
 	private ClientEndpoint clientEndpoint;
 
 	private Client() throws Exception {
 		keyboardSc = new Scanner(System.in);
 		//publicKey = PublicKeyReader.get("pk.pem");
-		publicKey = null;
-		clientEndpoint = new ClientEndpoint("localhost", 8000);
+		serverPublicKey = null;
+		clientPrivateKey = null;
+		clientPublicKey = null;
+
+		clientEndpoint = new ClientEndpoint("casawigu.ddns.net", 10250, clientPrivateKey, serverPublicKey);
 		//DPASService = (ICommLib) Naming.lookup("//localhost:8000/DPASService");
 		System.out.println("Client Construtor in");
 		System.out.println("Found server");
@@ -31,7 +37,7 @@ public class Client {
 
 
 	private void login() {
-		clientEndpoint.register(publicKey, "test");
+		clientEndpoint.register(clientPublicKey, "test");
 	}
 
 
@@ -112,7 +118,7 @@ public class Client {
 			} else {
 				try {
 					System.out.println("ASdasllala");
-					announcements.add(clientEndpoint.getAnnouncementById(ann));
+					announcements.add(clientEndpoint.getAnnouncementById(clientPublicKey, ann));
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");
 				}
@@ -122,10 +128,10 @@ public class Client {
 
 		try {
 			if (board == 1) {
-				clientEndpoint.postGeneral(publicKey, message.toCharArray(), announcements.toArray(new Announcement[0]));
+				clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println("Announcement successfully posted to general board.");
 			} else {
-				clientEndpoint.post(publicKey, line.toCharArray(), announcements.toArray(new Announcement[0]));
+				clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println("---------------- Posting to personal board -----------------");
 			}
 		} catch (UserNotFoundException e) {
@@ -144,7 +150,7 @@ public class Client {
 			line = keyboardSc.nextLine();
 			int uid = Integer.getInteger(line);
 			try {
-				user = clientEndpoint.getUserById(uid);
+				user = clientEndpoint.getUserById(clientPublicKey, uid);
 				finish = true;
 			} catch (UserNotFoundException e) {
 				System.out.println("Invalid user id, please try again.");
@@ -181,7 +187,7 @@ public class Client {
 
 		System.out.println("------------------ Printing General Board ------------------");
 
-		printAnnouncements(clientEndpoint.readGeneral(numAnn));
+		printAnnouncements(clientEndpoint.readGeneral(clientPublicKey, numAnn));
 
 	}
 
