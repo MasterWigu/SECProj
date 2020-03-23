@@ -45,7 +45,10 @@ public class ClientEndpoint {
         request.setAnnouncements(a);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        return response.getMessage().toString();
+        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
+            throw new UserNotFoundException();
+        else
+            return response.getMessage().toString();
     }
 
     public String postGeneral(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException {
@@ -57,7 +60,10 @@ public class ClientEndpoint {
         request.setAnnouncements(a);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        return response.getMessage().toString();
+        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
+            throw new UserNotFoundException();
+        else
+            return response.getMessage().toString();
     }
 
 
@@ -69,7 +75,10 @@ public class ClientEndpoint {
         request.setNumberOfAnnouncements(number);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        return response.getAnnouncements();
+        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
+            throw new UserNotFoundException();
+        else
+            return response.getAnnouncements();
     }
 
 
@@ -81,6 +90,7 @@ public class ClientEndpoint {
         request.setKey(key);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        //if (response.getFunction() == Packet.Func.READ_GENERAL)
         return response.getAnnouncements();
     }
 
