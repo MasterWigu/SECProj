@@ -94,7 +94,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileOutputStream file = new FileOutputStream("UserList");
+                    FileOutputStream file = new FileOutputStream("TempUserList");
                     ObjectOutputStream out = new ObjectOutputStream(file);
 
                     // Method for serialization of object

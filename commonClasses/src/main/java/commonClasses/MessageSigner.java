@@ -7,12 +7,13 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.*;
 import java.util.Arrays;
 
 public class MessageSigner {
 
-    private static class AnnToSign {
+    private static class AnnToSign implements Serializable {
         private char[] message;
         private PublicKey creatorPk;
         private int board;

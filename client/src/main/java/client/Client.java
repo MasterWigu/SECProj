@@ -64,7 +64,7 @@ public class Client {
 	}
 
 	private byte[] getMsgSign(char[] msg, int b, Announcement[] anns) {
-		return MessageSigner.sign(msg, b, anns, clientPrivateKey);
+		return MessageSigner.sign(msg, clientPublicKey, b, anns, clientPrivateKey);
 	}
 
 
@@ -200,12 +200,11 @@ public class Client {
 
 	private void printAnnouncements(Announcement[] announcements) {
 		for (Announcement a : announcements) {
-			//System.out.println("----------- Announcement -----------");
-			//System.out.println("From: " + a.getCreator().getId());
-			//System.out.println("Message:");
-			//System.out.println(a.getMessage());
-			//System.out.println("--------- End Announcement ---------");
-			System.out.println(a);
+			if (!MessageSigner.verify(a)) {
+				System.out.println("Invalid Announcement");
+			} else {
+				System.out.println(a);
+			}
 		}
 	}
 

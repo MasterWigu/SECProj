@@ -62,9 +62,9 @@ public class DPASService implements ICommLib {
 	}
 
 	@Override
-	public String post(PublicKey key, char[] message, Announcement[] a, long time) throws UserNotFoundException {
+	public String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
 		synchronized (announcementsListLock) {
-			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 0, time);
+			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 0, time, sign);
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
@@ -77,9 +77,9 @@ public class DPASService implements ICommLib {
 	}
 
 	@Override
-	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time) throws UserNotFoundException {
+	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
 		synchronized (announcementsListLock) {
-			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 1, time);
+			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 1, time, sign);
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);

@@ -35,7 +35,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             case POST:
                 try {
-                    String post = aDPASService.post(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp());
+                    String post = aDPASService.post(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST);
                     response.setMessage(post.toCharArray());
                 } catch (UserNotFoundException e) {
@@ -44,7 +44,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             case POST_GENERAL:
                 try{
-                    String postGeneral = aDPASService.postGeneral(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp());
+                    String postGeneral = aDPASService.postGeneral(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST_GENERAL);
                     response.setMessage(postGeneral.toCharArray());
                 } catch (UserNotFoundException e){
