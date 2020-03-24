@@ -14,12 +14,15 @@ public class Announcement implements Serializable {
     private long timestamp;
     private Announcement[] reffs;
 
-    public Announcement(char[] mss, User crt, Announcement[] rs, int br, long time) {
+    private byte[] signature;
+
+    public Announcement(char[] mss, User crt, Announcement[] rs, int br, long time, byte[] sign) {
         message = mss;
         creator = crt;
         board = br;
         timestamp = time;
         reffs = rs;
+        signature = sign;
     }
 
 
@@ -92,5 +95,9 @@ public class Announcement implements Serializable {
         }
         return ann.getTimestamp() == getTimestamp();
 
+    }
+
+    public byte[] getSignature() {
+        return signature;
     }
 }

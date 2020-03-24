@@ -8,7 +8,6 @@ import java.security.PublicKey;
 
 public class Packet implements Serializable {
 
-
     public enum Func {
         REGISTER,
         POST,
@@ -29,6 +28,7 @@ public class Packet implements Serializable {
     private char[] message;
     private int id;
     private String username;
+    private byte[] messageSignature;
 
     private long timestamp;
     private byte[] sign = null;
@@ -112,5 +112,14 @@ public class Packet implements Serializable {
     public void setSign(byte[] signature) {
         this.sign = signature;
     }
+
+    public byte[] getMessageSignature() {
+        return messageSignature;
+    }
+
+    public void setMessageSignature(byte[] messageSignature) {
+        this.messageSignature = messageSignature;
+    }
+
 
 }

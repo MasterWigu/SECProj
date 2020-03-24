@@ -36,25 +36,27 @@ public class ClientEndpoint {
     }
 
 
-    public String post(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException {
+    public String post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
         request.setKey(key);
         request.setMessage(message);
         request.setAnnouncements(a);
+        request.setMessageSignature(msgSign);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getMessage().toString();
     }
 
-    public String postGeneral(PublicKey key, char[] message, Announcement[] a) throws UserNotFoundException {
+    public String postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST_GENERAL);
         request.setKey(key);
         request.setMessage(message);
         request.setAnnouncements(a);
+        request.setMessageSignature(msgSign);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
         return response.getMessage().toString();

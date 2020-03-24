@@ -1,6 +1,7 @@
 package client;
 
 import commonClasses.Announcement;
+import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.CommunicationError;
@@ -18,12 +19,13 @@ public class Client {
 	private PublicKey clientPublicKey;
 	private Scanner keyboardSc;
 	private ClientEndpoint clientEndpoint;
+	private PrivateKey clientPrivateKey;
 
 	private Client() {
 		keyboardSc = new Scanner(System.in);
 		//publicKey = PublicKeyReader.get("pk.pem");
 		PublicKey serverPublicKey = null;
-		PrivateKey clientPrivateKey = null;
+		clientPrivateKey = null;
 		clientPublicKey = null;
 
 		clientEndpoint = new ClientEndpoint("localhost", 10250, clientPrivateKey, serverPublicKey);
@@ -59,6 +61,10 @@ public class Client {
 					return;
 			}
 		}
+	}
+
+	private byte[] getMsgSign(char[] msg, int b, Announcement[] anns) {
+		return MessageSigner.sign(msg, b, anns, clientPrivateKey);
 	}
 
 
@@ -121,12 +127,14 @@ public class Client {
 			}
 		}
 
+		byte[] sign = getMsgSign(message.toCharArray(), board, announcements.toArray(new Announcement[0]));
 		try {
 			if (board == 1) {
-				clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]));
+
+				clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println("Announcement successfully posted to general board.");
 			} else {
-				clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]));
+				clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println("---------------- Posting to personal board -----------------");
 			}
 		} catch (UserNotFoundException e) {
