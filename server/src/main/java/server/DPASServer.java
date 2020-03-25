@@ -4,6 +4,7 @@ package server;
 import commonClasses.KeyLoader;
 import library.Interfaces.ICommLib;
 import library.Interfaces.ISocketProcessor;
+import library.ServerEndpoint;
 import library.SocketServer;
 
 import java.io.BufferedReader;

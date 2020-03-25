@@ -18,7 +18,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <mainclass>client.Client</mainclass>
+        <mainclass>client.ClientApp</mainclass>
 
         <!-- instance number -->
         <cl.i>1</cl.i>

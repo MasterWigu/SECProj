@@ -7,6 +7,7 @@ import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
+import library.ClientEndpoint;
 
 import java.security.KeyException;
 import java.security.PrivateKey;
@@ -16,19 +17,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-/** This is the client of the Tic Tac Toe game. */
+
 public class Client {
 	private PublicKey clientPublicKey;
 	private Scanner keyboardSc;
 	private ClientEndpoint clientEndpoint;
 	private PrivateKey clientPrivateKey;
 
-	private Client(int id) {
+	Client(int id) {
+		PublicKey serverPublicKey = null;
 	    String keyStorePass = "DPASsecClient"+id;
 	    String resourcesPath = "src\\main\\resources\\";
-
 		keyboardSc = new Scanner(System.in);
-		PublicKey serverPublicKey = null;
+
 		try {
 		    serverPublicKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
             clientPrivateKey = KeyLoader.getPrivateKey(resourcesPath+"KeysUser" + id, keyStorePass);
@@ -36,18 +37,18 @@ public class Client {
         } catch (KeyException e) {
 		    e.printStackTrace();
         }
+
 		clientEndpoint = new ClientEndpoint("localhost", 10250, clientPrivateKey, serverPublicKey);
-		System.out.println("Client Construtor in");
 		System.out.println("Found server");
 	}
 
 
-	private void login() {
+	void login() {
 		clientEndpoint.register(clientPublicKey, "test");
 	}
 
 
-	private void work() {
+	void work() {
 		int choice = 0;
 		while (choice != 9) {
 			printMenu();
@@ -216,18 +217,7 @@ public class Client {
 		}
 	}
 
-	public static void main(String[] args) {
-		try {
-			String b = args[0];
-			int a = Integer.parseInt(b);
-			Client c = new Client(a);
-			c.login();
-			c.work();
-        } catch (Exception e) {
-			e.printStackTrace();
-            System.out.println("Lookup: " + e.getMessage());
-        }
-	}
+
 
 
 

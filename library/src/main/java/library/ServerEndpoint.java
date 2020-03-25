@@ -1,4 +1,4 @@
-package server;
+package library;
 
 import commonClasses.Announcement;
 import commonClasses.User;
@@ -17,7 +17,7 @@ public class ServerEndpoint implements ISocketProcessor {
     private PublicKey serverPublicKey;
     private ICommLib aDPASService;
 
-    ServerEndpoint(ICommLib aDPASS, PublicKey pk) {
+    public ServerEndpoint(ICommLib aDPASS, PublicKey pk) {
         aDPASService = aDPASS;
         serverPublicKey = pk;
     }

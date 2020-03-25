@@ -1,13 +1,10 @@
-package client;
+package library;
 
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
-import library.Packet;
-import library.PacketSigner;
-import library.SocketClient;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
