@@ -1,6 +1,7 @@
 package server;
 
 
+import commonClasses.KeyLoader;
 import library.Interfaces.ICommLib;
 import library.Interfaces.ISocketProcessor;
 import library.SocketServer;
@@ -12,13 +13,14 @@ import java.security.PublicKey;
 
 
 public class DPASServer {
-    public static void main(String args[]){
+    public static void main(String[] args){
         int registryPort = 10250;
         System.out.println("Main OK");
+        String keyStorePass = "DPASsecServer";
+        String resourcesPath = "src\\main\\resources\\";
         try{
-            //PrivateKey serverPk = PrivateKeyReader.get("private.pem");
-            PrivateKey serverPrivKey = null;
-            PublicKey serverPubKey = null;
+            PrivateKey serverPrivKey = KeyLoader.getPrivateKey(resourcesPath+"KeysServer", keyStorePass);
+            PublicKey serverPubKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysServer", keyStorePass);
 
             ICommLib aDPASService = new DPASService();
 
@@ -34,6 +36,7 @@ public class DPASServer {
             serverListener.stop();
 
         }catch(Exception e) {
+            e.printStackTrace();
             System.out.println("DPAS server main " + e.getMessage());
         }
     }

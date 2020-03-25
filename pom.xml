@@ -242,10 +242,11 @@
 
 
 	<modules>
+		<module>KeyStoreCreator</module>
 		<module>library</module>
 		<module>commonClasses</module>
 		<module>server</module>
 		<module>client</module>
-	</modules>
+    </modules>
 
 </project>

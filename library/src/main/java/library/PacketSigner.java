@@ -15,22 +15,15 @@ import static java.lang.Math.abs;
 public class PacketSigner {
     public static boolean verify(Packet p) {
         PublicKey pk = p.getKey();
-            long currTime = System.currentTimeMillis();
-            if (abs(currTime - p.getTimestamp()) > 5000) {
-                return false;
-            }
-
-            byte[] signature = p.getSign();
-
-            p.setSign(null);
-            byte[] hash = getHash(p);
-
-            //TODO retirar
-            if (pk == null) {
-                System.out.println("DEBUG: pk is null");
-                return Arrays.equals(hash, signature);
+        long currTime = System.currentTimeMillis();
+        if (abs(currTime - p.getTimestamp()) > 5000) {
+            return false;
         }
 
+        byte[] signature = p.getSign();
+
+        p.setSign(null);
+        byte[] hash = getHash(p);
         byte[] messageHash = null;
 
         try {
@@ -51,11 +44,6 @@ public class PacketSigner {
         p.setTimestamp(System.currentTimeMillis());
 
         byte[] hash = getHash(p);
-        if (pk == null) {
-            p.setSign(hash);
-            return p;
-        }
-
         byte[] signature = null;
         try {
             Cipher cipher = Cipher.getInstance("RSA");

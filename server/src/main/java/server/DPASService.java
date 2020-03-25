@@ -69,7 +69,7 @@ public class DPASService implements ICommLib {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
 				fileSaver.writeAnnouncements(announcements);
-				return "Announcement successfully posted with id " + announcements.size();
+				return "Announcement successfully posted with id " + announcements.size() + " to personal board.";
 			}
 
 		}
@@ -84,7 +84,7 @@ public class DPASService implements ICommLib {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
 				fileSaver.writeAnnouncements(announcements);
-				return "Announcement successfully posted with id " + announcements.size();
+				return "Announcement successfully posted with id " + announcements.size() + " to general board";
 			}
 
 		}
@@ -134,7 +134,7 @@ public class DPASService implements ICommLib {
 
 	private User getUserWithPk(PublicKey pk) throws UserNotFoundException {
 		for (User u : users) {
-			if (u.getPk() == pk) {
+			if (u.getPk().equals(pk)) {
 				return u;
 			}
 		}

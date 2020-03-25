@@ -1,12 +1,14 @@
 package client;
 
 import commonClasses.Announcement;
+import commonClasses.KeyLoader;
 import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
 
+import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -21,13 +23,19 @@ public class Client {
 	private ClientEndpoint clientEndpoint;
 	private PrivateKey clientPrivateKey;
 
-	private Client() {
-		keyboardSc = new Scanner(System.in);
-		//publicKey = PublicKeyReader.get("pk.pem");
-		PublicKey serverPublicKey = null;
-		clientPrivateKey = null;
-		clientPublicKey = null;
+	private Client(int id) {
+	    String keyStorePass = "DPASsecClient"+id;
+	    String resourcesPath = "src\\main\\resources\\";
 
+		keyboardSc = new Scanner(System.in);
+		PublicKey serverPublicKey = null;
+		try {
+		    serverPublicKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
+            clientPrivateKey = KeyLoader.getPrivateKey(resourcesPath+"KeysUser" + id, keyStorePass);
+            clientPublicKey = KeyLoader.getPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
+        } catch (KeyException e) {
+		    e.printStackTrace();
+        }
 		clientEndpoint = new ClientEndpoint("localhost", 10250, clientPrivateKey, serverPublicKey);
 		System.out.println("Client Construtor in");
 		System.out.println("Found server");
@@ -118,26 +126,26 @@ public class Client {
 				finish = true;
 			} else {
 				try {
-					System.out.println("ASdasllala");
 					announcements.add(clientEndpoint.getAnnouncementById(clientPublicKey, ann));
+					System.out.println("Announcement added to the list of referrals");
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");
 				}
-				System.out.println("Announcement added to the list of referrals");
 			}
 		}
 
 		byte[] sign = getMsgSign(message.toCharArray(), board, announcements.toArray(new Announcement[0]));
+		char[] response;
 		try {
 			if (board == 1) {
-
-				clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
-				System.out.println("Announcement successfully posted to general board.");
+				response = clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				System.out.println(String.valueOf(response));
 			} else {
-				clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]), sign);
-				System.out.println("---------------- Posting to personal board -----------------");
+				response = clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				System.out.println(String.valueOf(response));
 			}
 		} catch (UserNotFoundException e) {
+			e.printStackTrace();
 			//Unpossible
 		}
 	}
@@ -210,7 +218,9 @@ public class Client {
 
 	public static void main(String[] args) {
 		try {
-			Client c = new Client();
+			String b = args[0];
+			int a = Integer.parseInt(b);
+			Client c = new Client(a);
 			c.login();
 			c.work();
         } catch (Exception e) {

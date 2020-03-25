@@ -36,7 +36,7 @@ public class ClientEndpoint {
     }
 
 
-    public String post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
+    public char[] post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
@@ -49,10 +49,10 @@ public class ClientEndpoint {
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else
-            return response.getMessage().toString();
+            return response.getMessage();
     }
 
-    public String postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
+    public char[] postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST_GENERAL);
@@ -65,7 +65,7 @@ public class ClientEndpoint {
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else
-            return response.getMessage().toString();
+            return response.getMessage();
     }
 
 

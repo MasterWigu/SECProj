@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- http://maven.apache.org/pom.html#Quick_Overview -->
 
+    <artifactId>SEC_KeyStoreCreator</artifactId>
     <groupId>example</groupId>
-    <artifactId>SEC_proj_client</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,22 +18,19 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <mainclass>client.Client</mainclass>
-
-        <!-- instance number -->
-        <cl.i>1</cl.i>
+        <mainclass>keyStoreCreator.KeyStoreCreator</mainclass>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>example</groupId>
-            <artifactId>SEC_proj_commClass</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.58</version>
         </dependency>
         <dependency>
-            <groupId>example</groupId>
-            <artifactId>SEC_proj_lib</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.58</version>
         </dependency>
     </dependencies>
 
@@ -54,9 +51,8 @@
                     <!-- to prevent deprecation warning: -->
                     <killAfter>-1</killAfter>
                     <mainClass>${mainclass}</mainClass>
-                    <arguments>
-                        <argument>${cl.i}</argument>
-                    </arguments>
+                    <systemProperties>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -86,5 +82,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
