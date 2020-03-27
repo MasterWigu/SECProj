@@ -22,7 +22,7 @@ import java.util.Date;
 
 public class KeyStoreCreator {
 
-    private static KeyPair createKeyPair() {
+    public static KeyPair createKeyPair() {
         KeyPairGenerator kpg=null;
         try {
             kpg = KeyPairGenerator.getInstance("RSA");

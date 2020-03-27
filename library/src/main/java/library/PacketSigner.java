@@ -31,7 +31,7 @@ public class PacketSigner {
             cipher.init(Cipher.DECRYPT_MODE, pk);
             messageHash = cipher.doFinal(signature);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            System.out.println("Crypto error verifying packet");
         } catch (InvalidKeyException e) {
             System.out.println("Invalid private key!");
         }
@@ -50,7 +50,7 @@ public class PacketSigner {
             cipher.init(Cipher.ENCRYPT_MODE, pk);
             signature = cipher.doFinal(hash);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            System.out.println("Crypto error signing packet");
         } catch (InvalidKeyException e) {
             System.out.println("Invalid private key!");
         }

@@ -35,12 +35,6 @@ public class MessageSigner {
         AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getReffs());
         byte[] hash = getHash(ann);
 
-        //TODO retirar
-        if (pk == null) {
-            System.out.println("DEBUG: pk is null");
-            return Arrays.equals(hash, signature);
-        }
-
         byte[] messageHash = null;
 
         try {
@@ -48,9 +42,11 @@ public class MessageSigner {
             cipher.init(Cipher.DECRYPT_MODE, pk);
             messageHash = cipher.doFinal(signature);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            System.out.println("Crypto error verifying announcement");
+            return false;
         } catch (InvalidKeyException e) {
             System.out.println("Invalid public key!");
+            return false;
         }
 
         return Arrays.equals(messageHash, hash);
@@ -60,18 +56,13 @@ public class MessageSigner {
 
         AnnToSign ann = new AnnToSign(msg, cpk, b, anns);
         byte[] hash = getHash(ann);
-
-        if (pk == null) {
-            return hash;
-        }
-
         byte[] signature = null;
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, pk);
             signature = cipher.doFinal(hash);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            System.out.println("Crypto error signing announcement");
         } catch (InvalidKeyException e) {
             System.out.println("Invalid private key!");
         }
@@ -79,8 +70,8 @@ public class MessageSigner {
         return signature;
     }
 
-    private static byte[] getHash(AnnToSign a) {
 
+    private static byte[] getHash(AnnToSign a) {
         //Create signature
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out;
