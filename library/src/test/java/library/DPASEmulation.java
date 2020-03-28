@@ -7,6 +7,7 @@ import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 
 import java.security.PublicKey;
+import java.util.Arrays;
 
 public class DPASEmulation implements ICommLib {
     public PublicKey tempPublicKey = null;
@@ -22,7 +23,7 @@ public class DPASEmulation implements ICommLib {
     public String register(PublicKey key, String username) {
         tempPublicKey = key;
         tempUsername = username;
-        return null;
+        return "UserAddedTest";
     }
 
     @Override
@@ -32,7 +33,9 @@ public class DPASEmulation implements ICommLib {
         tempAs = a;
         tempTime = time;
         tempSign = sign;
-        return null;
+        if (Arrays.equals(tempSign, "not_def".getBytes()))
+            throw new UserNotFoundException();
+        return "PostedCreatedTest";
     }
 
     @Override
@@ -42,7 +45,9 @@ public class DPASEmulation implements ICommLib {
         tempAs = a;
         tempTime = time;
         tempSign = sign;
-        return null;
+        if (Arrays.equals(tempSign, "not_def".getBytes()))
+            throw new UserNotFoundException();
+        return "Posted to General";
     }
 
     @Override

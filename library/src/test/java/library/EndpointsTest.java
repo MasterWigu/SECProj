@@ -48,17 +48,58 @@ public class EndpointsTest {
     }
 
 
-    @Test (expected = UserNotFoundException.class)
+    // REGISTER
+    @Test
     public void successRegister() {
         String response = clientEnd1.register(client1Keys.getPublic(), "NOTNOT");
+        Assert.assertEquals("UserAddedTest", response);
+    }
 
-        Assert.assertArrayEquals("UserAddedTest".toCharArray(), response.toCharArray());
+    // POST
+    @Test
+    public void successPost() throws UserNotFoundException {
+        char[] response = clientEnd1.post(client1Keys.getPublic(), "POSTPOST".toCharArray(), null, null);
+        Assert.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
+    }
+
+    @Test (expected = UserNotFoundException.class)
+    public void userNotFound() throws UserNotFoundException {
+        clientEnd1.post(client1Keys.getPublic(), "POST".toCharArray(), null, "not_def".getBytes());
+    }
+
+
+    // POST GENERAL
+    /*@Test
+    public void successPostGeneral() throws UserNotFoundException {
+        char[] response = clientEnd1.post(client1Keys.getPublic(), "POSTPOSTGENERAL".toCharArray(), null, null);
+        System.out.println(response);
+        Assert.assertArrayEquals("Posted to General".toCharArray(), response);
+    }*/
+
+    @Test (expected = UserNotFoundException.class)
+    public void userNotFound1() throws UserNotFoundException {
+        clientEnd1.postGeneral(client1Keys.getPublic(), "POST".toCharArray(), null, "not_def".getBytes());
+    }
+
+    // READ
+    /*@Test
+    public void successRead() throws UserNotFoundException {
+        Announcement[] response = clientEnd1.read(client1Keys.getPublic(), 0);
+
+        Assert.assertArrayEquals("Read".toCharArray(), response[0].getMessage());
     }
 
 
     @Test (expected = UserNotFoundException.class)
-    public void userNotFound1() {
-        clientEnd1.register(client1Keys.getPublic(), "NOTNOT");
+    public void userNotFound2() throws UserNotFoundException {
+        clientEnd1.read(client1Keys.getPublic(), -2);
+    }*/
 
-    }
+    // READ_GENERAL
+    /*@Test
+    public void successReadGeneral() {
+        Announcement[] response = clientEnd1.readGeneral(client1Keys.getPublic(), 0);
+
+        Assert.assertArrayEquals("Read General".toCharArray(), response[0].getMessage());
+    }*/
 }

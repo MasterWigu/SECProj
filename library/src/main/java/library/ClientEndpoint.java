@@ -29,7 +29,7 @@ public class ClientEndpoint {
         request.setUsername(username);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        return Arrays.toString(response.getMessage());
+        return String.valueOf(response.getMessage());
     }
 
 

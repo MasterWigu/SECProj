@@ -30,12 +30,6 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         if (packet.getMessageSignature() != null)
             response.setMessageSignature(packet.getMessageSignature().clone());
 
-        if (packet.getUsername().equals("NOTNOT")) {
-            response.setFunction(Packet.Func.USER_NOT_FOUND);
-        }
-        if (response.getFunction() == Packet.Func.REGISTER) {
-            response.setMessage("UserAddedTest".toCharArray());
-        }
 
         return response;
     }
