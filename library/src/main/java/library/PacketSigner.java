@@ -17,6 +17,7 @@ public class PacketSigner {
         PublicKey pk = p.getKey();
         long currTime = System.currentTimeMillis();
         if (abs(currTime - p.getTimestamp()) > 5000) {
+            System.out.println("Invalid packet due to timestamp");
             return false;
         }
 
@@ -36,6 +37,7 @@ public class PacketSigner {
             System.out.println("Invalid private key!");
         }
 
+        p.setSign(signature);
         return Arrays.equals(messageHash, hash);
     }
 

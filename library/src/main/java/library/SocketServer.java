@@ -9,20 +9,23 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class SocketServer {
 
     private PrivateKey serverPrivateKey;
+    private PublicKey serverPublicKey;
     private ServerSocket serverSocket;
     private ISocketProcessor processor;
     private int port;
     private boolean working;
 
-    public SocketServer(ISocketProcessor pr, int p, PrivateKey pk) {
+    public SocketServer(ISocketProcessor pr, int p, PrivateKey pk, PublicKey spk) {
         processor = pr;
         port = p;
         working = false;
         serverPrivateKey = pk;
+        serverPublicKey = spk;
     }
 
     public void createWorker() {
@@ -65,15 +68,19 @@ public class SocketServer {
             ObjectInputStream in = new ObjectInputStream(tempSocket.getInputStream());
 
             Packet request = (Packet) in.readObject();
+            Packet response;
             if (!PacketSigner.verify(request)) {
                 System.out.println("Error verifying packet!");
-                return;
+                response = new Packet();
+                response.setFunction(Packet.Func.ERROR);
+                response.setKey(serverPublicKey);
+                response.setMessage("Invalid Packet received".toCharArray());
+            }
+            else {
+                response = processor.doOperation(request);
             }
 
-
-            Packet response = processor.doOperation(request);
             response = PacketSigner.sign(response, serverPrivateKey);
-
             out.writeObject(response);
             tempSocket.close();
 

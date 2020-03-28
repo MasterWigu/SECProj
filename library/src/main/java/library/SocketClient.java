@@ -22,6 +22,7 @@ public class SocketClient {
         try {
             if (host == null || port == 0 || message == null) {
                 System.out.println("Invalid arguments");
+                return null;
                 //throw new IllegalArgumentException();
             }
 

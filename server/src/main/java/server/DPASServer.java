@@ -27,7 +27,7 @@ public class DPASServer {
 
             ISocketProcessor processor = new ServerEndpoint(aDPASService, serverPubKey);
 
-            SocketServer serverListener = new SocketServer(processor, registryPort, serverPrivKey);
+            SocketServer serverListener = new SocketServer(processor, registryPort, serverPrivKey, serverPubKey);
             serverListener.createWorker();
 
             BufferedReader reader =  new BufferedReader(new InputStreamReader(System.in));

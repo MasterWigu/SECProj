@@ -1,9 +1,12 @@
 package library;
 
+import commonClasses.exceptions.UserNotFoundException;
 import keyStoreCreator.KeyStoreCreator;
 import library.Interfaces.ISocketProcessor;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.security.KeyPair;
 
@@ -29,7 +32,7 @@ public class EndpointsTest {
 
         serverEnd = new DPASEmulation();
         ISocketProcessor processor = new ServerEndpoint(serverEnd, serverKeys.getPublic());
-        serverListener = new SocketServer(processor, 10250, serverKeys.getPrivate());
+        serverListener = new SocketServer(processor, 10250, serverKeys.getPrivate(), serverKeys.getPublic());
         serverListener.createWorker();
 
 
@@ -42,5 +45,20 @@ public class EndpointsTest {
     @After
     public void close() {
         serverListener.stop();
+    }
+
+
+    @Test (expected = UserNotFoundException.class)
+    public void successRegister() {
+        String response = clientEnd1.register(client1Keys.getPublic(), "NOTNOT");
+
+        Assert.assertArrayEquals("UserAddedTest".toCharArray(), response.toCharArray());
+    }
+
+
+    @Test (expected = UserNotFoundException.class)
+    public void userNotFound1() {
+        clientEnd1.register(client1Keys.getPublic(), "NOTNOT");
+
     }
 }

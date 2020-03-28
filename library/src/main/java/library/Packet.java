@@ -5,6 +5,7 @@ import commonClasses.User;
 
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.util.Arrays;
 
 public class Packet implements Serializable {
 
@@ -120,6 +121,5 @@ public class Packet implements Serializable {
     public void setMessageSignature(byte[] messageSignature) {
         this.messageSignature = messageSignature;
     }
-
 
 }
