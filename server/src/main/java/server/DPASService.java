@@ -3,9 +3,12 @@ package server;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 
+import java.io.File;
+import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,7 @@ public class DPASService implements ICommLib {
 		usersListLock = new Object();
 		announcementsListLock = new Object();
 
-		fileSaver = new FileSaver();
+		fileSaver = FileSaver.getInstance();
 
 		users = fileSaver.readUsers();
 		announcements = fileSaver.readAnnouncements();
@@ -38,7 +41,9 @@ public class DPASService implements ICommLib {
 
 
 	@Override
-	public String register(PublicKey pk, String username) {
+	public String register(PublicKey pk, String username) throws KeyException {
+		if (pk == null)
+			throw new KeyException();
 		User user;
 		synchronized (usersListLock) {
 			try {

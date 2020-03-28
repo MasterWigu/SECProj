@@ -12,11 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 class FileSaver {
+    private static FileSaver fileSaver = null;
 
     private final Object usersFileLock;
     private final Object announcementsFileLock;
 
-    FileSaver() {
+    public static FileSaver getInstance(){
+        if(fileSaver == null)
+            fileSaver = new FileSaver();
+        return fileSaver;
+    }
+
+    private FileSaver() {
         usersFileLock = new Object();
         announcementsFileLock = new Object();
     }

@@ -3,11 +3,12 @@ package library.Interfaces;
 import java.security.PublicKey;
 import commonClasses.*;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 
 
 public interface ICommLib {
-    String register(PublicKey key, String username);
+    String register(PublicKey key, String username) throws KeyException;
 
     String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException;
 

@@ -3,6 +3,7 @@ package library;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 import library.Interfaces.ISocketProcessor;
@@ -29,9 +30,14 @@ public class ServerEndpoint implements ISocketProcessor {
         response.setKey(serverPublicKey);
         switch (packet.getFunction()){
             case REGISTER:
-                String register = aDPASService.register(packet.getKey(), packet.getUsername());
-                response.setFunction(REGISTER);
-                response.setMessage(register.toCharArray());
+                try {
+                    String register = aDPASService.register(packet.getKey(), packet.getUsername());
+                    response.setFunction(REGISTER);
+                    response.setMessage(register.toCharArray());
+                } catch (KeyException e) {
+                    response.setFunction(ERROR);
+                    response.setMessage("Invalid Public Key.".toCharArray());
+                }
                 break;
             case POST:
                 try {
