@@ -106,4 +106,18 @@ public class SocketsTest {
         Assert.assertArrayEquals("Invalid Packet received".toCharArray(), receive.getMessage());
         Assert.assertTrue(serverProcessor.read);
     }
+
+    @Test
+    public void nullSignature() {
+        Packet send = new Packet();
+
+        send.setKey(client1Keys.getPublic());
+        send.setUsername("TEST");
+        send.setFunction(Packet.Func.REGISTER);
+        send.setMessageSignature(null);
+
+        Packet receive = clientSocket1.sendFunction(send, client1Keys.getPrivate());
+
+        Assert.assertNull(receive.getMessageSignature());
+    }
 }
