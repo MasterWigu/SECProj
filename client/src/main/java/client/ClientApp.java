@@ -11,7 +11,6 @@ public class ClientApp {
             c.work();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Lookup: " + e.getMessage());
         }
     }
 }

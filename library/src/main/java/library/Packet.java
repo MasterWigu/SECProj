@@ -18,7 +18,9 @@ public class Packet implements Serializable {
         GET_ANN_ID,
         GET_USER_ID,
         ERROR,
-        USER_NOT_FOUND
+        USER_NOT_FOUND,
+        INVALID_ANN,
+        ANN_NOT_FOUND
     }
 
     private Func function;

@@ -61,7 +61,7 @@ public class SocketsTest {
     }
 
 
-    @Test
+    @Test(singleThreaded = true)
     public void successRegister() {
         Packet send = new Packet();
         send.setKey(client1Keys.getPublic());
@@ -76,6 +76,7 @@ public class SocketsTest {
         Packet inServer = serverProcessor.tempPacket;
         serverProcessor.read = true;
 
+        Assert.assertEquals(Packet.Func.REGISTER, receive.getFunction());
         Assert.assertEquals(serverKeys.getPublic(), receive.getKey());
         Assert.assertEquals(client1Keys.getPublic(), inServer.getKey());
         Assert.assertNotEquals(send.getTimestamp(), receive.getTimestamp());

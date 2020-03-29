@@ -3,7 +3,8 @@ package library;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.CommunicationError;
+import library.Exceptions.CommunicationErrorException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import keyStoreCreator.KeyStoreCreator;
 import library.Interfaces.ISocketProcessor;
@@ -29,7 +30,7 @@ public class EndpointsTest {
 
 
 
-    @BeforeMethod
+    @BeforeMethod()
     public void setUp() {
         serverKeys = KeyStoreCreator.createKeyPair();
         client1Keys = KeyStoreCreator.createKeyPair();
@@ -56,39 +57,39 @@ public class EndpointsTest {
 
     // REGISTER
     @Test
-    public void successRegister() {
+    public void successRegister() throws CommunicationErrorException {
         String response = clientEnd1.register(client1Keys.getPublic(), "NOTNOT");
         Assert.assertEquals("UserAddedTest", response);
     }
 
     // POST
     @Test
-    public void successPost() throws UserNotFoundException {
+    public void successPost() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         char[] response = clientEnd1.post(client1Keys.getPublic(), "SUCCESS_POST".toCharArray(), null, null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound() throws UserNotFoundException {
+    public void userNotFound() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         clientEnd1.post(client1Keys.getPublic(), "ERROR_POST".toCharArray(), null, null);
     }
 
 
     // POST GENERAL
     @Test
-    public void successPostGeneral() throws UserNotFoundException {
+    public void successPostGeneral() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         char[] response = clientEnd1.postGeneral(client1Keys.getPublic(), "SUCCESS_POST_GENERAL".toCharArray(), null, null);
         AssertJUnit.assertArrayEquals("PostedGeneralCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound1() throws UserNotFoundException {
+    public void userNotFound1() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         clientEnd1.postGeneral(client1Keys.getPublic(), "ERROR_POST_GENERAL".toCharArray(), null, null);
     }
 
     // READ
     @Test
-    public void successRead() throws UserNotFoundException {
+    public void successRead() throws UserNotFoundException, CommunicationErrorException {
         Announcement[] response = clientEnd1.read(client1Keys.getPublic(), 123456);
 
         AssertJUnit.assertArrayEquals("Read".toCharArray(), response[0].getMessage());
@@ -96,13 +97,13 @@ public class EndpointsTest {
 
 
     @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound2() throws UserNotFoundException {
+    public void userNotFound2() throws UserNotFoundException, CommunicationErrorException {
         clientEnd1.read(client1Keys.getPublic(), -2);
     }
 
     // READ_GENERAL
     @Test
-    public void successReadGeneral() {
+    public void successReadGeneral() throws CommunicationErrorException {
         Announcement[] response = clientEnd1.readGeneral(client1Keys.getPublic(), 123456);
 
         AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
@@ -110,7 +111,7 @@ public class EndpointsTest {
 
     // ANN_ID
     @Test
-    public void successGetAnnId() throws AnnouncementNotFoundException {
+    public void successGetAnnId() throws AnnouncementNotFoundException, CommunicationErrorException {
         Announcement response = clientEnd1.getAnnouncementById(client1Keys.getPublic(), 123456);
 
         AssertJUnit.assertArrayEquals("SuccessfulAnnouncement".toCharArray(), response.getMessage());
@@ -118,13 +119,13 @@ public class EndpointsTest {
 
 
     @Test (expectedExceptions = AnnouncementNotFoundException.class)
-    public void userNotFound3() throws AnnouncementNotFoundException {
+    public void userNotFound3() throws AnnouncementNotFoundException, CommunicationErrorException {
         clientEnd1.getAnnouncementById(client1Keys.getPublic(), -2);
     }
 
     // User_ID
     @Test
-    public void successGetUser() throws UserNotFoundException, CommunicationError {
+    public void successGetUser() throws UserNotFoundException, CommunicationErrorException {
         User response = clientEnd1.getUserById(client1Keys.getPublic(), 123456);
 
         Assert.assertEquals("SuccessfulUser", response.getUsername());
@@ -132,7 +133,7 @@ public class EndpointsTest {
 
 
     @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound4() throws UserNotFoundException, CommunicationError  {
+    public void userNotFound4() throws UserNotFoundException, CommunicationErrorException {
         clientEnd1.getUserById(client1Keys.getPublic(), -2);
     }
 }

@@ -8,8 +8,6 @@ import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 import library.Interfaces.ISocketProcessor;
-import library.Packet;
-
 import java.security.PublicKey;
 
 import static library.Packet.Func.*;
@@ -45,8 +43,10 @@ public class ServerEndpoint implements ISocketProcessor {
                     String post = aDPASService.post(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST);
                     response.setMessage(post.toCharArray());
-                } catch (UserNotFoundException | InvalidAnnouncementException e) {
+                } catch (UserNotFoundException e) {
                     response.setFunction(USER_NOT_FOUND);
+                } catch (InvalidAnnouncementException e) {
+                    response.setFunction(INVALID_ANN);
                 }
                 break;
             case POST_GENERAL:
@@ -54,8 +54,10 @@ public class ServerEndpoint implements ISocketProcessor {
                     String postGeneral = aDPASService.postGeneral(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST_GENERAL);
                     response.setMessage(postGeneral.toCharArray());
-                } catch (UserNotFoundException | InvalidAnnouncementException e){
+                } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
+                } catch (InvalidAnnouncementException e) {
+                    response.setFunction(INVALID_ANN);
                 }
                 break;
             case READ:
@@ -78,7 +80,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setFunction(GET_ANN_ID);
                     response.setAnnouncements(new Announcement[]{ann});
                 } catch (AnnouncementNotFoundException e){
-                    response.setFunction(USER_NOT_FOUND);
+                    response.setFunction(ANN_NOT_FOUND);
                 }
                 break;
             case GET_USER_ID:

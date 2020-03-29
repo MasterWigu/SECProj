@@ -5,7 +5,8 @@ import commonClasses.KeyLoader;
 import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.CommunicationError;
+import library.Exceptions.CommunicationErrorException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.ClientEndpoint;
 
@@ -43,8 +44,17 @@ public class Client {
 	}
 
 
-	void login() {
-		clientEndpoint.register(clientPublicKey, "test");
+	void login() throws CommunicationErrorException {
+		int numTries = 0;
+		while (++numTries<=3) {
+			try {
+				clientEndpoint.register(clientPublicKey, "test");
+				return;
+			} catch (CommunicationErrorException e) {
+				System.out.println("Communication with server failed, trying again.");
+			}
+		}
+		throw new CommunicationErrorException();
 	}
 
 
@@ -131,6 +141,8 @@ public class Client {
 					System.out.println("Announcement added to the list of referrals");
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");
+				} catch (CommunicationErrorException e) {
+					System.out.println("Communication error, please try again.");
 				}
 			}
 		}
@@ -148,6 +160,8 @@ public class Client {
 		} catch (UserNotFoundException e) {
 			e.printStackTrace();
 			//Unpossible
+		} catch (CommunicationErrorException | InvalidAnnouncementException e) {
+			System.out.println("Communication error, please try posting again.");
 		}
 	}
 
@@ -167,7 +181,7 @@ public class Client {
 			} catch (UserNotFoundException e) {
 				System.out.println("Invalid user id, please try again.");
 				finish = false;
-			} catch (CommunicationError e) {
+			} catch (CommunicationErrorException e) {
 				e.printStackTrace();
 			}
 		}
@@ -186,6 +200,8 @@ public class Client {
 		} catch (UserNotFoundException e) {
 			// Impossible
 			System.out.println(Arrays.toString(e.getStackTrace()));
+		} catch (CommunicationErrorException e) {
+			System.out.println("Communication error, please try again.");
 		}
 	}
 
@@ -200,8 +216,11 @@ public class Client {
 
 
 		System.out.println("------------------ Printing General Board ------------------");
-
-		printAnnouncements(clientEndpoint.readGeneral(clientPublicKey, numAnn));
+		try {
+			printAnnouncements(clientEndpoint.readGeneral(clientPublicKey, numAnn));
+		} catch (CommunicationErrorException e) {
+			System.out.println("Communication error, please try again.");
+		}
 
 	}
 

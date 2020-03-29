@@ -3,12 +3,12 @@ package library;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.CommunicationError;
+import library.Exceptions.CommunicationErrorException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Arrays;
 
 public class ClientEndpoint {
     private SocketClient socketClient;
@@ -21,7 +21,7 @@ public class ClientEndpoint {
     }
 
 
-    public String register(PublicKey key, String username) {
+    public String register(PublicKey key, String username) throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.REGISTER);
@@ -29,11 +29,14 @@ public class ClientEndpoint {
         request.setUsername(username);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        return String.valueOf(response.getMessage());
+        if (response.getFunction() == Packet.Func.REGISTER)
+            return String.valueOf(response.getMessage());
+        else
+            throw new CommunicationErrorException();
     }
 
 
-    public char[] post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
+    public char[] post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
@@ -45,11 +48,15 @@ public class ClientEndpoint {
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
-        else
+        else if (response.getFunction() == Packet.Func.INVALID_ANN)
+            throw  new InvalidAnnouncementException();
+        else if (response.getFunction() == Packet.Func.POST)
             return response.getMessage();
+        else
+            throw new CommunicationErrorException();
     }
 
-    public char[] postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException {
+    public char[] postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST_GENERAL);
@@ -61,12 +68,16 @@ public class ClientEndpoint {
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
-        else
+        else if (response.getFunction() == Packet.Func.INVALID_ANN)
+            throw  new InvalidAnnouncementException();
+        else if (response.getFunction() == Packet.Func.POST_GENERAL)
             return response.getMessage();
+        else
+            throw new CommunicationErrorException();
     }
 
 
-    public Announcement[] read(PublicKey key, int number) throws UserNotFoundException {
+    public Announcement[] read(PublicKey key, int number) throws UserNotFoundException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.READ);
@@ -76,12 +87,14 @@ public class ClientEndpoint {
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
-        else
+        else if (response.getFunction() == Packet.Func.READ)
             return response.getAnnouncements();
+        else
+            throw new CommunicationErrorException();
     }
 
 
-    public Announcement[] readGeneral(PublicKey key, int number) {
+    public Announcement[] readGeneral(PublicKey key, int number) throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.READ_GENERAL);
@@ -89,12 +102,15 @@ public class ClientEndpoint {
         request.setKey(key);
 
         Packet response = socketClient.sendFunction(request, clientPrivateKey);
-        //if (response.getFunction() == Packet.Func.READ_GENERAL)
-        return response.getAnnouncements();
+
+        if (response.getFunction() == Packet.Func.READ_GENERAL)
+            return response.getAnnouncements();
+        else
+            throw new CommunicationErrorException();
     }
 
 
-    public Announcement getAnnouncementById(PublicKey key, int id) throws AnnouncementNotFoundException {
+    public Announcement getAnnouncementById(PublicKey key, int id) throws AnnouncementNotFoundException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_ANN_ID);
@@ -104,20 +120,21 @@ public class ClientEndpoint {
         Packet response = socketClient.sendFunction(request,clientPrivateKey);
 
         Announcement ann;
-        if (response.getFunction() == Packet.Func.GET_ANN_ID) {
-            ann = response.getAnnouncements()[0];
-        } else {
+        if (response.getAnnouncements() == null) {
             throw new AnnouncementNotFoundException();
         }
-
-        if (ann == null) {
+        if (response.getFunction() == Packet.Func.GET_ANN_ID) {
+            ann = response.getAnnouncements()[0];
+        } else if (response.getFunction() == Packet.Func.ANN_NOT_FOUND ){
             throw new AnnouncementNotFoundException();
+        } else {
+            throw new CommunicationErrorException();
         }
         return ann;
     }
 
 
-    public User getUserById(PublicKey key, int id) throws UserNotFoundException, CommunicationError {
+    public User getUserById(PublicKey key, int id) throws UserNotFoundException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_USER_ID);
@@ -132,7 +149,7 @@ public class ClientEndpoint {
         } else if (response.getFunction() == Packet.Func.USER_NOT_FOUND) {
             throw new UserNotFoundException();
         } else {
-            throw new CommunicationError();
+            throw new CommunicationErrorException();
         }
 
         if (user == null) {
