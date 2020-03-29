@@ -2,8 +2,9 @@ package server;
 
 import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 
 public class RegisterTest extends ServerTestsBase{
 
@@ -19,7 +20,7 @@ public class RegisterTest extends ServerTestsBase{
         Assert.assertEquals(server.getUserById(id3).getPk(), client3Keys.getPublic());
     }
 
-    @Test(expected = KeyException.class)
+    @Test(expectedExceptions = KeyException.class)
     public void nullKey() throws KeyException {
         server.register(null, "TEST01");
     }
@@ -42,7 +43,7 @@ public class RegisterTest extends ServerTestsBase{
         Assert.assertEquals(server.getUserById(id1).getPk(), client1Keys.getPublic());
     }
 
-    @Test(expected = UserNotFoundException.class)
+    @Test(expectedExceptions = UserNotFoundException.class)
     public void getUserNotExists() throws UserNotFoundException {
         server.getUserById(5);
     }

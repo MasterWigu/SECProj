@@ -138,34 +138,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<!-- Spring Actuator -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<!-- Spring Thymeleaf -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
-
-		<!-- Bootstrap -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>${version.org.webjars.bootstrap}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>${version.org.webjars.jquery}</version>
-		</dependency>
 
 		<!-- Tests -->
 
@@ -174,36 +146,10 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Spock -->
 		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
-			<version>${version.spock}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>${version.groovy}</version>
-		</dependency>
-		<dependency> <!-- enables mocking of classes (in addition to interfaces) -->
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-			<version>${net.bytebuddy.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency> <!-- enables mocking of classes without default constructor (together with 
-				CGLIB) -->
-			<groupId>org.objenesis</groupId>
-			<artifactId>objenesis</artifactId>
-			<version>${org.objenesis.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency> <!-- only required if Hamcrest matchers are used -->
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>1.3</version>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8</version>
 			<scope>test</scope>
 		</dependency>
 

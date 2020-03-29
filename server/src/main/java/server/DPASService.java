@@ -130,7 +130,7 @@ public class DPASService implements ICommLib {
 			if (a.getBoard()==0 && a.getCreator() == getUserWithPk(key)) {
 				tempAnnouncements.add(a);
 			}
-			if (number-- == 0 && !sendAll) {
+			if (--number == 0 && !sendAll) {
 				break;
 			}
 		}
@@ -145,7 +145,7 @@ public class DPASService implements ICommLib {
 			if (a.getBoard()==1) {
 				tempAnnouncements.add(a);
 			}
-			if ((number-- == 0) && !sendAll) {
+			if ((--number == 0) && !sendAll) {
 				break;
 			}
 		}
