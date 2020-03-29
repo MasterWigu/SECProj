@@ -3,6 +3,7 @@ package server;
 import commonClasses.Announcement;
 import commonClasses.MessageSigner;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import org.testng.Assert;
@@ -14,7 +15,7 @@ public class ReadTest extends ServerTestsBase {
 
 
     @BeforeMethod
-    public void populateServer() throws UserNotFoundException, KeyException, AnnouncementNotFoundException {
+    public void populateServer() throws UserNotFoundException, KeyException, AnnouncementNotFoundException, InvalidAnnouncementException {
         server.register(client1Keys.getPublic(), "TESTU01");
 
         long time = System.currentTimeMillis();
@@ -36,7 +37,7 @@ public class ReadTest extends ServerTestsBase {
 
 
     @Test
-    public void readAll2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException {
+    public void readAll2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
         server.register(client2Keys.getPublic(), "TEST2");
         int id1 = createAnn(client2Keys, "ANN02".toCharArray(), null);
         Announcement a1 = server.getAnnouncementById(id1);
@@ -48,7 +49,7 @@ public class ReadTest extends ServerTestsBase {
     }
 
     @Test
-    public void read1of2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException {
+    public void read1of2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
         server.register(client1Keys.getPublic(), "TEST2");
         int id1 = createAnn(client1Keys, "ANN02".toCharArray(), null);
         Announcement a1 = server.getAnnouncementById(id1);
@@ -58,7 +59,7 @@ public class ReadTest extends ServerTestsBase {
     }
 
     @Test
-    public void readAllWithReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException {
+    public void readAllWithReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
         server.register(client2Keys.getPublic(), "TEST2");
         int id1 = createAnn(client2Keys, "ANN02".toCharArray(), new Announcement[] {ann1});
         Announcement a1 = server.getAnnouncementById(id1);

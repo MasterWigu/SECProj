@@ -4,6 +4,7 @@ import commonClasses.Announcement;
 import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
@@ -83,12 +84,18 @@ public class DPASService implements ICommLib {
 	}
 
 	@Override
-	public String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
+	public String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException {
 		synchronized (announcementsListLock) {
-			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 0, time, sign);
+			User user;
+			try {
+				user = getUserWithPk(key);
+			} catch (UserNotFoundException e) {
+				throw new UserNotFoundException();
+			}
+			Announcement tempAnn = new Announcement(message, user, a, 0, time, sign);
 			if (!MessageSigner.verify(tempAnn)) {
 				//TODO dedicated exception
-				throw new UserNotFoundException();
+				throw new InvalidAnnouncementException();
 			}
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
@@ -103,13 +110,20 @@ public class DPASService implements ICommLib {
 	}
 
 	@Override
-	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
+	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException {
 		synchronized (announcementsListLock) {
-			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 1, time, sign);
-			if (!MessageSigner.verify(tempAnn)) {
-				//TODO dedicated exception
+			User user;
+			try {
+				user = getUserWithPk(key);
+			} catch (UserNotFoundException e) {
 				throw new UserNotFoundException();
 			}
+			Announcement tempAnn = new Announcement(message, user, a, 1, time, sign);
+			if (!MessageSigner.verify(tempAnn)) {
+				//TODO dedicated exception
+				throw new InvalidAnnouncementException();
+			}
+
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);

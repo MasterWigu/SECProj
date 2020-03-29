@@ -3,6 +3,7 @@ package library;
 import commonClasses.Announcement;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
@@ -44,7 +45,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     String post = aDPASService.post(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST);
                     response.setMessage(post.toCharArray());
-                } catch (UserNotFoundException e) {
+                } catch (UserNotFoundException | InvalidAnnouncementException e) {
                     response.setFunction(USER_NOT_FOUND);
                 }
                 break;
@@ -53,7 +54,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     String postGeneral = aDPASService.postGeneral(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST_GENERAL);
                     response.setMessage(postGeneral.toCharArray());
-                } catch (UserNotFoundException e){
+                } catch (UserNotFoundException | InvalidAnnouncementException e){
                     response.setFunction(USER_NOT_FOUND);
                 }
                 break;
