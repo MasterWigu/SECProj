@@ -1,10 +1,11 @@
 package library;
 
 import keyStoreCreator.KeyStoreCreator;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.security.KeyPair;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class SocketsTest {
     }
 
 
-    @Before
+    @BeforeMethod
     public void setUp() {
         serverKeys = KeyStoreCreator.createKeyPair();
         client1Keys = KeyStoreCreator.createKeyPair();
@@ -54,14 +55,14 @@ public class SocketsTest {
 
     }
 
-    @After
+    @AfterMethod
     public void close() {
         serverListener.stop();
     }
 
 
     @Test
-    public void success() {
+    public void successRegister() {
         Packet send = new Packet();
         send.setKey(client1Keys.getPublic());
 
@@ -79,7 +80,7 @@ public class SocketsTest {
         Assert.assertEquals(client1Keys.getPublic(), inServer.getKey());
         Assert.assertNotEquals(send.getTimestamp(), receive.getTimestamp());
         Assert.assertEquals(send.getTimestamp(), inServer.getTimestamp());
-        Assert.assertArrayEquals(send.getSign(), inServer.getSign());
+        AssertJUnit.assertArrayEquals(send.getSign(), inServer.getSign());
         Assert.assertTrue(packetEq(receive, send));
     }
 
@@ -103,21 +104,7 @@ public class SocketsTest {
         Packet receive = clientSocket1.sendFunction(send, client2Keys.getPrivate());
 
         Assert.assertEquals(Packet.Func.ERROR, receive.getFunction());
-        Assert.assertArrayEquals("Invalid Packet received".toCharArray(), receive.getMessage());
+        AssertJUnit.assertArrayEquals("Invalid Packet received".toCharArray(), receive.getMessage());
         Assert.assertTrue(serverProcessor.read);
-    }
-
-    @Test
-    public void nullSignature() {
-        Packet send = new Packet();
-
-        send.setKey(client1Keys.getPublic());
-        send.setUsername("TEST");
-        send.setFunction(Packet.Func.REGISTER);
-        send.setMessageSignature(null);
-
-        Packet receive = clientSocket1.sendFunction(send, client1Keys.getPrivate());
-
-        Assert.assertNull(receive.getMessageSignature());
     }
 }

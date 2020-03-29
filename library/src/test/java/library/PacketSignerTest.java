@@ -3,8 +3,8 @@ package library;
 import commonClasses.Announcement;
 import commonClasses.User;
 import keyStoreCreator.KeyStoreCreator;
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.security.KeyPair;
 
@@ -142,7 +142,7 @@ public class PacketSignerTest {
         Assert.assertFalse(PacketSigner.verify(p));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void nullPrivateKey() {
         KeyPair keys = KeyStoreCreator.createKeyPair();
 
@@ -176,12 +176,12 @@ public class PacketSignerTest {
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test(expectedExceptions = NullPointerException.class)
     public void nullPacketVerify() {
         Assert.assertFalse(PacketSigner.verify(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expectedExceptions = NullPointerException.class)
     public void nullPacketSign() {
         KeyPair keys = KeyStoreCreator.createKeyPair();
         PacketSigner.sign(null, keys.getPrivate());
