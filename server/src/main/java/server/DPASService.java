@@ -1,14 +1,13 @@
 package server;
 
 import commonClasses.Announcement;
+import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
 import commonClasses.exceptions.KeyException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Interfaces.ICommLib;
 
-import java.io.File;
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,23 @@ public class DPASService implements ICommLib {
 	private final Object announcementsListLock;
 
 	private FileSaver fileSaver;
+	private boolean useFiles;
 
+
+	DPASService(boolean files) {
+		useFiles = files;
+		announcements = new ArrayList<>();
+		users = new ArrayList<>();
+
+		usersListLock = new Object();
+		announcementsListLock = new Object();
+
+		fileSaver = FileSaver.getInstance();
+		if (useFiles) {
+			users = fileSaver.readUsers();
+			announcements = fileSaver.readAnnouncements();
+		}
+	}
 
 
 	DPASService() {
@@ -51,7 +66,8 @@ public class DPASService implements ICommLib {
 			} catch (UserNotFoundException e) {
 				user = new User(users.size()+1, pk, username);
 				users.add(user);
-				fileSaver.writeUsers(users);
+				if (useFiles)
+					fileSaver.writeUsers(users);
 			}
 		}
 		return "Successful, your id is "+ user.getId();
@@ -70,10 +86,15 @@ public class DPASService implements ICommLib {
 	public String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
 		synchronized (announcementsListLock) {
 			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 0, time, sign);
+			if (!MessageSigner.verify(tempAnn)) {
+				//TODO dedicated exception
+				throw new UserNotFoundException();
+			}
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
-				fileSaver.writeAnnouncements(announcements);
+				if (useFiles)
+					fileSaver.writeAnnouncements(announcements);
 				return "Announcement successfully posted with id " + announcements.size() + " to personal board.";
 			}
 
@@ -85,10 +106,15 @@ public class DPASService implements ICommLib {
 	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException {
 		synchronized (announcementsListLock) {
 			Announcement tempAnn = new Announcement(message, getUserWithPk(key), a, 1, time, sign);
+			if (!MessageSigner.verify(tempAnn)) {
+				//TODO dedicated exception
+				throw new UserNotFoundException();
+			}
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
-				fileSaver.writeAnnouncements(announcements);
+				if (useFiles)
+					fileSaver.writeAnnouncements(announcements);
 				return "Announcement successfully posted with id " + announcements.size() + " to general board";
 			}
 

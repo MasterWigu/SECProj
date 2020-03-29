@@ -1,13 +1,11 @@
 package library;
 
 import keyStoreCreator.KeyStoreCreator;
-import org.bouncycastle.util.Pack;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.crypto.BadPaddingException;
 import java.security.KeyPair;
 import java.util.Arrays;
 

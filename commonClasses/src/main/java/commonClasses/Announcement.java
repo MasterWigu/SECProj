@@ -87,7 +87,7 @@ public class Announcement implements Serializable {
         if (!Arrays.equals(getMessage(), ann.getMessage())) {
             return false;
         }
-        if (getBoard() == ann.getBoard()) {
+        if (getBoard() != ann.getBoard()) {
             return false;
         }
         if (!Arrays.deepEquals(getReffs(), ann.getReffs())) {

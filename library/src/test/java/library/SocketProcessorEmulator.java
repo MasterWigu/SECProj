@@ -30,6 +30,11 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         if (packet.getMessageSignature() != null)
             response.setMessageSignature(packet.getMessageSignature().clone());
 
+        try { // Needed to ensure that the received and sent packets have different timestamps
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return response;
     }
