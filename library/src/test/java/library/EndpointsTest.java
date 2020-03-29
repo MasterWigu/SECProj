@@ -1,5 +1,9 @@
 package library;
 
+import commonClasses.Announcement;
+import commonClasses.User;
+import commonClasses.exceptions.AnnouncementNotFoundException;
+import commonClasses.exceptions.CommunicationError;
 import commonClasses.exceptions.UserNotFoundException;
 import keyStoreCreator.KeyStoreCreator;
 import library.Interfaces.ISocketProcessor;
@@ -58,33 +62,32 @@ public class EndpointsTest {
     // POST
     @Test
     public void successPost() throws UserNotFoundException {
-        char[] response = clientEnd1.post(client1Keys.getPublic(), "POSTPOST".toCharArray(), null, null);
+        char[] response = clientEnd1.post(client1Keys.getPublic(), "SUCCESS_POST".toCharArray(), null, null);
         Assert.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
     }
 
     @Test (expected = UserNotFoundException.class)
     public void userNotFound() throws UserNotFoundException {
-        clientEnd1.post(client1Keys.getPublic(), "POST".toCharArray(), null, "not_def".getBytes());
+        clientEnd1.post(client1Keys.getPublic(), "ERROR_POST".toCharArray(), null, null);
     }
 
 
     // POST GENERAL
-    /*@Test
+    @Test
     public void successPostGeneral() throws UserNotFoundException {
-        char[] response = clientEnd1.post(client1Keys.getPublic(), "POSTPOSTGENERAL".toCharArray(), null, null);
-        System.out.println(response);
-        Assert.assertArrayEquals("Posted to General".toCharArray(), response);
-    }*/
+        char[] response = clientEnd1.postGeneral(client1Keys.getPublic(), "SUCCESS_POST_GENERAL".toCharArray(), null, null);
+        Assert.assertArrayEquals("PostedGeneralCreatedTest".toCharArray(), response);
+    }
 
     @Test (expected = UserNotFoundException.class)
     public void userNotFound1() throws UserNotFoundException {
-        clientEnd1.postGeneral(client1Keys.getPublic(), "POST".toCharArray(), null, "not_def".getBytes());
+        clientEnd1.postGeneral(client1Keys.getPublic(), "ERROR_POST_GENERAL".toCharArray(), null, null);
     }
 
     // READ
-    /*@Test
+    @Test
     public void successRead() throws UserNotFoundException {
-        Announcement[] response = clientEnd1.read(client1Keys.getPublic(), 0);
+        Announcement[] response = clientEnd1.read(client1Keys.getPublic(), 123456);
 
         Assert.assertArrayEquals("Read".toCharArray(), response[0].getMessage());
     }
@@ -93,13 +96,41 @@ public class EndpointsTest {
     @Test (expected = UserNotFoundException.class)
     public void userNotFound2() throws UserNotFoundException {
         clientEnd1.read(client1Keys.getPublic(), -2);
-    }*/
+    }
 
     // READ_GENERAL
-    /*@Test
+    @Test
     public void successReadGeneral() {
-        Announcement[] response = clientEnd1.readGeneral(client1Keys.getPublic(), 0);
+        Announcement[] response = clientEnd1.readGeneral(client1Keys.getPublic(), 123456);
 
-        Assert.assertArrayEquals("Read General".toCharArray(), response[0].getMessage());
-    }*/
+        Assert.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
+    }
+
+    // ANN_ID
+    @Test
+    public void successGetAnnId() throws AnnouncementNotFoundException {
+        Announcement response = clientEnd1.getAnnouncementById(client1Keys.getPublic(), 123456);
+
+        Assert.assertArrayEquals("SuccessfulAnnouncement".toCharArray(), response.getMessage());
+    }
+
+
+    @Test (expected = AnnouncementNotFoundException.class)
+    public void userNotFound3() throws AnnouncementNotFoundException {
+        clientEnd1.getAnnouncementById(client1Keys.getPublic(), -2);
+    }
+
+    // User_ID
+    @Test
+    public void successGetUser() throws UserNotFoundException, CommunicationError {
+        User response = clientEnd1.getUserById(client1Keys.getPublic(), 123456);
+
+        Assert.assertEquals("SuccessfulUser", response.getUsername());
+    }
+
+
+    @Test (expected = UserNotFoundException.class)
+    public void userNotFound4() throws UserNotFoundException, CommunicationError  {
+        clientEnd1.getUserById(client1Keys.getPublic(), -2);
+    }
 }

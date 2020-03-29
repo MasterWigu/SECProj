@@ -33,7 +33,7 @@ public class DPASEmulation implements ICommLib {
         tempAs = a;
         tempTime = time;
         tempSign = sign;
-        if (Arrays.equals(tempSign, "not_def".getBytes()))
+        if (Arrays.equals(tempMessage, "ERROR_POST".toCharArray()))
             throw new UserNotFoundException();
         return "PostedCreatedTest";
     }
@@ -45,33 +45,41 @@ public class DPASEmulation implements ICommLib {
         tempAs = a;
         tempTime = time;
         tempSign = sign;
-        if (Arrays.equals(tempSign, "not_def".getBytes()))
+        if (Arrays.equals(tempMessage, "ERROR_POST_GENERAL".toCharArray()))
             throw new UserNotFoundException();
-        return "Posted to General";
+        return "PostedGeneralCreatedTest";
     }
 
     @Override
     public Announcement[] read(PublicKey key, int number) throws UserNotFoundException {
         tempPublicKey = key;
         tempNumber = number;
-        return null;
+        if (tempNumber < 0)
+            throw new UserNotFoundException();
+        return new Announcement[]{new Announcement("Read".toCharArray(), null, null, 0, 0, null)};
     }
 
     @Override
     public Announcement[] readGeneral(int number) {
         tempNumber = number;
+        if (tempNumber == 123456)
+            return new Announcement[]{new Announcement("ReadGeneral".toCharArray(), null, null, 0, 0, null)};
         return null;
     }
 
     @Override
     public Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException {
         tempId = id;
-        return null;
+        if (tempId == -2)
+            throw new AnnouncementNotFoundException();
+        return new Announcement("SuccessfulAnnouncement".toCharArray(), null, null, 0, 0, null);
     }
 
     @Override
     public User getUserById(int id) throws UserNotFoundException {
         tempId = id;
-        return null;
+        if (tempId == -2)
+            throw new UserNotFoundException();
+        return new User(0, null, "SuccessfulUser");
     }
 }
