@@ -1,11 +1,10 @@
 package library;
 
 import keyStoreCreator.KeyStoreCreator;
-import org.testng.annotations.AfterMethod;
+import org.junit.Before;
+import org.testng.annotations.*;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.security.KeyPair;
 import java.util.Arrays;
@@ -37,32 +36,33 @@ public class SocketsTest {
     }
 
 
-    @BeforeMethod
+    @BeforeSuite
     public void setUp() {
+
         serverKeys = KeyStoreCreator.createKeyPair();
         client1Keys = KeyStoreCreator.createKeyPair();
         client2Keys = KeyStoreCreator.createKeyPair();
         client3Keys = KeyStoreCreator.createKeyPair();
 
         serverProcessor = new SocketProcessorEmulator(serverKeys.getPublic());
-        serverListener = new SocketServer(serverProcessor, 10251, serverKeys.getPrivate(), serverKeys.getPublic());
+        serverListener = new SocketServer(serverProcessor, 10252, serverKeys.getPrivate(), serverKeys.getPublic());
         serverListener.createWorker();
 
 
-        clientSocket1 = new SocketClient("localhost", 10251, serverKeys.getPublic());
-        clientSocket2 = new SocketClient("localhost", 10251, serverKeys.getPublic());
-        clientSocket3 = new SocketClient("localhost", 10251, serverKeys.getPublic());
-
+        clientSocket1 = new SocketClient("localhost", 10252, serverKeys.getPublic());
+        clientSocket2 = new SocketClient("localhost", 10252, serverKeys.getPublic());
+        clientSocket3 = new SocketClient("localhost", 10252, serverKeys.getPublic());
     }
 
-    @AfterMethod
+    @AfterSuite
     public void close() {
         serverListener.stop();
     }
 
 
-    @Test(singleThreaded = true)
+    @Test
     public void successRegister() {
+        System.out.println("SUC_REG");
         Packet send = new Packet();
         send.setKey(client1Keys.getPublic());
 
@@ -88,6 +88,7 @@ public class SocketsTest {
 
     @Test
     public void nullPacket() {
+        System.out.println("NULL_PACK");
         Packet receive = clientSocket1.sendFunction(null, client1Keys.getPrivate());
         Assert.assertTrue(serverProcessor.read);
         Assert.assertNull(receive);
@@ -97,6 +98,7 @@ public class SocketsTest {
 
     @Test
     public void differentKeys() {
+        System.out.println("DIFF_KEYS");
         Packet send = new Packet();
         send.setKey(client1Keys.getPublic());
         send.setUsername("TEST");

@@ -11,9 +11,7 @@ import library.Interfaces.ISocketProcessor;
 
 import org.testng.Assert;
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.security.KeyPair;
 
@@ -30,8 +28,9 @@ public class EndpointsTest {
 
 
 
-    @BeforeMethod()
+    @BeforeSuite
     public void setUp() {
+        System.out.println("START_END");
         serverKeys = KeyStoreCreator.createKeyPair();
         client1Keys = KeyStoreCreator.createKeyPair();
         client2Keys = KeyStoreCreator.createKeyPair();
@@ -49,8 +48,9 @@ public class EndpointsTest {
 
     }
 
-    @AfterMethod
+    @AfterSuite
     public void close() {
+        System.out.println("STOP_END");
         serverListener.stop();
     }
 
@@ -138,13 +138,13 @@ public class EndpointsTest {
     }
 
     // CONCURRENCY TEST
-    /*@Test (invocationCount=10, threadPoolSize=3)
+    @Test (invocationCount=10, threadPoolSize=3)
     public void successConcurrentPost() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         char[] response1 = clientEnd1.post(client1Keys.getPublic(), "SUCCESS_POST1".toCharArray(), null, null);
-        char[] response2 = clientEnd2.post(client1Keys.getPublic(), "SUCCESS_POST2".toCharArray(), null, null);
-        char[] response3 = clientEnd2.post(client1Keys.getPublic(), "SUCCESS_POST3".toCharArray(), null, null);
+        char[] response2 = clientEnd2.post(client2Keys.getPublic(), "SUCCESS_POST2".toCharArray(), null, null);
+        char[] response3 = clientEnd3.post(client3Keys.getPublic(), "SUCCESS_POST3".toCharArray(), null, null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response1);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response2);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response3);
-    }*/
+    }
 }

@@ -50,14 +50,17 @@ public class SocketServer {
     }
 
     public void stop() {
+        try {
+            Thread.sleep(2000); //to ensure the socket is started so it can be closed
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        if (working) {
-            working = false;
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        working = false;
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
