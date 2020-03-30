@@ -136,4 +136,15 @@ public class EndpointsTest {
     public void userNotFound4() throws UserNotFoundException, CommunicationErrorException {
         clientEnd1.getUserById(client1Keys.getPublic(), -2);
     }
+
+    // CONCURRENCY TEST
+    /*@Test (invocationCount=10, threadPoolSize=3)
+    public void successConcurrentPost() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+        char[] response1 = clientEnd1.post(client1Keys.getPublic(), "SUCCESS_POST1".toCharArray(), null, null);
+        char[] response2 = clientEnd2.post(client1Keys.getPublic(), "SUCCESS_POST2".toCharArray(), null, null);
+        char[] response3 = clientEnd2.post(client1Keys.getPublic(), "SUCCESS_POST3".toCharArray(), null, null);
+        AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response1);
+        AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response2);
+        AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response3);
+    }*/
 }

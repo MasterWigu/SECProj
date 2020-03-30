@@ -8,7 +8,7 @@
 ## Setup
 On *root project's directory*, run the following command:
 ```
-mvn clean compile install
+mvn clean compile install -DskipTests
 ```
 Next, on *server's directory*, run the following command:
 ```
@@ -17,4 +17,10 @@ mvn exec:java
 After, on *client's directory*, run the following command:
 ```
 mvn exec:java
+```
+
+If you want to run the tests in order to see if the program is running correctly, you only need to run
+On *root project's directory*, run the following command:
+```
+mvn clean compile install
 ```
