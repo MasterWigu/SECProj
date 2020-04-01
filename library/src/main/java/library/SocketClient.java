@@ -48,7 +48,7 @@ public class SocketClient {
             sendSocket.close();
 
 
-            if (!PacketSigner.verify(response)) {
+            if (!PacketSigner.verify(response, serverPublicKey)) {
                 System.out.println("Message verify error!");
                 return null;
             }

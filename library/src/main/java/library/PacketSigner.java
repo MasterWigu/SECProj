@@ -13,8 +13,9 @@ import java.util.Arrays;
 import static java.lang.Math.abs;
 
 public class PacketSigner {
-    public static boolean verify(Packet p) {
-        PublicKey pk = p.getKey();
+    public static boolean verify(Packet p, PublicKey pk) {
+        if (pk == null)
+            pk = p.getKey();
         long currTime = System.currentTimeMillis();
         if (abs(currTime - p.getTimestamp()) > 5000) {
             System.out.println("Invalid packet due to timestamp");

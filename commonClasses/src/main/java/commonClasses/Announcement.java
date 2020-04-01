@@ -66,11 +66,13 @@ public class Announcement implements Serializable {
         out += "Creator Id: " + creator.getId() + "\n";
         out += "Time: " + new Timestamp(timestamp).toString() + "\n";
         out += "Refers to: ";
-        for (Announcement a : reffs) {
-            out += a.getId()+", ";
-        }
-        if (reffs.length != 0) {
-            out = out.substring(0, out.length()-2);
+        if (reffs != null) {
+            for (Announcement a : reffs) {
+                out += a.getId() + ", ";
+            }
+            if (reffs.length != 0) {
+                out = out.substring(0, out.length() - 2);
+            }
         }
         out += "\n";
         out += "Message:\n    " + String.valueOf(message) + "\n";

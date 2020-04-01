@@ -16,16 +16,18 @@ class FileSaver {
 
     private final Object usersFileLock;
     private final Object announcementsFileLock;
+    private String location;
 
-    public static FileSaver getInstance(){
+    public static FileSaver getInstance(String location){
         if(fileSaver == null)
-            fileSaver = new FileSaver();
+            fileSaver = new FileSaver(location);
         return fileSaver;
     }
 
-    private FileSaver() {
+    private FileSaver(String loc) {
         usersFileLock = new Object();
         announcementsFileLock = new Object();
+        location = loc;
     }
 
 
@@ -38,7 +40,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileOutputStream file = new FileOutputStream("TempAnnouncementList");
+                    FileOutputStream file = new FileOutputStream(location+"TempAnnouncementList");
                     ObjectOutputStream out = new ObjectOutputStream(file);
 
                     // Method for serialization of object
@@ -52,8 +54,8 @@ class FileSaver {
                     tryAgain = true;
                 }
             }
-            Path source = Paths.get("TempAnnouncementList");
-            Path dest = Paths.get("AnnouncementList");
+            Path source = Paths.get(location+"TempAnnouncementList");
+            Path dest = Paths.get(location+"AnnouncementList");
 
             try {
                 Files.move(source, dest, StandardCopyOption.ATOMIC_MOVE);
@@ -65,14 +67,15 @@ class FileSaver {
 
     List<Announcement> readAnnouncements() {
         // Serialization
-        List<Announcement> anns = new ArrayList<>();
+
         synchronized (announcementsFileLock) {
+            List<Announcement> anns = new ArrayList<>();
             boolean tryAgain = true;
 
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileInputStream file = new FileInputStream("AnnouncementList");
+                    FileInputStream file = new FileInputStream(location+"AnnouncementList");
                     ObjectInputStream in = new ObjectInputStream(file);
 
                     // Method for serialization of object
@@ -88,8 +91,8 @@ class FileSaver {
                     tryAgain = false;
                 }
             }
+            return anns;
         }
-        return anns;
     }
 
     void writeUsers(List<User> users) {
@@ -101,7 +104,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileOutputStream file = new FileOutputStream("TempUserList");
+                    FileOutputStream file = new FileOutputStream(location+"TempUserList");
                     ObjectOutputStream out = new ObjectOutputStream(file);
 
                     // Method for serialization of object
@@ -116,8 +119,8 @@ class FileSaver {
                 }
             }
 
-            Path source = Paths.get("TempUserList");
-            Path dest = Paths.get("UserList");
+            Path source = Paths.get(location+"TempUserList");
+            Path dest = Paths.get(location+"UserList");
 
             try {
                 Files.move(source, dest, StandardCopyOption.ATOMIC_MOVE);
@@ -130,15 +133,16 @@ class FileSaver {
 
     List<User> readUsers() {
         // Serialization
-        List<User> users = new ArrayList<>();
+
 
         synchronized (announcementsFileLock) {
+            List<User> users = new ArrayList<>();
             boolean tryAgain = true;
 
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileInputStream file = new FileInputStream("UserList");
+                    FileInputStream file = new FileInputStream(location+"UserList");
                     ObjectInputStream in = new ObjectInputStream(file);
 
                     // Method for serialization of object
@@ -153,7 +157,7 @@ class FileSaver {
                     tryAgain = false;
                 }
             }
+            return users;
         }
-        return users;
     }
 }

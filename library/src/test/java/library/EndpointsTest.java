@@ -30,7 +30,6 @@ public class EndpointsTest {
 
     @BeforeSuite
     public void setUp() {
-        System.out.println("START_END");
         serverKeys = KeyStoreCreator.createKeyPair();
         client1Keys = KeyStoreCreator.createKeyPair();
         client2Keys = KeyStoreCreator.createKeyPair();
@@ -42,15 +41,14 @@ public class EndpointsTest {
         serverListener.createWorker();
 
 
-        clientEnd1 = new ClientEndpoint("localhost", 10250, client1Keys.getPrivate(), client1Keys.getPublic());
-        clientEnd2 = new ClientEndpoint("localhost", 10250, client2Keys.getPrivate(), client2Keys.getPublic());
-        clientEnd3 = new ClientEndpoint("localhost", 10250, client3Keys.getPrivate(), client3Keys.getPublic());
+        clientEnd1 = new ClientEndpoint("localhost", 10250, client1Keys.getPrivate(), serverKeys.getPublic());
+        clientEnd2 = new ClientEndpoint("localhost", 10250, client2Keys.getPrivate(), serverKeys.getPublic());
+        clientEnd3 = new ClientEndpoint("localhost", 10250, client3Keys.getPrivate(), serverKeys.getPublic());
 
     }
 
     @AfterSuite
     public void close() {
-        System.out.println("STOP_END");
         serverListener.stop();
     }
 

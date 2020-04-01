@@ -72,7 +72,7 @@ public class SocketServer {
 
             Packet request = (Packet) in.readObject();
             Packet response;
-            if (!PacketSigner.verify(request)) {
+            if (!PacketSigner.verify(request, null)) {
                 System.out.println("Error verifying packet!");
                 response = new Packet();
                 response.setFunction(Packet.Func.ERROR);

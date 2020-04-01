@@ -82,7 +82,7 @@ public class PostGeneralTest extends ServerTestsBase {
     }
 
 
-    @Test(expectedExceptions = InvalidAnnouncementException.class) //TODO change to dedicated exception
+    @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureMess() throws UserNotFoundException, KeyException, InvalidAnnouncementException {
 
         server.register(client1Keys.getPublic(), "TESTU01");
@@ -93,17 +93,18 @@ public class PostGeneralTest extends ServerTestsBase {
     }
 
 
-    @Test(expectedExceptions = UserNotFoundException.class) //TODO changed but wrong test so keep
+    @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignaturePuk1() throws UserNotFoundException, KeyException, InvalidAnnouncementException {
 
         server.register(client1Keys.getPublic(), "TESTU01");
+        server.register(client2Keys.getPublic(), "TESTU02");
         long time = System.currentTimeMillis();
         byte[] sign1 = MessageSigner.sign("ANN01".toCharArray(), client1Keys.getPublic(), 1, null, client1Keys.getPrivate());
         server.postGeneral(client2Keys.getPublic(), "ANN01".toCharArray(), null, time, sign1);
     }
 
 
-    @Test(expectedExceptions = InvalidAnnouncementException.class) //TODO change to dedicated exception
+    @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignaturePuk2() throws UserNotFoundException, KeyException, InvalidAnnouncementException {
 
         server.register(client1Keys.getPublic(), "TESTU01");
@@ -113,7 +114,7 @@ public class PostGeneralTest extends ServerTestsBase {
     }
 
 
-    @Test(expectedExceptions = InvalidAnnouncementException.class) //TODO change to dedicated exception
+    @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureBoard() throws UserNotFoundException, KeyException, InvalidAnnouncementException {
 
         server.register(client1Keys.getPublic(), "TESTU01");
@@ -123,7 +124,7 @@ public class PostGeneralTest extends ServerTestsBase {
     }
 
 
-    @Test(expectedExceptions = InvalidAnnouncementException.class) //TODO change to dedicated exception
+    @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
         server.register(client1Keys.getPublic(), "TESTU01");
         long time1 = System.currentTimeMillis();

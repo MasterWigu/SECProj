@@ -23,19 +23,22 @@ public class DPASService implements ICommLib {
 	private final Object announcementsListLock;
 
 	private FileSaver fileSaver;
-	private boolean useFiles;
+	private boolean useFilesRead;
+	private boolean useFilesWrite;
 
 
-	DPASService(boolean files) {
-		useFiles = files;
+	DPASService(boolean filesRead, boolean filesWrite) {
+		useFilesRead = filesRead;
+		useFilesWrite = filesWrite;
+
 		announcements = new ArrayList<>();
 		users = new ArrayList<>();
 
 		usersListLock = new Object();
 		announcementsListLock = new Object();
 
-		fileSaver = FileSaver.getInstance();
-		if (useFiles) {
+		fileSaver = FileSaver.getInstance("src\\test\\resources\\");
+		if (useFilesRead) {
 			users = fileSaver.readUsers();
 			announcements = fileSaver.readAnnouncements();
 		}
@@ -49,7 +52,7 @@ public class DPASService implements ICommLib {
 		usersListLock = new Object();
 		announcementsListLock = new Object();
 
-		fileSaver = FileSaver.getInstance();
+		fileSaver = FileSaver.getInstance("src\\main\\resources\\");
 
 		users = fileSaver.readUsers();
 		announcements = fileSaver.readAnnouncements();
@@ -67,7 +70,7 @@ public class DPASService implements ICommLib {
 			} catch (UserNotFoundException e) {
 				user = new User(users.size()+1, pk, username);
 				users.add(user);
-				if (useFiles)
+				if (useFilesWrite)
 					fileSaver.writeUsers(users);
 			}
 		}
@@ -94,13 +97,12 @@ public class DPASService implements ICommLib {
 			}
 			Announcement tempAnn = new Announcement(message, user, a, 0, time, sign);
 			if (!MessageSigner.verify(tempAnn)) {
-				//TODO dedicated exception
 				throw new InvalidAnnouncementException();
 			}
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
-				if (useFiles)
+				if (useFilesWrite)
 					fileSaver.writeAnnouncements(announcements);
 				return "Announcement successfully posted with id " + announcements.size() + " to personal board.";
 			}
@@ -120,14 +122,13 @@ public class DPASService implements ICommLib {
 			}
 			Announcement tempAnn = new Announcement(message, user, a, 1, time, sign);
 			if (!MessageSigner.verify(tempAnn)) {
-				//TODO dedicated exception
 				throw new InvalidAnnouncementException();
 			}
 
 			if (!checkRepeatedAnn(tempAnn)) {
 				tempAnn.setId(announcements.size()+1);
 				announcements.add(tempAnn);
-				if (useFiles)
+				if (useFilesWrite)
 					fileSaver.writeAnnouncements(announcements);
 				return "Announcement successfully posted with id " + announcements.size() + " to general board";
 			}

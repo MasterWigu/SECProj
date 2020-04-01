@@ -40,8 +40,7 @@ public class ServerTestsBase {
         client2Keys = KeyStoreCreator.createKeyPair();
         client3Keys = KeyStoreCreator.createKeyPair();
 
-        server = new DPASService(false);
+        server = new DPASService(false, true);
 
     }
-
 }
