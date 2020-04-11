@@ -1,0 +1,198 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>example</groupId>
+	<artifactId>SEC_proj</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.2.RELEASE</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<maven.compiler.plugin>3.6.0</maven.compiler.plugin>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<gmaven-plugin.version>1.6</gmaven-plugin.version>
+		<maven-surefire-plugin.version>2.20.1</maven-surefire-plugin.version>
+		<version.spock>1.2-groovy-2.4</version.spock>
+		<version.groovy>2.4.15</version.groovy>
+		<org.jgroups.version>4.0.17.Final</org.jgroups.version>
+		<org.objenesis.version>2.6</org.objenesis.version>
+		<net.bytebuddy.version>1.8.21</net.bytebuddy.version>
+
+		<version.org.jmockit.jmockit>1.39</version.org.jmockit.jmockit>
+
+		<version.com.lazerycode.jmeter>2.8.2</version.com.lazerycode.jmeter>
+		<jmeter.version>5.0</jmeter.version>
+
+		<version.org.webjars.bootstrap>3.3.7-1</version.org.webjars.bootstrap>
+		<version.org.webjars.jquery>3.1.1</version.org.webjars.jquery>
+
+		<version.fenixframework>2.6.2</version.fenixframework>
+		<fenix.framework.codeGeneratorClassName>pt.ist.fenixframework.backend.jvstmojb.codeGenerator.FenixCodeGeneratorOneBoxPerObject</fenix.framework.codeGeneratorClassName>
+		<fenix.framework.backend>jvstm-ojb</fenix.framework.backend>
+
+		<!-- Coverage -->
+		<version.jacoco.maven.plugin>0.8.2</version.jacoco.maven.plugin>
+		<coverage.class.ratio>0.15</coverage.class.ratio>
+		<coverage.instruction.ratio>0.15</coverage.instruction.ratio>
+		<coverage.method.ratio>0.15</coverage.method.ratio>
+		<coverage.branch.ratio>0.15</coverage.branch.ratio>
+		<coverage.complexity.ratio>0.15</coverage.complexity.ratio>
+		<coverage.line.ratio>0.15</coverage.line.ratio>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>jmeter</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- Compile -->
+				<plugin>
+					<!-- The gmavenplus plugin is used to compile Groovy code. To learn 
+						more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
+					<groupId>org.codehaus.gmavenplus</groupId>
+					<artifactId>gmavenplus-plugin</artifactId>
+					<version>${gmaven-plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>compile</goal>
+								<goal>compileTests</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+					<configuration>
+						<useFile>false</useFile>
+						<includes>
+							<include>**/*Test.java</include>
+							<include>**/*Spec.java</include>
+						</includes>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven.compiler.plugin}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<!-- JMeter -->
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>${version.com.lazerycode.jmeter}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>jmeter-tests</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jmeter</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jmeterVersion>${jmeter.version}</jmeterVersion>
+					<testFilesDirectory>jmeter/tests/</testFilesDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<!-- Tests -->
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>${version.org.jmockit.jmockit}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>${org.jgroups.version}</version>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+
+		<!-- Time library -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+		</dependency>
+	</dependencies>
+
+
+	<modules>
+		<module>KeyStoreCreator</module>
+		<module>library</module>
+		<module>commonClasses</module>
+		<module>server</module>
+		<module>client</module>
+    </modules>
+
+</project>
