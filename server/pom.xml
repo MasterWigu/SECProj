@@ -19,6 +19,9 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <mainclass>server.DPASServer</mainclass>
+
+        <!-- instance number -->
+        <sv.i>1</sv.i>
     </properties>
 
     <dependencies>
@@ -71,8 +74,9 @@
                     <!-- to prevent deprecation warning: -->
                     <killAfter>-1</killAfter>
                     <mainClass>${mainclass}</mainClass>
-                    <systemProperties>
-                    </systemProperties>
+                    <arguments>
+                        <argument>${sv.i}</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <plugin>

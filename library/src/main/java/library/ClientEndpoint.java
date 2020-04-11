@@ -9,13 +9,16 @@ import commonClasses.exceptions.UserNotFoundException;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientEndpoint {
     private SocketClient socketClient;
     private PrivateKey clientPrivateKey;
 
-    public ClientEndpoint(String h, int p, PrivateKey cpk, PublicKey spk){
-        socketClient = new SocketClient(h, p, spk);
+    // TODO communication
+    public ClientEndpoint(String h, int[] p, PrivateKey cpk, List<PublicKey> spk){
+        socketClient = new SocketClient(h, p[0], spk.get(0));
         clientPrivateKey = cpk;
 
     }

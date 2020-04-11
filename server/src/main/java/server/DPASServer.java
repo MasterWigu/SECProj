@@ -15,15 +15,19 @@ import java.security.PublicKey;
 
 public class DPASServer {
     public static void main(String[] args){
-        int registryPort = 10250;
-        System.out.println("Main OK");
-        String keyStorePass = "DPASsecServer";
-        String resourcesPath = "src\\main\\resources\\";
-        try{
-            PrivateKey serverPrivKey = KeyLoader.getPrivateKey(resourcesPath+"KeysServer", keyStorePass);
-            PublicKey serverPubKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysServer", keyStorePass);
+        String b = args[0];
+        int id = Integer.parseInt(b);
 
-            ICommLib aDPASService = new DPASService();
+        int registryPort = 10250+id;
+        System.out.println("Main OK");
+        String keyStorePass = "DPASsecServer"+id;
+        String resourcesPath = "src\\main\\resources\\";
+
+        try{
+            PrivateKey serverPrivKey = KeyLoader.getPrivateKey(resourcesPath+"KeysServer"+id, keyStorePass);
+            PublicKey serverPubKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysServer"+id, keyStorePass);
+
+            ICommLib aDPASService = new DPASService(id);
 
             ISocketProcessor processor = new ServerEndpoint(aDPASService, serverPubKey);
 

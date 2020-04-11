@@ -35,7 +35,7 @@ public class FileSaverTest extends AnnUserCmp {
         ann2 = new Announcement("ANN2".toCharArray(), u2, new Announcement[]{ann1}, 10, 0, null);
         ann3 = new Announcement("ANN3".toCharArray(), u3, null, 0, 20, null);
 
-        f = FileSaver.getInstance("src\\test\\resources\\");
+        f = FileSaver.getInstance("src\\test\\resources\\", 1);
     }
 
     @Test

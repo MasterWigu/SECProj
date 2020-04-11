@@ -37,7 +37,7 @@ public class DPASService implements ICommLib {
 		usersListLock = new Object();
 		announcementsListLock = new Object();
 
-		fileSaver = FileSaver.getInstance("src\\test\\resources\\");
+		fileSaver = FileSaver.getInstance("src\\test\\resources\\", 1);
 		if (useFilesRead) {
 			users = fileSaver.readUsers();
 			announcements = fileSaver.readAnnouncements();
@@ -45,14 +45,14 @@ public class DPASService implements ICommLib {
 	}
 
 
-	DPASService() {
+	DPASService(int id) {
 		announcements = new ArrayList<>();
 		users = new ArrayList<>();
 
 		usersListLock = new Object();
 		announcementsListLock = new Object();
 
-		fileSaver = FileSaver.getInstance("src\\main\\resources\\");
+		fileSaver = FileSaver.getInstance("src\\main\\resources\\", id);
 
 		users = fileSaver.readUsers();
 		announcements = fileSaver.readAnnouncements();

@@ -12,12 +12,15 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class KeyStoreCreator {
@@ -72,7 +75,7 @@ public class KeyStoreCreator {
         return cert;
     }
 
-    private static void createClientKeyStore(int id, PrivateKey privKey, Certificate clientCert, Certificate serverCert) {
+    private static void createClientKeyStore(int id, PrivateKey privKey, Certificate clientCert, ArrayList<Certificate> serverCertList) {
         String pass = "DPASsecClient"+id;
         try {
 
@@ -89,7 +92,10 @@ public class KeyStoreCreator {
             ks.setEntry("dpas-privateKey", privateKeyEntry, password);
 
             ks.setCertificateEntry("dpas-cert", clientCert);
-            ks.setCertificateEntry("dpas-cert-server", serverCert);
+
+            for (int i=0; i<serverCertList.size(); i++) {
+                ks.setCertificateEntry("dpas-cert-server-"+(i+1), serverCertList.get(i));
+            }
 
 
             FileOutputStream fos = new FileOutputStream("..\\client\\src\\main\\resources\\KeysUser" + id + ".jks");
@@ -100,8 +106,8 @@ public class KeyStoreCreator {
     }
 
 
-    private static void createServerKeyStore(PrivateKey privKey, Certificate serverCert) {
-        String pass = "DPASsecServer";
+    private static void createServerKeyStore(int id, PrivateKey privKey, Certificate serverCert) {
+        String pass = "DPASsecServer"+id;
         try {
             KeyStore ks = KeyStore.getInstance("pkcs12");
             ks.load(null, pass.toCharArray());
@@ -115,7 +121,7 @@ public class KeyStoreCreator {
             ks.setCertificateEntry("dpas-cert-server", serverCert);
 
 
-            FileOutputStream fos = new FileOutputStream("..\\server\\src\\main\\resources\\KeysServer.jks");
+            FileOutputStream fos = new FileOutputStream("..\\server\\src\\main\\resources\\KeysServer" + id + ".jks");
             ks.store(fos, pass.toCharArray());
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e ) {
             e.printStackTrace();
@@ -123,19 +129,22 @@ public class KeyStoreCreator {
     }
 
     public static void main(String[] args){
-        KeyPair serverKeyPair = createKeyPair();
-        Certificate serverCert = createCertificate(serverKeyPair, "CN=ServerCert");
+        ArrayList<Certificate> serverCertList = new ArrayList<>();
+        KeyPair serverKeyPair;
+        Certificate serverCert;
+        for (int id=1; id<=3; id++){
+            serverKeyPair = createKeyPair();
+            serverCert = createCertificate(serverKeyPair, "CN=Server"+id+"Cert");
+            serverCertList.add(serverCert);
+            createServerKeyStore(id, serverKeyPair.getPrivate(), serverCert);
+        }
 
         KeyPair clientKeyPair;
         Certificate clientCert;
-
         for (int id=1; id<=3; id++) {
             clientKeyPair = createKeyPair();
             clientCert = createCertificate(clientKeyPair, "CN=Client"+id+"Cert");
-
-            createClientKeyStore(id, clientKeyPair.getPrivate(), clientCert, serverCert);
+            createClientKeyStore(id, clientKeyPair.getPrivate(), clientCert, serverCertList);
         }
-        createServerKeyStore(serverKeyPair.getPrivate(), serverCert);
-
     }
 }

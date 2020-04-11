@@ -17,17 +17,19 @@ class FileSaver {
     private final Object usersFileLock;
     private final Object announcementsFileLock;
     private String location;
+    private int id;
 
-    public static FileSaver getInstance(String location){
+    public static FileSaver getInstance(String location, int id){
         if(fileSaver == null)
-            fileSaver = new FileSaver(location);
+            fileSaver = new FileSaver(location, id);
         return fileSaver;
     }
 
-    private FileSaver(String loc) {
+    private FileSaver(String loc, int id) {
         usersFileLock = new Object();
         announcementsFileLock = new Object();
         location = loc;
+        id = id;
     }
 
 
@@ -40,7 +42,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileOutputStream file = new FileOutputStream(location+"TempAnnouncementList");
+                    FileOutputStream file = new FileOutputStream(location+"TempAnnouncementList"+id);
                     ObjectOutputStream out = new ObjectOutputStream(file);
 
                     // Method for serialization of object
@@ -54,8 +56,8 @@ class FileSaver {
                     tryAgain = true;
                 }
             }
-            Path source = Paths.get(location+"TempAnnouncementList");
-            Path dest = Paths.get(location+"AnnouncementList");
+            Path source = Paths.get(location+"TempAnnouncementList"+id);
+            Path dest = Paths.get(location+"AnnouncementList"+id);
 
             try {
                 Files.move(source, dest, StandardCopyOption.ATOMIC_MOVE);
@@ -75,7 +77,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileInputStream file = new FileInputStream(location+"AnnouncementList");
+                    FileInputStream file = new FileInputStream(location+"AnnouncementList"+id);
                     ObjectInputStream in = new ObjectInputStream(file);
 
                     // Method for serialization of object
@@ -104,7 +106,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileOutputStream file = new FileOutputStream(location+"TempUserList");
+                    FileOutputStream file = new FileOutputStream(location+"TempUserList"+id);
                     ObjectOutputStream out = new ObjectOutputStream(file);
 
                     // Method for serialization of object
@@ -119,8 +121,8 @@ class FileSaver {
                 }
             }
 
-            Path source = Paths.get(location+"TempUserList");
-            Path dest = Paths.get(location+"UserList");
+            Path source = Paths.get(location+"TempUserList"+id);
+            Path dest = Paths.get(location+"UserList"+id);
 
             try {
                 Files.move(source, dest, StandardCopyOption.ATOMIC_MOVE);
@@ -142,7 +144,7 @@ class FileSaver {
             while (tryAgain) {
                 try {
                     //Saving of object in a file
-                    FileInputStream file = new FileInputStream(location+"UserList");
+                    FileInputStream file = new FileInputStream(location+"UserList"+id);
                     ObjectInputStream in = new ObjectInputStream(file);
 
                     // Method for serialization of object

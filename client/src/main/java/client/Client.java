@@ -10,6 +10,7 @@ import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.ClientEndpoint;
 
+import java.lang.reflect.Array;
 import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,20 +27,22 @@ public class Client {
 	private PrivateKey clientPrivateKey;
 
 	Client(int id) {
-		PublicKey serverPublicKey = null;
+		int[] serverPorts = new int[]{10251,10252,10253};
+		List<PublicKey> serverPublicKey = new ArrayList<>();
 	    String keyStorePass = "DPASsecClient"+id;
 	    String resourcesPath = "src\\main\\resources\\";
 		keyboardSc = new Scanner(System.in);
 
+
 		try {
-		    serverPublicKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
+		    serverPublicKey.add(KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, keyStorePass));
             clientPrivateKey = KeyLoader.getPrivateKey(resourcesPath+"KeysUser" + id, keyStorePass);
             clientPublicKey = KeyLoader.getPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
         } catch (KeyException e) {
 		    e.printStackTrace();
         }
 
-		clientEndpoint = new ClientEndpoint("localhost", 10250, clientPrivateKey, serverPublicKey);
+		clientEndpoint = new ClientEndpoint("localhost", serverPorts, clientPrivateKey, serverPublicKey);
 		System.out.println("Found server");
 	}
 
