@@ -154,7 +154,7 @@ public class Client {
 				response = clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			} else {
-				response = clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				response = clientEndpoint.post(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			}
 		} catch (UserNotFoundException e) {
@@ -162,6 +162,7 @@ public class Client {
 			//Unpossible
 		} catch (CommunicationErrorException | InvalidAnnouncementException e) {
 			System.out.println("Communication error, please try posting again.");
+			e.printStackTrace();
 		}
 	}
 
@@ -173,8 +174,9 @@ public class Client {
 		System.out.println("------------------- Read Personal Board --------------------");
 		while (!finish) {
 			System.out.print("Enter User Id: ");
-			line = keyboardSc.nextLine();
-			int uid = Integer.getInteger(line);
+			keyboardSc.nextLine();
+            line = keyboardSc.nextLine();
+			int uid = Integer.parseInt(line);
 			try {
 				user = clientEndpoint.getUserById(clientPublicKey, uid);
 				finish = true;

@@ -86,8 +86,8 @@ class FileSaver {
                     System.out.println("Read announcements done");
                     tryAgain = false;
                 } catch (IOException | ClassNotFoundException ex) {
-                    System.out.println("IOException is caught");
-                    ex.printStackTrace();
+                    System.out.println("No previous announcements file to read from");
+                    //ex.printStackTrace();
                     tryAgain = false;
                 }
             }
@@ -152,8 +152,8 @@ class FileSaver {
                     System.out.println("Read users done");
                     tryAgain = false;
                 } catch (IOException | ClassNotFoundException ex) {
-                    System.out.println("IOException is caught");
-                    ex.printStackTrace();
+                    System.out.println("No previous users file to read from");
+                    //ex.printStackTrace();
                     tryAgain = false;
                 }
             }
