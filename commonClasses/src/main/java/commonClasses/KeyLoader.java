@@ -1,5 +1,6 @@
 package commonClasses;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.*;
@@ -45,13 +46,13 @@ public class KeyLoader {
         return cert.getPublicKey();
     }
 
-    public static PublicKey getServerPublicKey(String path, String password) throws KeyException {
+    public static PublicKey getServerPublicKey(String path, int id,  String password) throws KeyException {
         //Creating the KeyStore object
         KeyStore keyStore = getKeystore(path, password);
         Certificate cert;
 
         try {
-            cert = keyStore.getCertificate("dpas-cert-server");
+            cert = keyStore.getCertificate("dpas-cert-server-"+id);
         } catch (KeyStoreException e) {
             throw new KeyException();
         }

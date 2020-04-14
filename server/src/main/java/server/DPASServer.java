@@ -25,7 +25,7 @@ public class DPASServer {
 
         try{
             PrivateKey serverPrivKey = KeyLoader.getPrivateKey(resourcesPath+"KeysServer"+id, keyStorePass);
-            PublicKey serverPubKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysServer"+id, keyStorePass);
+            PublicKey serverPubKey = KeyLoader.getServerPublicKey(resourcesPath+"KeysServer"+id, id, keyStorePass);
 
             ICommLib aDPASService = new DPASService(id);
 

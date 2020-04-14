@@ -56,6 +56,9 @@ public class DPASService implements ICommLib {
 
 		users = fileSaver.readUsers();
 		announcements = fileSaver.readAnnouncements();
+
+		useFilesRead = true;
+		useFilesWrite = true;
 	}
 
 

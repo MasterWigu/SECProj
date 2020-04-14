@@ -118,7 +118,7 @@ public class KeyStoreCreator {
             //Create a protection parameter used to protect the contents of the keystore
             KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection((pass+"PK").toCharArray());
             ks.setEntry("dpas-privateKey", privateKeyEntry, password);
-            ks.setCertificateEntry("dpas-cert-server", serverCert);
+            ks.setCertificateEntry("dpas-cert-server-"+id, serverCert);
 
 
             FileOutputStream fos = new FileOutputStream("..\\server\\src\\main\\resources\\KeysServer" + id + ".jks");

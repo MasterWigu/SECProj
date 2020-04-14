@@ -35,7 +35,7 @@ public class Client {
 
 
 		try {
-		    serverPublicKey.add(KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, keyStorePass));
+		    serverPublicKey.add(KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, id, keyStorePass));
             clientPrivateKey = KeyLoader.getPrivateKey(resourcesPath+"KeysUser" + id, keyStorePass);
             clientPublicKey = KeyLoader.getPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
         } catch (KeyException e) {
@@ -112,6 +112,7 @@ public class Client {
 	private void post(int board) {
 		boolean accept = false;
 		String message = "";
+		message = keyboardSc.nextLine();
 		String line = "";
 		if (board == 1) {
 			System.out.println("----------------- Posting to general board -----------------");
@@ -157,7 +158,7 @@ public class Client {
 				response = clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			} else {
-				response = clientEndpoint.post(clientPublicKey, line.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				response = clientEndpoint.post(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			}
 		} catch (UserNotFoundException e) {
@@ -165,6 +166,7 @@ public class Client {
 			//Unpossible
 		} catch (CommunicationErrorException | InvalidAnnouncementException e) {
 			System.out.println("Communication error, please try posting again.");
+			e.printStackTrace();
 		}
 	}
 
@@ -176,8 +178,9 @@ public class Client {
 		System.out.println("------------------- Read Personal Board --------------------");
 		while (!finish) {
 			System.out.print("Enter User Id: ");
+			keyboardSc.nextLine();
 			line = keyboardSc.nextLine();
-			int uid = Integer.getInteger(line);
+			int uid = Integer.parseInt(line);
 			try {
 				user = clientEndpoint.getUserById(clientPublicKey, uid);
 				finish = true;
