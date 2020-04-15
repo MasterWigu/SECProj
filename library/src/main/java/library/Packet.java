@@ -34,6 +34,7 @@ public class Packet implements Serializable {
     private byte[] messageSignature;
 
     private long timestamp;
+    private int seqNumber;
     private byte[] sign = null;
 
     public Func getFunction() {
@@ -123,5 +124,9 @@ public class Packet implements Serializable {
     public void setMessageSignature(byte[] messageSignature) {
         this.messageSignature = messageSignature;
     }
+
+    public int getSeqNumber() { return seqNumber; }
+
+    public void setSeqNumber(int seqNumber) { this.seqNumber = seqNumber; }
 
 }

@@ -13,12 +13,20 @@ import java.util.Arrays;
 import static java.lang.Math.abs;
 
 public class PacketSigner {
+    private static int seqNumber = 0;
+
     public static boolean verify(Packet p, PublicKey pk) {
         if (pk == null)
             pk = p.getKey();
-        long currTime = System.currentTimeMillis();
+        /*long currTime = System.currentTimeMillis();
         if (abs(currTime - p.getTimestamp()) > 5000) {
             System.out.println("Invalid packet due to timestamp");
+            return false;
+        }*/
+        System.out.println(seqNumber);
+        System.out.println(p.getSeqNumber());
+        if (seqNumber != p.getSeqNumber()){
+            System.out.println("Invalid packet due to sequence number.");
             return false;
         }
 
@@ -44,7 +52,9 @@ public class PacketSigner {
 
     public static Packet sign(Packet p, PrivateKey pk) {
         //Insert timestamp
-        p.setTimestamp(System.currentTimeMillis());
+        //p.setTimestamp(System.currentTimeMillis());
+        p.setSeqNumber(seqNumber);
+        seqNumber = seqNumber++;
 
         byte[] hash = getHash(p);
         byte[] signature = null;
