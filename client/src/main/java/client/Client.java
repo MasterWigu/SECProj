@@ -158,6 +158,7 @@ public class Client {
 				response = clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			} else {
+
 				response = clientEndpoint.post(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			}

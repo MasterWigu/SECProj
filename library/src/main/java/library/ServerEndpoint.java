@@ -26,11 +26,11 @@ public class ServerEndpoint implements ISocketProcessor {
     @Override
     public Packet doOperation(Packet packet) {
         Packet response = new Packet();
-        response.setKey(serverPublicKey);
+        response.setSenderPk(serverPublicKey);
         switch (packet.getFunction()){
             case REGISTER:
                 try {
-                    String register = aDPASService.register(packet.getKey(), packet.getUsername());
+                    String register = aDPASService.register(packet.getSenderPk(), packet.getUsername());
                     response.setFunction(REGISTER);
                     response.setMessage(register.toCharArray());
                 } catch (KeyException e) {
@@ -40,7 +40,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             case POST:
                 try {
-                    String post = aDPASService.post(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
+                    String post = aDPASService.post(packet.getSenderPk(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST);
                     response.setMessage(post.toCharArray());
                 } catch (UserNotFoundException e) {
@@ -51,7 +51,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             case POST_GENERAL:
                 try{
-                    String postGeneral = aDPASService.postGeneral(packet.getKey(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
+                    String postGeneral = aDPASService.postGeneral(packet.getSenderPk(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
                     response.setFunction(POST_GENERAL);
                     response.setMessage(postGeneral.toCharArray());
                 } catch (UserNotFoundException e){
@@ -62,7 +62,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             case READ:
                 try{
-                    Announcement[] a = aDPASService.read(packet.getKey(), packet.getNumberOfAnnouncements());
+                    Announcement[] a = aDPASService.read(packet.getSenderPk(), packet.getNumberOfAnnouncements());
                     response.setFunction(READ);
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){

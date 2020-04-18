@@ -9,9 +9,9 @@ import java.security.KeyPair;
 import java.util.Arrays;
 
 public class SocketsTest {
-    SocketClient clientSocket1;
-    SocketClient clientSocket2;
-    SocketClient clientSocket3;
+    AuthPerfectP2PLinks clientSocket1;
+    AuthPerfectP2PLinks clientSocket2;
+    AuthPerfectP2PLinks clientSocket3;
     KeyPair serverKeys;
     KeyPair client1Keys;
     KeyPair client2Keys;
@@ -48,9 +48,9 @@ public class SocketsTest {
         serverListener.createWorker();
 
 
-        clientSocket1 = new SocketClient("localhost", 10252, serverKeys.getPublic());
-        clientSocket2 = new SocketClient("localhost", 10252, serverKeys.getPublic());
-        clientSocket3 = new SocketClient("localhost", 10252, serverKeys.getPublic());
+        clientSocket1 = new AuthPerfectP2PLinks("localhost", 10252, serverKeys.getPublic());
+        clientSocket2 = new AuthPerfectP2PLinks("localhost", 10252, serverKeys.getPublic());
+        clientSocket3 = new AuthPerfectP2PLinks("localhost", 10252, serverKeys.getPublic());
     }
 
     @AfterSuite
@@ -63,7 +63,7 @@ public class SocketsTest {
     public void successRegister() {
         System.out.println("SUC_REG");
         Packet send = new Packet();
-        send.setKey(client1Keys.getPublic());
+        send.setSenderPk(client1Keys.getPublic());
 
 
         send.setUsername("TEST");
@@ -76,8 +76,8 @@ public class SocketsTest {
         serverProcessor.read = true;
 
         Assert.assertEquals(Packet.Func.REGISTER, receive.getFunction());
-        Assert.assertEquals(serverKeys.getPublic(), receive.getKey());
-        Assert.assertEquals(client1Keys.getPublic(), inServer.getKey());
+        Assert.assertEquals(serverKeys.getPublic(), receive.getSenderPk());
+        Assert.assertEquals(client1Keys.getPublic(), inServer.getSenderPk());
         Assert.assertNotEquals(send.getTimestamp(), receive.getTimestamp());
         Assert.assertEquals(send.getTimestamp(), inServer.getTimestamp());
         AssertJUnit.assertArrayEquals(send.getSign(), inServer.getSign());
@@ -99,7 +99,7 @@ public class SocketsTest {
     public void differentKeys() {
         System.out.println("DIFF_KEYS");
         Packet send = new Packet();
-        send.setKey(client1Keys.getPublic());
+        send.setSenderPk(client1Keys.getPublic());
         send.setUsername("TEST");
         send.setFunction(Packet.Func.REGISTER);
 

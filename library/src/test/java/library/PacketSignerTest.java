@@ -17,7 +17,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.REGISTER);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
         p.setUsername("Test");
 
         p = PacketSigner.sign(p, keys.getPrivate());
@@ -32,7 +32,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
 
         p = PacketSigner.sign(p, keys.getPrivate());
 
@@ -48,7 +48,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.POST);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
         p.setMessage("TEST001".toCharArray());
         p.setAnnouncements(new Announcement[]{a});
         p.setMessageSignature(null);
@@ -64,7 +64,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.REGISTER);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
         p.setUsername("Test");
 
         p = PacketSigner.sign(p, keys.getPrivate());
@@ -79,7 +79,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.REGISTER);
-        p.setKey(keys1.getPublic());
+        p.setSenderPk(keys1.getPublic());
         p.setUsername("Test");
 
         p = PacketSigner.sign(p, keys1.getPrivate());
@@ -94,7 +94,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.REGISTER);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
         p.setUsername("Test");
 
         p = PacketSigner.sign(p, keys.getPrivate());
@@ -110,7 +110,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
 
         p = PacketSigner.sign(p, keys.getPrivate());
         p.setId(1);
@@ -127,7 +127,7 @@ public class PacketSignerTest {
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.POST);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
         p.setMessage("TEST001".toCharArray());
         p.setAnnouncements(new Announcement[]{a});
         p.setMessageSignature(null);
@@ -146,7 +146,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
 
         p = PacketSigner.sign(p, keys.getPrivate());
 
@@ -163,7 +163,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(null);
+        p.setSenderPk(null);
 
         p = PacketSigner.sign(p, keys.getPrivate());
 
@@ -179,7 +179,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(keys.getPublic());
+        p.setSenderPk(keys.getPublic());
 
         p = PacketSigner.sign(p, null);
 
@@ -196,7 +196,7 @@ public class PacketSignerTest {
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
         p.setId(0);
-        p.setKey(keys1.getPublic());
+        p.setSenderPk(keys1.getPublic());
 
         p = PacketSigner.sign(p, keys2.getPrivate());
 

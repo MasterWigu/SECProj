@@ -76,7 +76,7 @@ public class SocketServer {
                 System.out.println("Error verifying packet!");
                 response = new Packet();
                 response.setFunction(Packet.Func.ERROR);
-                response.setKey(serverPublicKey);
+                response.setSenderPk(serverPublicKey);
                 response.setMessage("Invalid Packet received".toCharArray());
             }
             else {

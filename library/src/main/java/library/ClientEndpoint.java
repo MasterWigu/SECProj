@@ -9,16 +9,15 @@ import commonClasses.exceptions.UserNotFoundException;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClientEndpoint {
-    private SocketClient socketClient;
+    private AuthPerfectP2PLinks authPerfectP2PLinks;
     private PrivateKey clientPrivateKey;
 
     // TODO communication
     public ClientEndpoint(String h, int[] p, PrivateKey cpk, List<PublicKey> spk){
-        socketClient = new SocketClient(h, p[0], spk.get(0));
+        authPerfectP2PLinks = new AuthPerfectP2PLinks(h, p[0], spk.get(0));
         clientPrivateKey = cpk;
 
     }
@@ -28,10 +27,10 @@ public class ClientEndpoint {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.REGISTER);
-        request.setKey(key);
+        request.setSenderPk(key);
         request.setUsername(username);
 
-        Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.REGISTER)
             return String.valueOf(response.getMessage());
         else
@@ -43,12 +42,12 @@ public class ClientEndpoint {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
-        request.setKey(key);
+        request.setSenderPk(key);
         request.setMessage(message);
         request.setAnnouncements(a);
         request.setMessageSignature(msgSign);
 
-        Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else if (response.getFunction() == Packet.Func.INVALID_ANN)
@@ -63,12 +62,12 @@ public class ClientEndpoint {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST_GENERAL);
-        request.setKey(key);
+        request.setSenderPk(key);
         request.setMessage(message);
         request.setAnnouncements(a);
         request.setMessageSignature(msgSign);
 
-        Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else if (response.getFunction() == Packet.Func.INVALID_ANN)
@@ -84,10 +83,10 @@ public class ClientEndpoint {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.READ);
-        request.setKey(key);
+        request.setSenderPk(key);
         request.setNumberOfAnnouncements(number);
 
-        Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else if (response.getFunction() == Packet.Func.READ)
@@ -102,9 +101,9 @@ public class ClientEndpoint {
 
         request.setFunction(Packet.Func.READ_GENERAL);
         request.setNumberOfAnnouncements(number);
-        request.setKey(key);
+        request.setSenderPk(key);
 
-        Packet response = socketClient.sendFunction(request, clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
 
         if (response.getFunction() == Packet.Func.READ_GENERAL)
             return response.getAnnouncements();
@@ -118,9 +117,9 @@ public class ClientEndpoint {
 
         request.setFunction(Packet.Func.GET_ANN_ID);
         request.setId(id);
-        request.setKey(key);
+        request.setSenderPk(key);
 
-        Packet response = socketClient.sendFunction(request,clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request,clientPrivateKey);
 
         Announcement ann;
         if (response.getAnnouncements() == null) {
@@ -142,9 +141,9 @@ public class ClientEndpoint {
 
         request.setFunction(Packet.Func.GET_USER_ID);
         request.setId(id);
-        request.setKey(key);
+        request.setSenderPk(key);
 
-        Packet response = socketClient.sendFunction(request,clientPrivateKey);
+        Packet response = authPerfectP2PLinks.sendFunction(request,clientPrivateKey);
 
         User user;
         if (response.getFunction() == Packet.Func.GET_USER_ID) {

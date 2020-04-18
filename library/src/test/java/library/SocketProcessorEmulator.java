@@ -21,7 +21,7 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         response.setFunction(packet.getFunction());
         response.setAnnouncements(packet.getAnnouncements());
         response.setUser(packet.getUser());
-        response.setKey(serverPublicKey);
+        response.setSenderPk(serverPublicKey);
         response.setNumberOfAnnouncements(packet.getNumberOfAnnouncements());
         if (packet.getMessage() != null)
             response.setMessage(packet.getMessage().clone());

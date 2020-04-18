@@ -5,9 +5,30 @@ import commonClasses.User;
 
 import java.io.Serializable;
 import java.security.PublicKey;
-import java.util.Arrays;
+import java.util.Random;
 
 public class Packet implements Serializable {
+    private static final Random random = new Random();
+
+    public Packet() {
+        this.nonce = random.nextInt();
+    }
+
+    public Integer getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(Integer nonce) {
+        this.nonce = nonce;
+    }
+
+    public PublicKey getReceiverPk() {
+        return receiverPk;
+    }
+
+    public void setReceiverPk(PublicKey receiverPk) {
+        this.receiverPk = receiverPk;
+    }
 
     public enum Func {
         REGISTER,
@@ -26,13 +47,15 @@ public class Packet implements Serializable {
     private Func function;
     private Announcement[] announcements;
     private User user;
-    private PublicKey key;
+    private PublicKey senderPk;
+    private PublicKey receiverPk;
     private int numberOfAnnouncements;
     private char[] message;
     private int id;
     private String username;
     private byte[] messageSignature;
 
+    private Integer nonce;
     private long timestamp;
     private int seqNumber;
     private byte[] sign = null;
@@ -61,12 +84,12 @@ public class Packet implements Serializable {
         this.user = user;
     }
 
-    public PublicKey getKey() {
-        return key;
+    public PublicKey getSenderPk() {
+        return senderPk;
     }
 
-    public void setKey(PublicKey key) {
-        this.key = key;
+    public void setSenderPk(PublicKey key) {
+        this.senderPk = key;
     }
 
     public int getNumberOfAnnouncements() {
