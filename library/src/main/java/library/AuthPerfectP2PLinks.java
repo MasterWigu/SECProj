@@ -1,5 +1,8 @@
 package library;
 
+import library.Exceptions.CommunicationErrorException;
+import library.Exceptions.PacketValidationException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,7 +22,7 @@ public class AuthPerfectP2PLinks {
         delivered = new ArrayList<>();
     }
 
-    public static Packet sendFunction(Packet message, SRData sender, SRData receiver) {
+    public static Packet sendFunction(Packet message, SRData sender, SRData receiver) throws PacketValidationException, CommunicationErrorException {
         try {
             if (receiver.getHost() == null || receiver.getPort() == 0 || message == null) {
                 System.out.println("Invalid arguments");
@@ -53,27 +56,25 @@ public class AuthPerfectP2PLinks {
 
             if (!getFresh(response)) {
                 System.out.println("Freshness error!");
-                return null;
+                throw new PacketValidationException();
             }
 
             if(response.getSenderPk() == null || response.getReceiverPk() == null ||
                     !response.getSenderPk().equals(receiver.getPubKey()) || !response.getReceiverPk().equals(sender.getPubKey())) {
                 System.out.println("Pair sender/receiver invalid!");
-                return null;
+                throw new PacketValidationException();
             }
 
             if (!PacketSigner.verify(response, sender.getPubKey())) {
                 System.out.println("Message verify error!");
-                return null;
+                throw new PacketValidationException();
             }
 
             return response;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new CommunicationErrorException();
         }
-
-    return null;
-
     }
 
     private static boolean getFresh(Packet pack) {

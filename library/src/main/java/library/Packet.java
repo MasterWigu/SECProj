@@ -30,7 +30,24 @@ public class Packet implements Serializable {
         this.receiverPk = receiverPk;
     }
 
+    public int getRid() {
+        return rid;
+    }
+
+    public void setRid(int rid) {
+        this.rid = rid;
+    }
+
+    public int getWts() {
+        return wts;
+    }
+
+    public void setWts(int wts) {
+        this.wts = wts;
+    }
+
     public enum Func {
+        GET_WTS,
         REGISTER,
         POST,
         POST_GENERAL,
@@ -59,6 +76,11 @@ public class Packet implements Serializable {
     private long timestamp;
     private int seqNumber;
     private byte[] sign = null;
+
+    //REGS
+    private int rid;
+    private int wts;
+
 
     public Func getFunction() {
         return function;
