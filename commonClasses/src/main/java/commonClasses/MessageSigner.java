@@ -28,7 +28,15 @@ public class MessageSigner {
     }
 
     public static boolean verify(Announcement p) {
-        PublicKey pk = p.getCreator().getPk();
+        return verify(p, null);
+    }
+
+    public static boolean verify(Announcement p, PublicKey pubK) {
+        PublicKey pk;
+        if (pubK == null)
+            pk = p.getCreator().getPk();
+        else
+            pk = pubK;
 
         byte[] signature = p.getSignature();
 

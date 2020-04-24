@@ -5,6 +5,8 @@ import commonClasses.User;
 
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Packet implements Serializable {
@@ -46,7 +48,24 @@ public class Packet implements Serializable {
         this.wts = wts;
     }
 
+    public Announcement getAnnToWrite() {
+        return annToWrite;
+    }
+
+    public void setAnnToWrite(Announcement annToWrite) {
+        this.annToWrite = annToWrite;
+    }
+
+    public Map<Integer, List<Announcement>> getAnnouncements() {
+        return announcements;
+    }
+
+    public void setAnnouncements(Map<Integer, List<Announcement>> announcements) {
+        this.announcements = announcements;
+    }
+
     public enum Func {
+        WRITE_BACK,
         GET_WTS,
         REGISTER,
         POST,
@@ -62,20 +81,19 @@ public class Packet implements Serializable {
     }
 
     private Func function;
-    private Announcement[] announcements;
+    private Map<Integer, List<Announcement>> announcements;
     private User user;
-    private PublicKey senderPk;
-    private PublicKey receiverPk;
-    private int numberOfAnnouncements;
-    private char[] message;
+
     private int id;
-    private String username;
-    private byte[] messageSignature;
+    private Announcement annToWrite;
+
 
     private Integer nonce;
-    private long timestamp;
-    private int seqNumber;
     private byte[] sign = null;
+
+    //APP2PL
+    private PublicKey senderPk;
+    private PublicKey receiverPk;
 
     //REGS
     private int rid;
@@ -88,14 +106,6 @@ public class Packet implements Serializable {
 
     public void setFunction(Func function) {
         this.function = function;
-    }
-
-    public Announcement[] getAnnouncements() {
-        return announcements;
-    }
-
-    public void setAnnouncements(Announcement[] announcements) {
-        this.announcements = announcements;
     }
 
     public User getUser() {
@@ -114,21 +124,6 @@ public class Packet implements Serializable {
         this.senderPk = key;
     }
 
-    public int getNumberOfAnnouncements() {
-        return numberOfAnnouncements;
-    }
-
-    public void setNumberOfAnnouncements(int numberOfAnnouncements) {
-        this.numberOfAnnouncements = numberOfAnnouncements;
-    }
-
-    public char[] getMessage() {
-        return message;
-    }
-
-    public void setMessage(char[] message) {
-        this.message = message;
-    }
 
     public int getId() {
         return id;
@@ -138,22 +133,6 @@ public class Packet implements Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public byte[] getSign() {
         return sign;
     }
@@ -161,17 +140,5 @@ public class Packet implements Serializable {
     public void setSign(byte[] signature) {
         this.sign = signature;
     }
-
-    public byte[] getMessageSignature() {
-        return messageSignature;
-    }
-
-    public void setMessageSignature(byte[] messageSignature) {
-        this.messageSignature = messageSignature;
-    }
-
-    public int getSeqNumber() { return seqNumber; }
-
-    public void setSeqNumber(int seqNumber) { this.seqNumber = seqNumber; }
 
 }

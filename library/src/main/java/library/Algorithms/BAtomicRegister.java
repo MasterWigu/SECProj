@@ -2,24 +2,24 @@ package library.Algorithms;
 
 import commonClasses.Announcement;
 import commonClasses.MessageSigner;
+import commonClasses.User;
 import library.AuthPerfectP2PLinks;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
 import library.Packet;
 import library.SRData;
 
-import java.io.IOException;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BRegularRegister {
+public class BAtomicRegister {
     private enum Mode {
         READ,
-        WRITE,
+        WRITE
     }
 
 
@@ -38,7 +38,7 @@ public class BRegularRegister {
 
 
 
-    public BRegularRegister(SRData sender, List<SRData> servers, int faults) {
+    public BAtomicRegister(SRData sender, List<SRData> servers, int faults) {
         wts = 0;
         rid = 0;
 
@@ -89,9 +89,11 @@ public class BRegularRegister {
         return ackList.get(0);
     }
 
-
-
     public Packet read(Packet pack) {
+        return read(pack, true);
+    }
+
+    private Packet read(Packet pack, boolean writeBack) {
         rid++;
         pack.setRid(rid);
 
@@ -110,12 +112,50 @@ public class BRegularRegister {
         if(errorCount >= quorum)
             return null;
 
+
+
         Packet maxWtsPack = readList.get(0);
+
         for (Packet p : readList) {
             if (p.getWts()>maxWtsPack.getWts()) {
                 maxWtsPack = p;
             }
         }
+
+        if (maxWtsPack.getAnnouncements() != null) {
+            Map<Integer, List<Announcement>> tempAnns = maxWtsPack.getAnnouncements();
+            for (Packet p : readList) {
+                if (p.getWts() == maxWtsPack.getWts() && tempAnns != null) {
+                    for (Integer key : p.getAnnouncements().keySet()) {
+                        if (!tempAnns.containsKey(key)) {
+                            tempAnns.put(key, new ArrayList<Announcement>());
+                        }
+                        for (Announcement ann : p.getAnnouncements().get(key)) {
+                            if (!tempAnns.get(key).contains(ann)) {
+                                tempAnns.get(key).add(ann);
+                            }
+                        }
+                    }
+                }
+            }
+            maxWtsPack.setAnnouncements(tempAnns);
+        }
+
+
+
+        if (writeBack) {
+            Packet wbPack = new Packet();
+            wbPack.setFunction(Packet.Func.WRITE_BACK);
+
+            wbPack.setAnnouncements(maxWtsPack.getAnnouncements());
+            wbPack.setWts(maxWtsPack.getWts());
+
+            Packet wbResp = writeInner(wbPack, wbPack.getWts());
+            if (wbResp == null)
+                System.out.println("Error on writeback");
+                return null;
+        }
+
 
         return maxWtsPack;
     }
@@ -136,7 +176,7 @@ public class BRegularRegister {
                         if (mode == Mode.WRITE)
                             receiveWriteResp(respPack);
                         else if (mode == Mode.READ)
-                            receiveReadResp(respPack);
+                            receiveReadResp(respPack, pack.getUser());
                     } catch (CommunicationErrorException | PacketValidationException e) {
                         errorCount++;
                     }
@@ -155,7 +195,7 @@ public class BRegularRegister {
             ackList.add(pack);
     }
 
-    private synchronized void receiveReadResp(Packet pack) {
+    private synchronized void receiveReadResp(Packet pack, User user) {
         if (rid != pack.getRid())
             return;
 
@@ -167,10 +207,19 @@ public class BRegularRegister {
         else {
             //Verify all announcements inside packet
             if (pack.getAnnouncements() != null) {
-                for (Announcement ann : pack.getAnnouncements()) {
-                    if (!MessageSigner.verify(ann)) {
-                        errorCount++;
-                        return;
+                for (List<Announcement> anns : pack.getAnnouncements().values()) {
+                    for (Announcement ann : anns) {
+                        if (user != null) {
+                            if (!MessageSigner.verify(ann, user.getPk())) {
+                                errorCount++;
+                                return;
+                            }
+                        } else {
+                            if (!MessageSigner.verify(ann, null)) {
+                                errorCount++;
+                                return;
+                            }
+                        }
                     }
                 }
             }

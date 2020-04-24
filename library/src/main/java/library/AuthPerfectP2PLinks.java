@@ -59,7 +59,7 @@ public class AuthPerfectP2PLinks {
                 throw new PacketValidationException();
             }
 
-            if(response.getSenderPk() == null || response.getReceiverPk() == null ||
+            if (response.getSenderPk() == null || response.getReceiverPk() == null ||
                     !response.getSenderPk().equals(receiver.getPubKey()) || !response.getReceiverPk().equals(sender.getPubKey())) {
                 System.out.println("Pair sender/receiver invalid!");
                 throw new PacketValidationException();
