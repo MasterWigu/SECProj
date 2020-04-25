@@ -32,7 +32,7 @@ public class PostTest extends ServerTestsBase {
         AssertJUnit.assertArrayEquals(a.getMessage(), "ANN01".toCharArray());
         Assert.assertEquals(a.getCreator().getPk(), client1Keys.getPublic());
         Assert.assertEquals(a.getBoard(), 0);
-        Assert.assertNull(a.getReffs());
+        Assert.assertNull(a.getRefs());
         Assert.assertEquals(a.getTimestamp(), time);
         AssertJUnit.assertArrayEquals(sign1, a.getSignature());
     }
@@ -59,15 +59,15 @@ public class PostTest extends ServerTestsBase {
         AssertJUnit.assertArrayEquals(a1.getMessage(), "ANN01".toCharArray());
         Assert.assertEquals(a1.getCreator().getPk(), client1Keys.getPublic());
         Assert.assertEquals(a1.getBoard(), 0);
-        Assert.assertNull(a1.getReffs());
+        Assert.assertNull(a1.getRefs());
         Assert.assertEquals(a1.getTimestamp(), time1);
         AssertJUnit.assertArrayEquals(sign1, a1.getSignature());
 
         AssertJUnit.assertArrayEquals(a2.getMessage(), "ANN02".toCharArray());
         Assert.assertEquals(a2.getCreator().getPk(), client1Keys.getPublic());
         Assert.assertEquals(a2.getBoard(), 0);
-        Assert.assertNotNull(a2.getReffs());
-        AssertJUnit.assertArrayEquals(a2.getReffs(), new Announcement[]{a1});
+        Assert.assertNotNull(a2.getRefs());
+        AssertJUnit.assertArrayEquals(a2.getRefs(), new Announcement[]{a1});
         Assert.assertEquals(a2.getTimestamp(), time2);
         AssertJUnit.assertArrayEquals(sign2, a2.getSignature());
     }
@@ -95,15 +95,15 @@ public class PostTest extends ServerTestsBase {
         AssertJUnit.assertArrayEquals(a1.getMessage(), "ANN01".toCharArray());
         Assert.assertEquals(a1.getCreator().getPk(), client1Keys.getPublic());
         Assert.assertEquals(a1.getBoard(), 0);
-        Assert.assertNull(a1.getReffs());
+        Assert.assertNull(a1.getRefs());
         Assert.assertEquals(a1.getTimestamp(), time1);
         AssertJUnit.assertArrayEquals(sign1, a1.getSignature());
 
         AssertJUnit.assertArrayEquals(a2.getMessage(), "ANN02".toCharArray());
         Assert.assertEquals(a2.getCreator().getPk(), client2Keys.getPublic());
         Assert.assertEquals(a2.getBoard(), 0);
-        Assert.assertNotNull(a2.getReffs());
-        AssertJUnit.assertArrayEquals(a2.getReffs(), new Announcement[]{a1});
+        Assert.assertNotNull(a2.getRefs());
+        AssertJUnit.assertArrayEquals(a2.getRefs(), new Announcement[]{a1});
         Assert.assertEquals(a2.getTimestamp(), time2);
         AssertJUnit.assertArrayEquals(sign2, a2.getSignature());
 

@@ -7,7 +7,7 @@ import library.AuthPerfectP2PLinks;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
 import library.Packet;
-import library.SRData;
+import commonClasses.SRData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,11 +164,9 @@ public class BAtomicRegister {
         errorCount = 0;
 
         for (final SRData server : servers) {
-
             threadPool.submit(new Callable<Void>() {
                 @Override
                 public Void call(){
-
                     Packet respPack;
                     try {
                         respPack = AuthPerfectP2PLinks.sendFunction(pack, sender, server);
@@ -180,10 +178,6 @@ public class BAtomicRegister {
                     } catch (CommunicationErrorException | PacketValidationException e) {
                         errorCount++;
                     }
-
-
-
-
                     return null;
                 }
             });

@@ -1,84 +1,98 @@
 package library;
 
 import commonClasses.Announcement;
+import commonClasses.SRData;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
+import javafx.scene.shape.ArcTo;
+import library.Algorithms.BAtomicRegister;
 import library.Exceptions.CommunicationErrorException;
 import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
+import library.Exceptions.PacketValidationException;
 
+import javax.jws.soap.SOAPBinding;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ClientEndpoint {
     private AuthPerfectP2PLinks authPerfectP2PLinks;
-    private PrivateKey clientPrivateKey;
+    private SRData client;
+    private ArrayList<SRData> servers;
+    private BAtomicRegister atomicRegister;
+
 
     // TODO communication
-    public ClientEndpoint(String h, int[] p, PrivateKey cpk, List<PublicKey> spk){
-        authPerfectP2PLinks = new AuthPerfectP2PLinks(h, p[0], spk.get(0));
-        clientPrivateKey = cpk;
+    public ClientEndpoint(PrivateKey cpk, PublicKey key, ArrayList<SRData> s, int faults){
+        authPerfectP2PLinks = new AuthPerfectP2PLinks();
+        authPerfectP2PLinks.init();
+        servers = s;
 
+        client = new SRData();
+        client.setPubKey(key);
+        client.setPrvKey(cpk);
+        atomicRegister = new BAtomicRegister(client, servers, faults);
     }
 
-
-    public String register(PublicKey key, String username) throws CommunicationErrorException {
+    public String register() throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.REGISTER);
-        request.setSenderPk(key);
-        request.setUsername(username);
 
-        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
-        if (response.getFunction() == Packet.Func.REGISTER)
-            return String.valueOf(response.getMessage());
-        else
-            throw new CommunicationErrorException();
+        SimpleBroadcast.broadcast(request, client, servers);
+
+        return "Success register.";
     }
 
 
-    public char[] post(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public char[] post(char[] message, Announcement[] refs, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
-        request.setSenderPk(key);
-        request.setMessage(message);
-        request.setAnnouncements(a);
-        request.setMessageSignature(msgSign);
 
-        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
-        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
-            throw new UserNotFoundException();
-        else if (response.getFunction() == Packet.Func.INVALID_ANN)
-            throw  new InvalidAnnouncementException();
-        else if (response.getFunction() == Packet.Func.POST)
-            return response.getMessage();
-        else
-            throw new CommunicationErrorException();
-    }
+        User user = new User(-1, client.getPubKey());
+        Announcement ann = new Announcement(message, user, refs, 0, 0,  msgSign);
+        request.setAnnToWrite(ann);
 
-    public char[] postGeneral(PublicKey key, char[] message, Announcement[] a, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
-        Packet request = new Packet();
+        Packet response = atomicRegister.write(request);
 
-        request.setFunction(Packet.Func.POST_GENERAL);
-        request.setSenderPk(key);
-        request.setMessage(message);
-        request.setAnnouncements(a);
-        request.setMessageSignature(msgSign);
-
-        Packet response = authPerfectP2PLinks.sendFunction(request, clientPrivateKey);
         if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
             throw new UserNotFoundException();
         else if (response.getFunction() == Packet.Func.INVALID_ANN)
             throw  new InvalidAnnouncementException();
         else if (response.getFunction() == Packet.Func.POST_GENERAL)
-            return response.getMessage();
+            return response.getMsg();
         else
             throw new CommunicationErrorException();
     }
 
 
+    public char[] postGeneral(char[] message, Announcement[] refs, byte[] msgSign) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+        Packet request = new Packet();
+
+        request.setFunction(Packet.Func.POST);
+
+        User user = new User(-1, client.getPubKey());
+        Announcement ann = new Announcement(message, user, refs, 1, 0,  msgSign);
+        request.setAnnToWrite(ann);
+
+        Packet response = atomicRegister.write(request);
+
+        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
+            throw new UserNotFoundException();
+        else if (response.getFunction() == Packet.Func.INVALID_ANN)
+            throw  new InvalidAnnouncementException();
+        else if (response.getFunction() == Packet.Func.POST_GENERAL)
+            return response.getMsg();
+        else
+            throw new CommunicationErrorException();
+
+    }
+
+    /*
     public Announcement[] read(PublicKey key, int number) throws UserNotFoundException, CommunicationErrorException {
         Packet request = new Packet();
 
@@ -159,4 +173,5 @@ public class ClientEndpoint {
         }
         return user;
     }
+     */
 }

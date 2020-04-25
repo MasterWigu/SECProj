@@ -11,17 +11,17 @@ public class Announcement implements Serializable {
     private char[] message;
     private User creator;
     private int board; // 0 if personal, 1 if general
-    private long timestamp;
-    private Announcement[] reffs;
+    private int wts;
+    private Announcement[] refs;
 
     private byte[] signature;
 
-    public Announcement(char[] mss, User crt, Announcement[] rs, int br, long time, byte[] sign) {
+    public Announcement(char[] mss, User crt, Announcement[] rs, int br, int wts1, byte[] sign) {
         message = mss;
         creator = crt;
         board = br;
-        timestamp = time;
-        reffs = rs;
+        wts = wts1;
+        refs = rs;
         signature = sign;
     }
 
@@ -46,12 +46,8 @@ public class Announcement implements Serializable {
         id = aid;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Announcement[] getReffs() {
-        return reffs;
+    public Announcement[] getRefs() {
+        return refs;
     }
 
     public String toString() {
@@ -64,13 +60,13 @@ public class Announcement implements Serializable {
         }
         out += "Ann. Id: " + id + "\n";
         out += "Creator Id: " + creator.getId() + "\n";
-        out += "Time: " + new Timestamp(timestamp).toString() + "\n";
+        out += "WTS: " + wts + "\n";
         out += "Refers to: ";
-        if (reffs != null) {
-            for (Announcement a : reffs) {
+        if (refs != null) {
+            for (Announcement a : refs) {
                 out += a.getId() + ", ";
             }
-            if (reffs.length != 0) {
+            if (refs.length != 0) {
                 out = out.substring(0, out.length() - 2);
             }
         }
@@ -92,14 +88,18 @@ public class Announcement implements Serializable {
         if (getBoard() != ann.getBoard()) {
             return false;
         }
-        if (!Arrays.deepEquals(getReffs(), ann.getReffs())) {
+        if (!Arrays.deepEquals(getRefs(), ann.getRefs())) {
             return false;
         }
-        return ann.getTimestamp() == getTimestamp();
+        return ann.getWts() == getWts();
 
     }
 
     public byte[] getSignature() {
         return signature;
+    }
+
+    public int getWts() {
+        return wts;
     }
 }

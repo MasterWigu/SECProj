@@ -9,8 +9,8 @@ import library.Exceptions.CommunicationErrorException;
 import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.ClientEndpoint;
+import commonClasses.SRData;
 
-import java.lang.reflect.Array;
 import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,23 +26,25 @@ public class Client {
 	private ClientEndpoint clientEndpoint;
 	private PrivateKey clientPrivateKey;
 
-	Client(int id) {
-		int[] serverPorts = new int[]{10251,10252,10253};
-		List<PublicKey> serverPublicKey = new ArrayList<>();
+	private ArrayList<SRData> servers;
+
+
+	Client(int id, ArrayList<SRData> s, int faults) {
 	    String keyStorePass = "DPASsecClient"+id;
 	    String resourcesPath = "src\\main\\resources\\";
+	    servers = s;
 		keyboardSc = new Scanner(System.in);
 
 
 		try {
-		    serverPublicKey.add(KeyLoader.getServerPublicKey(resourcesPath+"KeysUser" + id, id, keyStorePass));
+		    KeyLoader.getServersPublicKeys(resourcesPath+"KeysUser" + id, keyStorePass, servers);
             clientPrivateKey = KeyLoader.getPrivateKey(resourcesPath+"KeysUser" + id, keyStorePass);
             clientPublicKey = KeyLoader.getPublicKey(resourcesPath+"KeysUser" + id, keyStorePass);
         } catch (KeyException e) {
 		    e.printStackTrace();
         }
 
-		clientEndpoint = new ClientEndpoint("localhost", serverPorts, clientPrivateKey, serverPublicKey);
+		clientEndpoint = new ClientEndpoint(clientPrivateKey, clientPublicKey, servers, faults);
 		System.out.println("Found server");
 	}
 
@@ -51,7 +53,7 @@ public class Client {
 		int numTries = 0;
 		while (++numTries<=3) {
 			try {
-				clientEndpoint.register(clientPublicKey, "test");
+				clientEndpoint.register();
 				return;
 			} catch (CommunicationErrorException e) {
 				System.out.println("Communication with server failed, trying again.");
@@ -159,7 +161,7 @@ public class Client {
 				System.out.println(String.valueOf(response));
 			} else {
 
-				response = clientEndpoint.post(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				response = clientEndpoint.post(message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
 				System.out.println(String.valueOf(response));
 			}
 		} catch (UserNotFoundException e) {

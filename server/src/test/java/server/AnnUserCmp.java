@@ -11,10 +11,10 @@ public class AnnUserCmp {
         Assert.assertEquals(a1.getId(), a2.getId());
         AssertJUnit.assertArrayEquals(a1.getMessage(), a2.getMessage());
         AssertJUnit.assertArrayEquals(a1.getSignature(), a2.getSignature());
-        if (a1.getReffs() != null && a2.getReffs() != null) {
-            Assert.assertEquals(a1.getReffs().length, a2.getReffs().length);
-            for (int i = 0; i < a1.getReffs().length; i++) {
-                annCmp(a1.getReffs()[i], a2.getReffs()[i]);
+        if (a1.getRefs() != null && a2.getRefs() != null) {
+            Assert.assertEquals(a1.getRefs().length, a2.getRefs().length);
+            for (int i = 0; i < a1.getRefs().length; i++) {
+                annCmp(a1.getRefs()[i], a2.getRefs()[i]);
             }
         }
         Assert.assertEquals(a1.getBoard(), a2.getBoard());

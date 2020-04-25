@@ -1,5 +1,6 @@
 package library;
 
+import commonClasses.SRData;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
 
@@ -7,8 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +15,7 @@ import java.util.List;
 public class AuthPerfectP2PLinks {
     private static List<Integer> delivered;
 
-
-
-    public static void init() {
+    public void init() {
         delivered = new ArrayList<>();
     }
 

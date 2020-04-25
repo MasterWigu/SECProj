@@ -64,6 +64,14 @@ public class Packet implements Serializable {
         this.announcements = announcements;
     }
 
+    public char[] getMsg() {
+        return msg;
+    }
+
+    public void setMsg(char[] msg) {
+        this.msg = msg;
+    }
+
     public enum Func {
         WRITE_BACK,
         GET_WTS,
@@ -83,6 +91,7 @@ public class Packet implements Serializable {
     private Func function;
     private Map<Integer, List<Announcement>> announcements;
     private User user;
+    private char[] msg;
 
     private int id;
     private Announcement annToWrite;

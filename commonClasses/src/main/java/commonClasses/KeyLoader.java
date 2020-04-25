@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 
 public class KeyLoader {
     private static KeyStore getKeystore(String path, String password ) throws KeyException {
@@ -57,5 +58,19 @@ public class KeyLoader {
             throw new KeyException();
         }
         return cert.getPublicKey();
+    }
+
+    public static void getServersPublicKeys(String path,  String password, ArrayList<SRData> servers) throws KeyException {
+        //Creating the KeyStore object
+        KeyStore keyStore = getKeystore(path, password);
+        Certificate cert;
+        try {
+            for (SRData srd : servers){
+                cert = keyStore.getCertificate("dpas-cert-server-"+srd.getId());
+                srd.setPubKey(cert.getPublicKey());
+            }
+        } catch (KeyStoreException e) {
+            throw new KeyException();
+        }
     }
 }

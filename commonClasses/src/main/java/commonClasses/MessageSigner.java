@@ -40,7 +40,7 @@ public class MessageSigner {
 
         byte[] signature = p.getSignature();
 
-        AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getReffs());
+        AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getRefs());
         byte[] hash = getHash(ann);
 
         byte[] messageHash = null;

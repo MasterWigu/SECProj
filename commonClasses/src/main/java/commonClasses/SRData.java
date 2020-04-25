@@ -1,4 +1,4 @@
-package library;
+package commonClasses;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -8,6 +8,7 @@ public class SRData {
     private int port;
     private PublicKey pubKey;
     private PrivateKey prvKey;
+    private int id;
 
     public String getHost() {
         return host;
@@ -39,5 +40,13 @@ public class SRData {
 
     public void setPrvKey(PrivateKey prvKey) {
         this.prvKey = prvKey;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
