@@ -210,14 +210,12 @@ public class BAtomicRegister {
                 for (List<Announcement> anns : pack.getAnnouncements().values()) {
                     for (Announcement ann : anns) {
                         if (sentPack.getUser() != null) {
-                            //todo verify that board == 1
-                            if (!MessageSigner.verify(ann, sentPack.getUser().getPk())) {
+                            if (!MessageSigner.verify(ann, sentPack.getUser().getPk()) || ann.getBoard() !=1) {
                                 errorCount++;
                                 return;
                             }
                         } else {
-                            //todo verify that board == 0
-                            if (!MessageSigner.verify(ann, null)) {
+                            if (!MessageSigner.verify(ann, null) || ann.getBoard() != 0) {
                                 errorCount++;
                                 return;
                             }
