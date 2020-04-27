@@ -25,6 +25,16 @@ public class Announcement implements Serializable {
         signature = sign;
     }
 
+    public Announcement(char[] mss, User crt, Announcement[] rs, int br) {
+        message = mss;
+        creator = crt;
+        board = br;
+        wts = -1;
+        refs = rs;
+        signature = null;
+    }
+
+
 
     public char[] getMessage() {
         return message;
@@ -99,7 +109,15 @@ public class Announcement implements Serializable {
         return signature;
     }
 
+    public void setSignature(byte[] sign) {
+        this.signature = sign;
+    }
+
     public int getWts() {
         return wts;
+    }
+
+    public void setWts(int wts) {
+        this.wts = wts;
     }
 }

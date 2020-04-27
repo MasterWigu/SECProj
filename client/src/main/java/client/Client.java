@@ -20,19 +20,15 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class Client {
+class Client {
 	private PublicKey clientPublicKey;
 	private Scanner keyboardSc;
 	private ClientEndpoint clientEndpoint;
 	private PrivateKey clientPrivateKey;
 
-	private ArrayList<SRData> servers;
-
-
-	Client(int id, ArrayList<SRData> s, int faults) {
+	Client(int id, ArrayList<SRData> servers, int faults) {
 	    String keyStorePass = "DPASsecClient"+id;
 	    String resourcesPath = "src\\main\\resources\\";
-	    servers = s;
 		keyboardSc = new Scanner(System.in);
 
 
@@ -49,17 +45,8 @@ public class Client {
 	}
 
 
-	void login() throws CommunicationErrorException {
-		int numTries = 0;
-		while (++numTries<=3) {
-			try {
-				clientEndpoint.register();
-				return;
-			} catch (CommunicationErrorException e) {
-				System.out.println("Communication with server failed, trying again.");
-			}
-		}
-		throw new CommunicationErrorException();
+	void login() {
+		clientEndpoint.register();
 	}
 
 
@@ -87,11 +74,6 @@ public class Client {
 		}
 	}
 
-	private byte[] getMsgSign(char[] msg, int b, Announcement[] anns) {
-		return MessageSigner.sign(msg, clientPublicKey, b, anns, clientPrivateKey);
-	}
-
-
 	private void printMenu() {
 		System.out.println("--------------------------- MENU ---------------------------");
 		System.out.println("1 - Post to personal board");
@@ -113,9 +95,9 @@ public class Client {
 
 	private void post(int board) {
 		boolean accept = false;
-		String message = "";
+		String message;
 		message = keyboardSc.nextLine();
-		String line = "";
+		String line;
 		if (board == 1) {
 			System.out.println("----------------- Posting to general board -----------------");
 		} else {
@@ -143,7 +125,7 @@ public class Client {
 				finish = true;
 			} else {
 				try {
-					announcements.add(clientEndpoint.getAnnouncementById(clientPublicKey, ann));
+					announcements.add(clientEndpoint.getAnnouncementById(ann));
 					System.out.println("Announcement added to the list of referrals");
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");
@@ -153,15 +135,14 @@ public class Client {
 			}
 		}
 
-		byte[] sign = getMsgSign(message.toCharArray(), board, announcements.toArray(new Announcement[0]));
 		char[] response;
 		try {
 			if (board == 1) {
-				response = clientEndpoint.postGeneral(clientPublicKey, message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				response = clientEndpoint.postGeneral(message.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println(String.valueOf(response));
 			} else {
 
-				response = clientEndpoint.post(message.toCharArray(), announcements.toArray(new Announcement[0]), sign);
+				response = clientEndpoint.post(message.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println(String.valueOf(response));
 			}
 		} catch (UserNotFoundException e) {
@@ -185,7 +166,7 @@ public class Client {
 			line = keyboardSc.nextLine();
 			int uid = Integer.parseInt(line);
 			try {
-				user = clientEndpoint.getUserById(clientPublicKey, uid);
+				user = clientEndpoint.getUserById(uid);
 				finish = true;
 			} catch (UserNotFoundException e) {
 				System.out.println("Invalid user id, please try again.");
@@ -205,7 +186,7 @@ public class Client {
 
 		System.out.println("------------ Printing Personal Board of user "+ user.getId() + " -------------");
 		try {
-			printAnnouncements(clientEndpoint.read(user.getPk(), numAnn));
+			printAnnouncements(clientEndpoint.read(user, numAnn));
 		} catch (UserNotFoundException e) {
 			// Impossible
 			System.out.println(Arrays.toString(e.getStackTrace()));
@@ -226,7 +207,7 @@ public class Client {
 
 		System.out.println("------------------ Printing General Board ------------------");
 		try {
-			printAnnouncements(clientEndpoint.readGeneral(clientPublicKey, numAnn));
+			printAnnouncements(clientEndpoint.readGeneral(numAnn));
 		} catch (CommunicationErrorException e) {
 			System.out.println("Communication error, please try again.");
 		}

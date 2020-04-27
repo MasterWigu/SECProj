@@ -12,8 +12,48 @@ import java.util.Random;
 public class Packet implements Serializable {
     private static final Random random = new Random();
 
+    public enum Func {
+        WRITE_BACK,
+        GET_WTS,
+        REGISTER,
+        POST,
+        POST_GENERAL,
+        READ,
+        READ_GENERAL,
+        GET_ANN_ID,
+        GET_USER_ID,
+        ERROR,
+        USER_NOT_FOUND,
+        INVALID_ANN,
+        ANN_NOT_FOUND
+    }
+
+    private Func function;
+    private Map<Integer, List<Announcement>> announcements;
+    private User user;
+    private char[] msg;
+
+    private int id;
+    private Announcement singleAnnouncement;
+
+
+    private Integer nonce;
+    private byte[] sign = null;
+
+    //APP2PL
+    private PublicKey senderPk;
+    private PublicKey receiverPk;
+
+    //REGS
+    private int rid;
+    private int wts;
+
+
+
+
     public Packet() {
         this.nonce = random.nextInt();
+        this.id = -1;
     }
 
     public Integer getNonce() {
@@ -48,12 +88,12 @@ public class Packet implements Serializable {
         this.wts = wts;
     }
 
-    public Announcement getAnnToWrite() {
-        return annToWrite;
+    public Announcement getSingleAnnouncement() {
+        return singleAnnouncement;
     }
 
-    public void setAnnToWrite(Announcement annToWrite) {
-        this.annToWrite = annToWrite;
+    public void setSingleAnnouncement(Announcement singleAnnouncement) {
+        this.singleAnnouncement = singleAnnouncement;
     }
 
     public Map<Integer, List<Announcement>> getAnnouncements() {
@@ -71,43 +111,6 @@ public class Packet implements Serializable {
     public void setMsg(char[] msg) {
         this.msg = msg;
     }
-
-    public enum Func {
-        WRITE_BACK,
-        GET_WTS,
-        REGISTER,
-        POST,
-        POST_GENERAL,
-        READ,
-        READ_GENERAL,
-        GET_ANN_ID,
-        GET_USER_ID,
-        ERROR,
-        USER_NOT_FOUND,
-        INVALID_ANN,
-        ANN_NOT_FOUND
-    }
-
-    private Func function;
-    private Map<Integer, List<Announcement>> announcements;
-    private User user;
-    private char[] msg;
-
-    private int id;
-    private Announcement annToWrite;
-
-
-    private Integer nonce;
-    private byte[] sign = null;
-
-    //APP2PL
-    private PublicKey senderPk;
-    private PublicKey receiverPk;
-
-    //REGS
-    private int rid;
-    private int wts;
-
 
     public Func getFunction() {
         return function;

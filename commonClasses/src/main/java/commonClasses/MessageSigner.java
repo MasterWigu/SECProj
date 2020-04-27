@@ -18,12 +18,14 @@ public class MessageSigner {
         private PublicKey creatorPk;
         private int board;
         private Announcement[] reffs;
+        private int wts;
 
-        private AnnToSign(char[] msg, PublicKey cpk, int b, Announcement[] anns) {
+        private AnnToSign(char[] msg, PublicKey cpk, int b, Announcement[] anns, int wts) {
             message = msg;
             creatorPk = cpk;
             board = b;
             reffs = anns;
+            wts = wts;
         }
     }
 
@@ -40,7 +42,7 @@ public class MessageSigner {
 
         byte[] signature = p.getSignature();
 
-        AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getRefs());
+        AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getRefs(), p.getWts());
         byte[] hash = getHash(ann);
 
         byte[] messageHash = null;
@@ -60,9 +62,14 @@ public class MessageSigner {
         return Arrays.equals(messageHash, hash);
     }
 
-    public static byte[] sign(char[] msg, PublicKey cpk, int b, Announcement[] anns, PrivateKey pk) {
 
-        AnnToSign ann = new AnnToSign(msg, cpk, b, anns);
+    public static byte[] sign(Announcement annToSign, PrivateKey pk) {
+        return sign(annToSign.getMessage(), annToSign.getCreator().getPk(), annToSign.getBoard(), annToSign.getRefs(), annToSign.getWts(), pk);
+    }
+
+    public static byte[] sign(char[] msg, PublicKey cpk, int b, Announcement[] anns, int wts, PrivateKey pk) {
+
+        AnnToSign ann = new AnnToSign(msg, cpk, b, anns, wts);
         byte[] hash = getHash(ann);
         byte[] signature = null;
         try {

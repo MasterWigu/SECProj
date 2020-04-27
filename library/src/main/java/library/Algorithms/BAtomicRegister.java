@@ -2,7 +2,6 @@ package library.Algorithms;
 
 import commonClasses.Announcement;
 import commonClasses.MessageSigner;
-import commonClasses.User;
 import library.AuthPerfectP2PLinks;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
@@ -25,6 +24,7 @@ public class BAtomicRegister {
 
     private SRData sender;
     private List<SRData> servers;
+    private AuthPerfectP2PLinks APP2PLink;
 
     private int wts;
     private int rid;
@@ -39,6 +39,9 @@ public class BAtomicRegister {
 
 
     public BAtomicRegister(SRData sender, List<SRData> servers, int faults) {
+        APP2PLink = new AuthPerfectP2PLinks();
+        APP2PLink.init();
+
         wts = 0;
         rid = 0;
 
@@ -57,7 +60,7 @@ public class BAtomicRegister {
         readWtsPack.setFunction(Packet.Func.GET_WTS);
         readWtsPack.setSenderPk(sender.getPubKey());
 
-        Packet readWtsPackResp = read(readWtsPack);
+        Packet readWtsPackResp = read(readWtsPack, false);
 
         wts = readWtsPackResp.getWts()+1;
 
@@ -71,6 +74,10 @@ public class BAtomicRegister {
 
         pack.setWts(wts);
 
+        if (pack.getSingleAnnouncement() != null) { //if we are posting
+            pack.getSingleAnnouncement().setWts(wts);
+            pack.getSingleAnnouncement().setSignature(MessageSigner.sign(pack.getSingleAnnouncement(), sender.getPrvKey()));
+        }
         ackList.clear();
 
         sendAllBroadcast(pack, Mode.WRITE);
@@ -169,12 +176,12 @@ public class BAtomicRegister {
                 public Void call(){
                     Packet respPack;
                     try {
-                        respPack = AuthPerfectP2PLinks.sendFunction(pack, sender, server);
+                        respPack = APP2PLink.sendFunction(pack, sender, server);
 
                         if (mode == Mode.WRITE)
                             receiveWriteResp(respPack);
                         else if (mode == Mode.READ)
-                            receiveReadResp(respPack, pack.getUser());
+                            receiveReadResp(respPack, pack);
                     } catch (CommunicationErrorException | PacketValidationException e) {
                         errorCount++;
                     }
@@ -189,12 +196,11 @@ public class BAtomicRegister {
             ackList.add(pack);
     }
 
-    private synchronized void receiveReadResp(Packet pack, User user) {
+    private synchronized void receiveReadResp(Packet pack, Packet sentPack) {
         if (rid != pack.getRid())
             return;
 
-        if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)
-                || pack.getFunction().equals(Packet.Func.USER_NOT_FOUND)) {
+        if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
             errorCount++;
             return;
         }
@@ -203,12 +209,14 @@ public class BAtomicRegister {
             if (pack.getAnnouncements() != null) {
                 for (List<Announcement> anns : pack.getAnnouncements().values()) {
                     for (Announcement ann : anns) {
-                        if (user != null) {
-                            if (!MessageSigner.verify(ann, user.getPk())) {
+                        if (sentPack.getUser() != null) {
+                            //todo verify that board == 1
+                            if (!MessageSigner.verify(ann, sentPack.getUser().getPk())) {
                                 errorCount++;
                                 return;
                             }
                         } else {
+                            //todo verify that board == 0
                             if (!MessageSigner.verify(ann, null)) {
                                 errorCount++;
                                 return;
@@ -217,10 +225,24 @@ public class BAtomicRegister {
                     }
                 }
             }
+            if (pack.getSingleAnnouncement() != null) {
+                if (!MessageSigner.verify(pack.getSingleAnnouncement(), null)) {
+                    errorCount++;
+                    return;
+                }
+                if (sentPack.getId() != -1 && pack.getSingleAnnouncement().getId() != sentPack.getId()) {
+                    errorCount++;
+                    return;
+                }
+            }
+            if (pack.getUser() != null && sentPack.getId() != -1 && pack.getFunction() == Packet.Func.GET_USER_ID) {
+                if (pack.getUser().getId() != sentPack.getId()) {
+                    errorCount++;
+                    return;
+                }
+            }
         }
-
         readList.add(pack);
-
     }
 
 }

@@ -19,7 +19,7 @@ public class AuthPerfectP2PLinks {
         delivered = new ArrayList<>();
     }
 
-    public static Packet sendFunction(Packet message, SRData sender, SRData receiver) throws PacketValidationException, CommunicationErrorException {
+    public Packet sendFunction(Packet message, SRData sender, SRData receiver) throws PacketValidationException, CommunicationErrorException {
         try {
             if (receiver.getHost() == null || receiver.getPort() == 0 || message == null) {
                 System.out.println("Invalid arguments");
