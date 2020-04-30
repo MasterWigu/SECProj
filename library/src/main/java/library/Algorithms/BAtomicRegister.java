@@ -9,6 +9,7 @@ import library.Packet;
 import commonClasses.SRData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -58,6 +59,7 @@ public class BAtomicRegister {
 
         Packet readWtsPack = new Packet();
         readWtsPack.setFunction(Packet.Func.GET_WTS);
+        readWtsPack.setAuxFunction(pack.getFunction());
         readWtsPack.setSenderPk(sender.getPubKey());
 
         Packet readWtsPackResp = read(readWtsPack, false);
@@ -135,7 +137,7 @@ public class BAtomicRegister {
                 if (p.getWts() == maxWtsPack.getWts() && tempAnns != null) {
                     for (Integer key : p.getAnnouncements().keySet()) {
                         if (!tempAnns.containsKey(key)) {
-                            tempAnns.put(key, new ArrayList<Announcement>());
+                            tempAnns.put(key, new ArrayList<>());
                         }
                         for (Announcement ann : p.getAnnouncements().get(key)) {
                             if (!tempAnns.get(key).contains(ann)) {
@@ -228,7 +230,7 @@ public class BAtomicRegister {
                     errorCount++;
                     return;
                 }
-                if (sentPack.getId() != -1 && pack.getSingleAnnouncement().getId() != sentPack.getId()) {
+                if (sentPack.getCharId() != null && !Arrays.equals(pack.getSingleAnnouncement().getId(), sentPack.getCharId())) {
                     errorCount++;
                     return;
                 }

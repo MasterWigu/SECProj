@@ -77,13 +77,14 @@ public class SocketServer {
                 response = new Packet();
                 response.setFunction(Packet.Func.ERROR);
                 response.setSenderPk(serverPublicKey);
-                response.setMessage("Invalid Packet received".toCharArray());
+                response.setMsg("Invalid Packet received".toCharArray());
             }
             else {
                 response = processor.doOperation(request);
             }
-
-            response = PacketSigner.sign(response, serverPrivateKey);
+            response.setReceiverPk(request.getSenderPk());
+            response.setSenderPk(serverPublicKey);
+            PacketSigner.sign(response, serverPrivateKey);
             out.writeObject(response);
             tempSocket.close();
 

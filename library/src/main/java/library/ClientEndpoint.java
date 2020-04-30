@@ -114,11 +114,11 @@ public class ClientEndpoint {
     }
 
 
-    public Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException, CommunicationErrorException {
+    public Announcement getAnnouncementById(char[] id) throws AnnouncementNotFoundException, CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.GET_ANN_ID);
-        request.setId(id);
+        request.setCharId(id);
 
         Packet response = atomicRegister.read(request);
 

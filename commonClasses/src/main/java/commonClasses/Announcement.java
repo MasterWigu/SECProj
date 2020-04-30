@@ -1,13 +1,12 @@
 package commonClasses;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Arrays;
 
 
 public class Announcement implements Serializable {
 
-    private int id;
+    private char[] id;
     private char[] message;
     private User creator;
     private int board; // 0 if personal, 1 if general
@@ -44,15 +43,19 @@ public class Announcement implements Serializable {
         return creator;
     }
 
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
     public int getBoard() {
         return board;
     }
 
-    public int getId() {
+    public char[] getId() {
         return id;
     }
 
-    public void setId(int aid) {
+    public void setId(char[] aid) {
         id = aid;
     }
 

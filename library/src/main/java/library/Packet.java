@@ -12,6 +12,14 @@ import java.util.Random;
 public class Packet implements Serializable {
     private static final Random random = new Random();
 
+    public char[] getCharId() {
+        return charId;
+    }
+
+    public void setCharId(char[] charId) {
+        this.charId = charId;
+    }
+
     public enum Func {
         WRITE_BACK,
         GET_WTS,
@@ -29,14 +37,16 @@ public class Packet implements Serializable {
     }
 
     private Func function;
+    private Func auxFunction;
     private Map<Integer, List<Announcement>> announcements;
     private User user;
     private char[] msg;
 
     private int id;
+    private char[] charId;
     private Announcement singleAnnouncement;
 
-
+    //INTEGRITY
     private Integer nonce;
     private byte[] sign = null;
 
@@ -136,7 +146,6 @@ public class Packet implements Serializable {
         this.senderPk = key;
     }
 
-
     public int getId() {
         return id;
     }
@@ -152,5 +161,14 @@ public class Packet implements Serializable {
     public void setSign(byte[] signature) {
         this.sign = signature;
     }
+
+    public Func getAuxFunction() {
+        return auxFunction;
+    }
+
+    public void setAuxFunction(Func auxFunction) {
+        this.auxFunction = auxFunction;
+    }
+
 
 }

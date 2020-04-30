@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SimpleBroadcast {
+    /*
     public static void broadcast(final Packet pack, final SRData client, ArrayList<SRData> servers){
         ExecutorService threadPool = Executors.newFixedThreadPool(servers.size());
         for (final SRData server : servers) {
@@ -27,7 +28,7 @@ public class SimpleBroadcast {
                 }
             });
         }
-    }
+    }*/
 
 
 

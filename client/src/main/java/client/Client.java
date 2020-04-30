@@ -119,13 +119,13 @@ class Client {
 		while (!finish) {
 			System.out.print("Announcement id: ");
 			line = keyboardSc.nextLine();
-			int ann = Integer.valueOf(line);
+			//int ann = Integer.valueOf(line);
 
-			if (ann == 0) {
+			if (line.trim().equals("0")) {
 				finish = true;
 			} else {
 				try {
-					announcements.add(clientEndpoint.getAnnouncementById(ann));
+					announcements.add(clientEndpoint.getAnnouncementById(line.toCharArray()));
 					System.out.println("Announcement added to the list of referrals");
 				} catch (AnnouncementNotFoundException e) {
 					System.out.println("Invalid announcement id, please try again.");

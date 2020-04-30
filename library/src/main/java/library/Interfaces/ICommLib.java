@@ -2,16 +2,13 @@ package library.Interfaces;
 
 import java.security.PublicKey;
 import commonClasses.*;
-import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.InvalidAnnouncementException;
-import commonClasses.exceptions.KeyException;
-import commonClasses.exceptions.UserNotFoundException;
+import commonClasses.exceptions.*;
 
 
 public interface ICommLib {
-    String register(PublicKey key, String username) throws KeyException;
+    String register(PublicKey key, int wts) throws KeyException, InvalidWtsException;
 
-    String post(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException;
+    String post(PublicKey pk, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException;
 
     String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException;
 
@@ -22,5 +19,9 @@ public interface ICommLib {
     Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException;
 
     User getUserById(int id) throws UserNotFoundException;
+
+    int getRegisterWts();
+
+    int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException;
 
 }
