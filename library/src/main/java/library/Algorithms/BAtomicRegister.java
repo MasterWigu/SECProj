@@ -2,6 +2,7 @@ package library.Algorithms;
 
 import commonClasses.Announcement;
 import commonClasses.MessageSigner;
+import commonClasses.User;
 import library.AuthPerfectP2PLinks;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
@@ -60,7 +61,7 @@ public class BAtomicRegister {
         Packet readWtsPack = new Packet();
         readWtsPack.setFunction(Packet.Func.GET_WTS);
         readWtsPack.setAuxFunction(pack.getFunction());
-        readWtsPack.setSenderPk(sender.getPubKey());
+        readWtsPack.setUser(new User(-1, sender.getPubKey()));
 
         Packet readWtsPackResp = read(readWtsPack, false);
 
@@ -118,8 +119,10 @@ public class BAtomicRegister {
                 e.printStackTrace();
             }
         }
-        if(errorCount >= quorum)
+        if(errorCount >= quorum) {
+            System.out.println("FUCK1!");
             return null;
+        }
 
 
 
@@ -132,7 +135,7 @@ public class BAtomicRegister {
         }
 
         if (maxWtsPack.getAnnouncements() != null) {
-            Map<Integer, List<Announcement>> tempAnns = maxWtsPack.getAnnouncements();
+            Map<Integer, ArrayList<Announcement>> tempAnns = maxWtsPack.getAnnouncements();
             for (Packet p : readList) {
                 if (p.getWts() == maxWtsPack.getWts() && tempAnns != null) {
                     for (Integer key : p.getAnnouncements().keySet()) {
@@ -152,7 +155,7 @@ public class BAtomicRegister {
 
 
 
-        if (writeBack) {
+        if (writeBack && false) { //TODO remove bypass
             Packet wbPack = new Packet();
             wbPack.setFunction(Packet.Func.WRITE_BACK);
 
@@ -165,7 +168,8 @@ public class BAtomicRegister {
                 return null;
         }
 
-
+        //TODO remove
+        System.out.println(maxWtsPack);
         return maxWtsPack;
     }
 
@@ -199,6 +203,7 @@ public class BAtomicRegister {
     }
 
     private synchronized void receiveReadResp(Packet pack, Packet sentPack) {
+        //TODO falha no read_general, rip
         if (rid != pack.getRid())
             return;
 
@@ -208,15 +213,15 @@ public class BAtomicRegister {
         }
         else {
             //Verify all announcements inside packet
-            if (pack.getAnnouncements() != null) {
+            if (pack.getAnnouncements() != null) { // if read or read_general
                 for (List<Announcement> anns : pack.getAnnouncements().values()) {
                     for (Announcement ann : anns) {
-                        if (sentPack.getUser() != null) {
+                        if (sentPack.getUser() != null) { // if read
                             if (!MessageSigner.verify(ann, sentPack.getUser().getPk()) || ann.getBoard() !=1) {
                                 errorCount++;
                                 return;
                             }
-                        } else {
+                        } else { // if read_general
                             if (!MessageSigner.verify(ann, null) || ann.getBoard() != 0) {
                                 errorCount++;
                                 return;
@@ -225,7 +230,7 @@ public class BAtomicRegister {
                     }
                 }
             }
-            if (pack.getSingleAnnouncement() != null) {
+            if (pack.getSingleAnnouncement() != null) { // if get_ann_by_id and ann found
                 if (!MessageSigner.verify(pack.getSingleAnnouncement(), null)) {
                     errorCount++;
                     return;
@@ -235,7 +240,7 @@ public class BAtomicRegister {
                     return;
                 }
             }
-            if (pack.getUser() != null && sentPack.getId() != -1 && pack.getFunction() == Packet.Func.GET_USER_ID) {
+            if (pack.getUser() != null && sentPack.getId() != -1 && pack.getFunction() == Packet.Func.GET_USER_ID) { // if get_user_by_id and user found
                 if (pack.getUser().getId() != sentPack.getId()) {
                     errorCount++;
                     return;

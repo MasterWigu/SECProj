@@ -8,7 +8,7 @@ import library.Interfaces.ICommLib;
 
 import java.security.PublicKey;
 import java.util.Arrays;
-
+/*
 public class DPASEmulation implements ICommLib {
     public PublicKey tempPublicKey = null;
     public String tempUsername;
@@ -82,4 +82,4 @@ public class DPASEmulation implements ICommLib {
             throw new UserNotFoundException();
         return new User(0, null, "SuccessfulUser");
     }
-}
+}*/

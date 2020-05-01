@@ -62,7 +62,7 @@ public class AuthPerfectP2PLinks {
                 throw new PacketValidationException();
             }
 
-            if (!PacketSigner.verify(response, sender.getPubKey())) {
+            if (!PacketSigner.verify(response, receiver.getPubKey())) {
                 System.out.println("Message verify error!");
                 throw new PacketValidationException();
             }

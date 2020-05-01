@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 public class ReadGeneralTest extends ServerTestsBase {
     private Announcement ann1;
-
+/*
 
     @BeforeMethod
     public void populateServer() throws UserNotFoundException, KeyException, AnnouncementNotFoundException, InvalidAnnouncementException {
@@ -68,7 +68,7 @@ public class ReadGeneralTest extends ServerTestsBase {
         Assert.assertEquals(ann1, server.readGeneral(0)[0]);
         Assert.assertEquals(a1, server.readGeneral(0)[1]);
 
-    }
+    }*/
 
 
 }

@@ -6,7 +6,7 @@ import org.testng.Assert;
 import org.testng.AssertJUnit;
 
 public class AnnUserCmp {
-
+/*
     public void annCmp(Announcement a1, Announcement a2) {
         Assert.assertEquals(a1.getId(), a2.getId());
         AssertJUnit.assertArrayEquals(a1.getMessage(), a2.getMessage());
@@ -26,5 +26,5 @@ public class AnnUserCmp {
         Assert.assertEquals(u1.getId(), u2.getId());
         Assert.assertEquals(u1.getPk(), u2.getPk());
         Assert.assertEquals(u1.getUsername(), u2.getUsername());
-    }
+    }*/
 }

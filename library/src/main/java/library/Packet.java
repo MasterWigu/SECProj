@@ -5,7 +5,7 @@ import commonClasses.User;
 
 import java.io.Serializable;
 import java.security.PublicKey;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -38,7 +38,7 @@ public class Packet implements Serializable {
 
     private Func function;
     private Func auxFunction;
-    private Map<Integer, List<Announcement>> announcements;
+    private Map<Integer, ArrayList<Announcement>> announcements;
     private User user;
     private char[] msg;
 
@@ -106,19 +106,19 @@ public class Packet implements Serializable {
         this.singleAnnouncement = singleAnnouncement;
     }
 
-    public Map<Integer, List<Announcement>> getAnnouncements() {
+    public Map<Integer, ArrayList<Announcement>> getAnnouncements() {
         return announcements;
     }
 
-    public void setAnnouncements(Map<Integer, List<Announcement>> announcements) {
+    public void setAnnouncements(Map<Integer, ArrayList<Announcement>> announcements) {
         this.announcements = announcements;
     }
 
-    public char[] getMsg() {
+    public char[] getMessage() {
         return msg;
     }
 
-    public void setMsg(char[] msg) {
+    public void setMessage(char[] msg) {
         this.msg = msg;
     }
 

@@ -13,7 +13,7 @@ public class ServerTestsBase {
     KeyPair client1Keys;
     KeyPair client2Keys;
     KeyPair client3Keys;
-    DPASService server;
+    DPASService server;/*
 
     int createAnn(KeyPair clientKeys, char[] mss, Announcement[] anns) throws UserNotFoundException, InvalidAnnouncementException {
         long time = System.currentTimeMillis();
@@ -42,5 +42,5 @@ public class ServerTestsBase {
 
         server = new DPASService(false, true);
 
-    }
+    }*/
 }

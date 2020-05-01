@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 
 public class PostTest extends ServerTestsBase {
 
-
+/*
 
     @Test
     public void success() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
@@ -195,6 +195,6 @@ public class PostTest extends ServerTestsBase {
         Assert.assertEquals("Duplicate Announcement", out1);
     }
 
-
+*/
 
 }

@@ -49,4 +49,15 @@ public class SRData {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String toString() {
+        String out = "-----SRData-----\n";
+        out += "    Id: "  +id   + "\n";
+        out += "    Host: "+host + "\n";
+        out += "    Port: "+port + "\n";
+
+        out += "    PubK: "+pubKey + "\n";
+        out += "    PrvK: "+prvKey + "\n";
+        return out;
+    }
 }

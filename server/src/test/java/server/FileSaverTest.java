@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileSaverTest extends AnnUserCmp {
-
+/*
     private Announcement ann1;
     private Announcement ann2;
     private Announcement ann3;
@@ -91,6 +91,6 @@ public class FileSaverTest extends AnnUserCmp {
             annCmp(as.get(i), aRead.get(i));
         }
     }
-
+*/
 
 }

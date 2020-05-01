@@ -1,8 +1,12 @@
 package library.Interfaces;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import commonClasses.*;
 import commonClasses.exceptions.*;
+import library.Packet;
 
 
 public interface ICommLib {
@@ -10,15 +14,15 @@ public interface ICommLib {
 
     String post(PublicKey pk, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException;
 
-    String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException;
+    String postGeneral(PublicKey key, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException;
 
-    Announcement[] read(PublicKey key, int number) throws UserNotFoundException;
+    HashMap<Integer, ArrayList<Announcement>> read(PublicKey key, Packet packet) throws UserNotFoundException;
 
-    Announcement[] readGeneral(int number);
+    HashMap<Integer, ArrayList<Announcement>> readGeneral(Packet packet);
 
-    Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException;
+    Announcement getAnnouncementById(char[] id, Packet packet) throws AnnouncementNotFoundException;
 
-    User getUserById(int id) throws UserNotFoundException;
+    User getUserById(int id, Packet packet) throws UserNotFoundException;
 
     int getRegisterWts();
 

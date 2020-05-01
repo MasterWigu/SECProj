@@ -28,7 +28,7 @@ public class PacketSigner {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
             System.out.println("Crypto error verifying packet");
         } catch (InvalidKeyException e) {
-            System.out.println("Invalid private key!");
+            System.out.println("Invalid public key verifying packet!");
         }
 
         p.setSign(signature);
@@ -45,7 +45,8 @@ public class PacketSigner {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
             System.out.println("Crypto error signing packet");
         } catch (InvalidKeyException e) {
-            System.out.println("Invalid private key!");
+            e.printStackTrace();
+            System.out.println("Invalid private key signing packet!");
         }
         p.setSign(signature);
 

@@ -72,12 +72,12 @@ public class SocketServer {
 
             Packet request = (Packet) in.readObject();
             Packet response;
-            if (!PacketSigner.verify(request, null)) {
+            if (!PacketSigner.verify(request, request.getSenderPk())) {
                 System.out.println("Error verifying packet!");
                 response = new Packet();
                 response.setFunction(Packet.Func.ERROR);
                 response.setSenderPk(serverPublicKey);
-                response.setMsg("Invalid Packet received".toCharArray());
+                response.setMessage("Invalid Packet received".toCharArray());
             }
             else {
                 response = processor.doOperation(request);

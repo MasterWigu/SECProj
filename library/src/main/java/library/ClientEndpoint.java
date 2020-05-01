@@ -19,7 +19,6 @@ public class ClientEndpoint {
     private BAtomicRegister atomicRegister;
 
 
-    // TODO communication
     public ClientEndpoint(PrivateKey cpk, PublicKey key, ArrayList<SRData> s, int faults){
 
         client = new SRData();
@@ -35,7 +34,7 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.write(request);
 
-        return Arrays.toString(response.getMsg());
+        return Arrays.toString(response.getMessage());
     }
 
 
@@ -55,7 +54,7 @@ public class ClientEndpoint {
         else if (response.getFunction() == Packet.Func.INVALID_ANN)
             throw  new InvalidAnnouncementException();
         else if (response.getFunction() == Packet.Func.POST)
-            return response.getMsg();
+            return response.getMessage();
         else
             throw new CommunicationErrorException();
     }
@@ -77,7 +76,7 @@ public class ClientEndpoint {
         else if (response.getFunction() == Packet.Func.INVALID_ANN)
             throw  new InvalidAnnouncementException();
         else if (response.getFunction() == Packet.Func.POST_GENERAL)
-            return response.getMsg();
+            return response.getMessage();
         else
             throw new CommunicationErrorException();
 
@@ -161,7 +160,7 @@ public class ClientEndpoint {
         return user;
     }
 
-    private Announcement[] selectAnnouncements(Map<Integer, List<Announcement>> anns, int number) {
+    private Announcement[] selectAnnouncements(Map<Integer, ArrayList<Announcement>> anns, int number) {
         int annCount = 0;
         ArrayList<Announcement> outAnns = new ArrayList<>();
 

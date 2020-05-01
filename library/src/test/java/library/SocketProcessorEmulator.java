@@ -2,7 +2,7 @@ package library;
 
 import library.Interfaces.ISocketProcessor;
 import java.security.PublicKey;
-
+/*
 public class SocketProcessorEmulator implements ISocketProcessor {
     Packet tempPacket;
     boolean read = true;
@@ -12,7 +12,7 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         serverPublicKey = serverPK;
     }
 
-
+/*
     @Override
     public Packet doOperation(Packet packet) {
         tempPacket = packet;
@@ -38,4 +38,4 @@ public class SocketProcessorEmulator implements ISocketProcessor {
 
         return response;
     }
-}
+}*/

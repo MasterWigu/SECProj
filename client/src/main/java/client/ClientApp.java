@@ -28,7 +28,7 @@ public class ClientApp {
                     SRData server = new SRData();
                     server.setId(Integer.parseInt(dataServers[0]));
                     server.setHost(dataServers[1]);
-                    server.setId(Integer.parseInt(dataServers[2]));
+                    server.setPort(Integer.parseInt(dataServers[2]));
                     servers.add(server);
                 }
                 reader.close();
@@ -38,6 +38,8 @@ public class ClientApp {
                 ex.printStackTrace();
             }
 
+            for (SRData srv : servers)
+                System.out.println(srv);
             // TODO define faults
             Client c = new Client(a, servers, 0);
             c.login();

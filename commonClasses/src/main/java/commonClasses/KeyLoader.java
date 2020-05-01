@@ -65,9 +65,9 @@ public class KeyLoader {
         KeyStore keyStore = getKeystore(path, password);
         Certificate cert;
         try {
-            for (SRData srd : servers){
-                cert = keyStore.getCertificate("dpas-cert-server-"+srd.getId());
-                srd.setPubKey(cert.getPublicKey());
+            for (SRData srv : servers){
+                cert = keyStore.getCertificate("dpas-cert-server-"+srv.getId());
+                srv.setPubKey(cert.getPublicKey());
             }
         } catch (KeyStoreException e) {
             throw new KeyException();

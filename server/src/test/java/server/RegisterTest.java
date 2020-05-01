@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 public class RegisterTest extends ServerTestsBase{
 
-
+/*
     @Test
     public void success() throws UserNotFoundException, KeyException {
         int id1 = Integer.parseInt(server.register(client1Keys.getPublic(), "TEST01").replace("Successful, your id is ", ""));
@@ -48,7 +48,7 @@ public class RegisterTest extends ServerTestsBase{
         server.getUserById(5);
     }
 
-
+*/
 
 
 }

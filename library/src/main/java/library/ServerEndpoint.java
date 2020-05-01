@@ -6,6 +6,9 @@ import commonClasses.exceptions.*;
 import library.Interfaces.ICommLib;
 import library.Interfaces.ISocketProcessor;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static library.Packet.Func.*;
 
@@ -26,27 +29,30 @@ public class ServerEndpoint implements ISocketProcessor {
         switch (packet.getFunction()){
             case GET_WTS:
                 response = handleGetWts(packet, response);
+                response.setRid(packet.getRid());
                 break;
             case WRITE_BACK:
+                //TODO do this shit
                 response = handleWriteBack(packet, response);
             case REGISTER:
+                response.setFunction(REGISTER);
+                response.setWts(packet.getWts());
                 try {
                     String register = aDPASService.register(packet.getSenderPk(), packet.getWts());
-                    response.setFunction(REGISTER);
-                    response.setMsg(register.toCharArray());
-                    response.setWts(packet.getWts());
+                    response.setMessage(register.toCharArray());
                 } catch (KeyException e) {
                     response.setFunction(ERROR);
-                    response.setMsg("Invalid Public Key.".toCharArray());
+                    response.setMessage("Invalid Public Key.".toCharArray());
                 } catch (InvalidWtsException e) {
                     response.setFunction(ERROR);
-                    response.setMsg("Invalid WTS on register.".toCharArray());
+                    response.setMessage("Invalid WTS on register.".toCharArray());
                 }
                 break;
             case POST:
+                response.setFunction(POST);
+                response.setWts(packet.getWts());
                 try {
                     String post = aDPASService.post(packet.getSenderPk(), packet.getSingleAnnouncement(), packet.getWts());
-                    response.setFunction(POST);
                     response.setMessage(post.toCharArray());
                 } catch (UserNotFoundException e) {
                     response.setFunction(USER_NOT_FOUND);
@@ -55,9 +61,10 @@ public class ServerEndpoint implements ISocketProcessor {
                 }
                 break;
             case POST_GENERAL:
+                response.setFunction(POST_GENERAL);
+                response.setWts(packet.getWts());
                 try{
-                    String postGeneral = aDPASService.postGeneral(packet.getSenderPk(), packet.getMessage(), packet.getAnnouncements(), packet.getTimestamp(), packet.getMessageSignature());
-                    response.setFunction(POST_GENERAL);
+                    String postGeneral = aDPASService.postGeneral(packet.getSenderPk(), packet.getSingleAnnouncement(), packet.getWts());
                     response.setMessage(postGeneral.toCharArray());
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
@@ -66,32 +73,38 @@ public class ServerEndpoint implements ISocketProcessor {
                 }
                 break;
             case READ:
+                response.setFunction(READ);
+                response.setRid(packet.getRid());
                 try{
-                    Announcement[] a = aDPASService.read(packet.getSenderPk(), packet.getNumberOfAnnouncements());
-                    response.setFunction(READ);
+                    HashMap<Integer, ArrayList<Announcement>> a = aDPASService.read(packet.getSenderPk(), response);
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
                 }
                 break;
             case READ_GENERAL:
-                Announcement[] a = aDPASService.readGeneral(packet.getNumberOfAnnouncements());
                 response.setFunction(READ_GENERAL);
+                response.setRid(packet.getRid());
+
+                Map<Integer, ArrayList<Announcement>> a = aDPASService.readGeneral(response);
                 response.setAnnouncements(a);
+
                 break;
             case GET_ANN_ID:
+                response.setFunction(GET_ANN_ID);
+                response.setRid(packet.getRid());
                 try {
-                    Announcement ann = aDPASService.getAnnouncementById(packet.getId());
-                    response.setFunction(GET_ANN_ID);
-                    response.setAnnouncements(new Announcement[]{ann});
+                    Announcement ann = aDPASService.getAnnouncementById(packet.getCharId(), response);
+                    response.setSingleAnnouncement(ann);
                 } catch (AnnouncementNotFoundException e){
                     response.setFunction(ANN_NOT_FOUND);
                 }
                 break;
             case GET_USER_ID:
+                response.setFunction(GET_USER_ID);
+                response.setRid(response.getRid());
                 try {
-                    User user = aDPASService.getUserById(packet.getId());
-                    response.setFunction(GET_USER_ID);
+                    User user = aDPASService.getUserById(packet.getId(), response);
                     response.setUser(user);
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
@@ -135,10 +148,10 @@ public class ServerEndpoint implements ISocketProcessor {
 
     private Packet handleWriteBack(Packet pack, Packet response) {
         response.setFunction(WRITE_BACK);
-        switch (pack.getAuxFunction()) {
+        /*switch (pack.getAuxFunction()) {
             case READ:
                 try{
-                    Announcement[] a = aDPASService.read(packet.getSenderPk(), packet.getNumberOfAnnouncements());
+                    Map<Integer, ArrayList<Announcement>> a = aDPASService.read(packet.getSenderPk(), packet.getNumberOfAnnouncements());
                     response.setFunction(READ);
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){
@@ -146,7 +159,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 }
                 break;
             case READ_GENERAL:
-                Announcement[] a = aDPASService.readGeneral(packet.getNumberOfAnnouncements());
+                Map<Integer, ArrayList<Announcement>> a = aDPASService.readGeneral(packet.getNumberOfAnnouncements());
                 response.setFunction(READ_GENERAL);
                 response.setAnnouncements(a);
                 break;
@@ -170,6 +183,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 break;
             default:
                 response.setFunction(ERROR);
-        }
+        }*/
+        return  null;
     }
 }

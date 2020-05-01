@@ -7,7 +7,7 @@ import org.testng.AssertJUnit;
 
 import java.security.KeyPair;
 import java.util.Arrays;
-
+/*
 public class SocketsTest {
     AuthPerfectP2PLinks clientSocket1;
     AuthPerfectP2PLinks clientSocket2;
@@ -109,4 +109,4 @@ public class SocketsTest {
         AssertJUnit.assertArrayEquals("Invalid Packet received".toCharArray(), receive.getMessage());
         Assert.assertTrue(serverProcessor.read);
     }
-}
+}*/

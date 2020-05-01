@@ -4,26 +4,25 @@ import commonClasses.Announcement;
 import commonClasses.MessageSigner;
 import commonClasses.User;
 import commonClasses.exceptions.*;
-import javafx.beans.InvalidationListener;
 import library.Interfaces.ICommLib;
+import library.Packet;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.lang3.SerializationUtils;
 
 
 public class DPASService implements ICommLib {
-
-	private List<Announcement> announcements;
-
 
 	private List<User> users;
 	private Integer registerWts;
 	private final Object usersListLock;
 
-	private HashMap<PublicKey, HashMap<Integer, ArrayList<Announcement>>> personalBoards;
+	private HashMap<PublicKey, ArrayList<Announcement>> personalBoards;
+	private HashMap<PublicKey, ArrayList<Announcement>> personalBoardBuffers;
 	private HashMap<PublicKey, Integer> personalWtss;
 	private final HashMap<PublicKey, Object> personalBoardLocks;
 
@@ -58,22 +57,29 @@ public class DPASService implements ICommLib {
 
 
 	DPASService(int id) {
-		announcements = new ArrayList<>();
 		users = new ArrayList<>();
-
 		usersListLock = new Object();
+		registerWts = 0;
+
+		personalBoards = new HashMap<>();
+		personalBoardBuffers = new HashMap<>();
 		personalBoardLocks = new HashMap<>();
 		personalWtss = new HashMap<>();
 
+
+		generalBoard = new HashMap<>();
 		generalBoardLock = new Object();
+		generalWts = 0;
 
 		fileSaver = FileSaver.getInstance("src\\main\\resources\\", id);
 
-		users = fileSaver.readUsers();
-		announcements = fileSaver.readAnnouncements();
+		//users = fileSaver.readUsers();
 
-		useFilesRead = true;
-		useFilesWrite = true;
+		//TODO update
+		//announcements = fileSaver.readAnnouncements();
+
+		useFilesRead = false;
+		useFilesWrite = false;
 	}
 
 
@@ -94,7 +100,8 @@ public class DPASService implements ICommLib {
 				user = new User(users.size()+1, pk);
 				users.add(user);
 				personalBoardLocks.put(pk, new Object());
-				personalBoards.put(pk, new HashMap<Integer, ArrayList<Announcement>>());
+				personalBoards.put(pk, new ArrayList<Announcement>());
+				personalBoardBuffers.put(pk, new ArrayList<Announcement>());
 				personalWtss.put(pk, 0);
 				registerWts++;
 				if (useFilesWrite)
@@ -116,7 +123,7 @@ public class DPASService implements ICommLib {
 	@Override
 	public int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException {
 		int tempWts;
-		if (board == 0) {
+		if (board == 1) {
 			synchronized (generalBoardLock) {
 				tempWts = generalWts;
 			}
@@ -133,13 +140,12 @@ public class DPASService implements ICommLib {
 	}
 
 	private boolean checkRepeatedAnn(Announcement a) {
-		//TODO refactor
-		for (Announcement a1 : announcements) {
-			if (a1.equals(a)) {
-				return true;
-			}
+		try {
+			getAnnouncementWithId(a.getId());
+		} catch (AnnouncementNotFoundException e) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -157,85 +163,134 @@ public class DPASService implements ICommLib {
 				throw new InvalidAnnouncementException();
 			}
 
-			if (!checkRepeatedAnn(ann)) {
-				String id = "P" + creator.getId() + "_" + (personalBoards.get(creator.getPk()).size() + 1);
-				ann.setId(id.toCharArray());
-				personalBoards.get(creator.getPk()).put(wts, new ArrayList<Announcement>());
-				personalBoards.get(creator.getPk()).get(wts).add(ann);
-				personalWtss.put(creator.getPk(), personalWtss.get(creator.getPk()) + 1);
-				if (useFilesWrite)
-					fileSaver.writeAnnouncements(announcements);
-				return "Announcement successfully posted with id " + announcements.size() + " to personal board.";
+			String id = "P" + creator.getId() + "_" + (personalBoards.get(creator.getPk()).size() + 1);
+			ann.setId(id.toCharArray());
+			if (checkRepeatedAnn(ann)) {
+				return "Duplicate Announcement";
 			}
 
+			if (wts < personalWtss.get(pk))
+				throw new InvalidAnnouncementException();
+
+			if (wts == personalWtss.get(pk)+1) {
+				personalBoards.get(creator.getPk()).add(ann);
+				personalWtss.put(creator.getPk(), personalWtss.get(creator.getPk()) + 1);
+
+				//check if any packet in buffer can be posted
+				boolean again = true;
+				while (again) {
+					again = false;
+					for (Announcement a : personalBoardBuffers.get(pk)) {
+						if (a.getWts() == personalWtss.get(pk)+1) {
+							personalBoards.get(creator.getPk()).add(ann);
+							personalWtss.put(creator.getPk(), personalWtss.get(creator.getPk()) + 1);
+							again = true;
+						}
+					}
+				}
+
+			}
+			else { // if we still need packet before this one, put in buffer
+				personalBoardBuffers.get(pk).add(ann);
+			}
+
+
+			if (useFilesWrite)
+				//TODO update
+				fileSaver.writeAnnouncements(null);
+
+			return "Announcement successfully posted with id " + id + " to personal board.";
 		}
-		return "Duplicate Announcement";
 	}
 
 	@Override
-	public String postGeneral(PublicKey key, char[] message, Announcement[] a, long time, byte[] sign) throws UserNotFoundException, InvalidAnnouncementException {
-		synchronized (announcementsListLock) {
-			User user;
-			try {
-				user = getUserWithPk(key);
-			} catch (UserNotFoundException e) {
-				throw new UserNotFoundException();
-			}
-			Announcement tempAnn = new Announcement(message, user, a, 1, time, sign);
-			if (!MessageSigner.verify(tempAnn)) {
+	public String postGeneral(PublicKey key, Announcement ann, int wts) throws UserNotFoundException, InvalidAnnouncementException {
+		if (!personalBoards.containsKey(ann.getCreator().getPk())) { // check if user exists
+			throw new UserNotFoundException();
+		}
+
+		User creator = getUserWithPk(ann.getCreator().getPk());
+		synchronized (generalBoardLock) {
+			ann.setCreator(creator);
+			if (ann.getBoard() != 1 || !key.equals(ann.getCreator().getPk()))
+				throw new InvalidAnnouncementException();
+
+			if (!MessageSigner.verify(ann, key) || !MessageSigner.verify(ann)) {
 				throw new InvalidAnnouncementException();
 			}
 
-			if (!checkRepeatedAnn(tempAnn)) {
-				tempAnn.setId(announcements.size()+1);
-				announcements.add(tempAnn);
-				if (useFilesWrite)
-					fileSaver.writeAnnouncements(announcements);
-				return "Announcement successfully posted with id " + announcements.size() + " to general board";
+
+			String id = "G" + creator.getId() + "_" + wts;
+			ann.setId(id.toCharArray());
+			if (checkRepeatedAnn(ann)) {
+				return "Duplicate Announcement";
 			}
 
+			if (wts > generalWts+1)
+				throw new InvalidAnnouncementException();
+
+			if (!generalBoard.containsKey(wts)) {
+				generalBoard.put(wts, new ArrayList<Announcement>());
+			}
+
+			generalBoard.get(wts).add(ann);
+
+			if (generalWts < wts) // if this ann is late, and the generalWts is now greater, we dont update
+				generalWts = wts;
+
+			if (useFilesWrite)
+				//TODO update
+				fileSaver.writeAnnouncements(null);
+
+			return "Announcement successfully posted with id " + id + " to general board.";
 		}
-		return "Duplicate Announcement";
+	}
+
+
+	@Override
+	public HashMap<Integer, ArrayList<Announcement>> read(PublicKey key, Packet packet) throws UserNotFoundException {
+		if (!personalBoards.containsKey(key)) { // check if user exists
+			throw new UserNotFoundException();
+		}
+		HashMap<Integer, ArrayList<Announcement>> outMap = new HashMap<>();
+
+		synchronized (personalBoardLocks.get(key)) {
+			packet.setWts(personalWtss.get(key));
+			outMap.put(-1, SerializationUtils.clone(personalBoards.get(key)));
+		}
+		return outMap;
 	}
 
 	@Override
-	public Announcement[] read(PublicKey key, int number) throws UserNotFoundException {
-		List<Announcement> tempAnnouncements = new ArrayList<>();
-		boolean sendAll = number==0;
-		for (Announcement a : announcements) {
-			if (a.getBoard()==0 && a.getCreator() == getUserWithPk(key)) {
-				tempAnnouncements.add(a);
-			}
-			if (--number == 0 && !sendAll) {
-				break;
-			}
+	public HashMap<Integer, ArrayList<Announcement>> readGeneral(Packet packet) {
+		HashMap<Integer, ArrayList<Announcement>> outMap;
+
+		synchronized (generalBoardLock) {
+			packet.setWts(generalWts);
+			outMap = SerializationUtils.clone(generalBoard);
 		}
-		return tempAnnouncements.toArray(new Announcement[0]);
+		return outMap;
 	}
 
 	@Override
-	public Announcement[] readGeneral(int number) {
-		List<Announcement> tempAnnouncements = new ArrayList<>();
-		boolean sendAll = number==0;
-		for (Announcement a : announcements) {
-			if (a.getBoard()==1) {
-				tempAnnouncements.add(a);
-			}
-			if ((--number == 0) && !sendAll) {
-				break;
-			}
+	public Announcement getAnnouncementById(char[] id, Packet packet) throws AnnouncementNotFoundException {
+		Announcement ann = getAnnouncementWithId(id);
+		if (ann.getBoard() == 1) { // if board general
+			packet.setWts(generalWts);
+		} else {
+			packet.setWts(personalWtss.get(ann.getCreator().getPk()));
 		}
-		return tempAnnouncements.toArray(new Announcement[0]);
-	}
-
-	@Override
-	public Announcement getAnnouncementById(int id) throws AnnouncementNotFoundException {
 		return getAnnouncementWithId(id);
 	}
 
 	@Override
-	public User getUserById(int id) throws UserNotFoundException {
-		return getUserWithId(id);
+	public User getUserById(int id, Packet packet) throws UserNotFoundException {
+		User user;
+		synchronized (usersListLock) {
+			user = getUserWithId(id);
+			packet.setWts(registerWts);
+		}
+		return user;
 	}
 
 
@@ -257,10 +312,41 @@ public class DPASService implements ICommLib {
 		throw new UserNotFoundException();
 	}
 
-	private Announcement getAnnouncementWithId(int id) throws AnnouncementNotFoundException {
-		for (Announcement a : announcements) {
-			if (a.getId() == id) {
-				return a;
+	private Announcement getAnnouncementWithId(char[] id) throws AnnouncementNotFoundException {
+
+		String annId = new String(id);
+		String board = annId.substring(0,1); // get first letter
+
+		String[] user_ann_ids = annId.substring(1).split("_");
+
+		System.out.println(annId);
+		System.out.println(board);
+		System.out.println(Integer.parseInt(user_ann_ids[0]));
+		System.out.println(Integer.parseInt(user_ann_ids[1]));
+		if (board.equals("G")) {
+			// since id = GXX_YY where YY is the wts, we can search directly in the correct wts
+			int annWts = Integer.parseInt(user_ann_ids[1]);
+			if (!generalBoard.containsKey(annWts)) {
+				throw new AnnouncementNotFoundException();
+			}
+			for (Announcement ann : generalBoard.get(annWts)) {
+				if (Arrays.equals(ann.getId(), id)) {
+					return ann;
+				}
+			}
+		} else if (board.equals("P")) {
+			int userId = Integer.parseInt(user_ann_ids[0]);
+			User user;
+			try {
+				user = getUserWithId(userId);
+			} catch (UserNotFoundException e) {
+				System.out.println("MERDA");
+				throw new AnnouncementNotFoundException();
+			}
+			for (Announcement ann : personalBoards.get(user.getPk())) {
+				if (Arrays.equals(ann.getId(), id)) {
+					return ann;
+				}
 			}
 		}
 		throw new AnnouncementNotFoundException();

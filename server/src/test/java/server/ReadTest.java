@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class ReadTest extends ServerTestsBase {
     private Announcement ann1;
 
-
+/*
     @BeforeMethod
     public void populateServer() throws UserNotFoundException, KeyException, AnnouncementNotFoundException, InvalidAnnouncementException {
         server.register(client1Keys.getPublic(), "TESTU01");
@@ -70,6 +70,6 @@ public class ReadTest extends ServerTestsBase {
         Assert.assertEquals(a1, server.read(client2Keys.getPublic(), 0)[0]);
 
     }
-
+*/
 
 }
