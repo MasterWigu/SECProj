@@ -25,7 +25,7 @@ public class MessageSigner {
             creatorPk = cpk;
             board = b;
             reffs = anns;
-            wts = wts;
+            this.wts = wts;
         }
     }
 
@@ -45,7 +45,7 @@ public class MessageSigner {
         AnnToSign ann = new AnnToSign(p.getMessage(), p.getCreator().getPk(), p.getBoard(), p.getRefs(), p.getWts());
         byte[] hash = getHash(ann);
 
-        byte[] messageHash = null;
+        byte[] messageHash;
 
         try {
             Cipher cipher = Cipher.getInstance("RSA");

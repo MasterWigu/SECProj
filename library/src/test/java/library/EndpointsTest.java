@@ -1,20 +1,5 @@
 package library;
 
-import commonClasses.Announcement;
-import commonClasses.User;
-import commonClasses.exceptions.AnnouncementNotFoundException;
-import library.Exceptions.CommunicationErrorException;
-import commonClasses.exceptions.InvalidAnnouncementException;
-import commonClasses.exceptions.UserNotFoundException;
-import keyStoreCreator.KeyStoreCreator;
-import library.Interfaces.ISocketProcessor;
-
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-import org.testng.annotations.*;
-
-import java.security.KeyPair;
-
 public class EndpointsTest {
     // TODO Alter
     /*DPASEmulation serverEnd;

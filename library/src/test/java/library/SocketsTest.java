@@ -1,12 +1,5 @@
 package library;
 
-import keyStoreCreator.KeyStoreCreator;
-import org.testng.annotations.*;
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-
-import java.security.KeyPair;
-import java.util.Arrays;
 /*
 public class SocketsTest {
     AuthPerfectP2PLinks clientSocket1;

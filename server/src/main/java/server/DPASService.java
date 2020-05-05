@@ -6,16 +6,21 @@ import commonClasses.User;
 import commonClasses.exceptions.*;
 import library.Interfaces.ICommLib;
 import library.Packet;
+import org.apache.commons.lang3.SerializationUtils;
+import server.DataSerializables.GeneralBoardData;
+import server.DataSerializables.PersonalBoardsData;
+import server.DataSerializables.UsersData;
 
 import java.security.PublicKey;
-import java.util.*;
-
-import org.apache.commons.lang3.SerializationUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DPASService implements ICommLib {
 
-	private List<User> users;
+	private ArrayList<User> users;
 	private Integer registerWts;
 	private final Object usersListLock;
 
@@ -28,30 +33,33 @@ public class DPASService implements ICommLib {
 	private Integer generalWts;
 	private final Object generalBoardLock;
 
-
-
-
 	private FileSaver fileSaver;
 	private boolean useFilesRead;
 	private boolean useFilesWrite;
 
-/*
+
 	DPASService(boolean filesRead, boolean filesWrite) {
 		useFilesRead = filesRead;
 		useFilesWrite = filesWrite;
 
-		announcements = new ArrayList<>();
 		users = new ArrayList<>();
-
 		usersListLock = new Object();
-		announcementsListLock = new Object();
+		registerWts = 0;
+
+		personalBoards = new HashMap<>();
+		personalBoardBuffers = new HashMap<>();
+		personalBoardLocks = new HashMap<>();
+		personalWtss = new HashMap<>();
+
+
+		generalBoard = new HashMap<>();
+		generalBoardLock = new Object();
+		generalWts = 0;
+
 
 		fileSaver = FileSaver.getInstance("src\\test\\resources\\", 1);
-		if (useFilesRead) {
-			users = fileSaver.readUsers();
-			announcements = fileSaver.readAnnouncements();
-		}
-	}*/
+		loadFiles();
+	}
 
 
 	DPASService(int id) {
@@ -71,19 +79,57 @@ public class DPASService implements ICommLib {
 
 		fileSaver = FileSaver.getInstance("src\\main\\resources\\", id);
 
-		//users = fileSaver.readUsers();
 
-		//TODO update
-		//announcements = fileSaver.readAnnouncements();
+		loadFiles();
 
 		useFilesRead = false;
 		useFilesWrite = false;
 	}
 
+	private void loadFiles() {
+		if (!useFilesRead)
+			return;
+		UsersData usersData = fileSaver.readUsers();
+		users = usersData.getUsers();
+		registerWts = usersData.getRegisterWts();
+
+
+		GeneralBoardData generalBoardData = fileSaver.readGeneralBoard();
+		generalBoard = generalBoardData.getGeneralBoard();
+		generalWts = generalBoardData.getGeneralWts();
+
+
+		PersonalBoardsData personalBoardsData = fileSaver.readPersonalBoards();
+		personalBoards = personalBoardsData.getPersonalBoards();
+		personalBoardBuffers = personalBoardsData.getPersonalBoardBuffers();
+		personalWtss = personalBoardsData.getPersonalWtss();
+	}
+
+	private void savePersonalBoards() {
+		if (!useFilesWrite)
+			return;
+		PersonalBoardsData personalBoardsData = new PersonalBoardsData(personalBoards, personalBoardBuffers, personalWtss);
+		fileSaver.writePersonalBoards(personalBoardsData);
+	}
+
+	private void saveGeneralBoard() {
+		if (!useFilesWrite)
+			return;
+		GeneralBoardData generalBoardData = new GeneralBoardData(generalBoard, generalWts);
+		fileSaver.writeGeneralBoard(generalBoardData);
+	}
+
+	private void saveUsers() {
+		if (!useFilesWrite)
+			return;
+		UsersData usersData = new UsersData(users, registerWts);
+		fileSaver.writeUsers(usersData);
+	}
+
+
 
 	@Override
 	public String register(PublicKey pk, int wts) throws KeyException, InvalidWtsException {
-		//TODO remove this shit/add wts verification
 		if (wts <= 0) {
 			throw new InvalidWtsException();
 		}
@@ -102,11 +148,10 @@ public class DPASService implements ICommLib {
 				personalBoardBuffers.put(pk, new ArrayList<Announcement>());
 				personalWtss.put(pk, 0);
 				registerWts++;
-				if (useFilesWrite)
-					fileSaver.writeUsers(users);
+				saveUsers();
 			}
 		}
-		return "Successful, your id is "+ user.getId();
+		return "Successfully logged in, your id is "+ user.getId();
 	}
 
 	@Override
@@ -191,11 +236,7 @@ public class DPASService implements ICommLib {
 			else { // if we still need packet before this one, put in buffer
 				personalBoardBuffers.get(pk).add(ann);
 			}
-
-
-			if (useFilesWrite)
-				//TODO update
-				fileSaver.writeAnnouncements(null);
+			savePersonalBoards();
 
 			return "Announcement successfully posted with id " + id + " to personal board.";
 		}
@@ -236,9 +277,7 @@ public class DPASService implements ICommLib {
 			if (generalWts < wts) // if this ann is late, and the generalWts is now greater, we dont update
 				generalWts = wts;
 
-			if (useFilesWrite)
-				//TODO update
-				fileSaver.writeAnnouncements(null);
+			saveGeneralBoard();
 
 			return "Announcement successfully posted with id " + id + " to general board.";
 		}
@@ -296,7 +335,6 @@ public class DPASService implements ICommLib {
 			if (personalWtss.get(boardOwner.getPk()) < maxWts)
 				personalWtss.put(boardOwner.getPk(), maxWts);
 		}
-		System.out.println("ReadWB done");
 	}
 
 	@Override
@@ -322,7 +360,6 @@ public class DPASService implements ICommLib {
 			if (generalWts < maxWts)
 				generalWts = maxWts;
 		}
-		System.out.println("ReadGeneralWB done");
 	}
 
 	@Override
@@ -381,9 +418,7 @@ public class DPASService implements ICommLib {
 
 	@Override
 	public void userByIdWb(PublicKey pk, User user) {
-		//TODO hmmm fazer algo?
-		return;
-
+		// Don't WB users (may allow attacks and duplication of user ids
 	}
 
 
@@ -412,11 +447,6 @@ public class DPASService implements ICommLib {
 		String board = annId.substring(0,1); // get first letter
 
 		String[] user_ann_ids = annId.substring(1).split("_");
-
-		System.out.println(annId);
-		System.out.println(board);
-		System.out.println(Integer.parseInt(user_ann_ids[0]));
-		System.out.println(Integer.parseInt(user_ann_ids[1]));
 		if (board.equals("G")) {
 			// since id = GXX_YY where YY is the wts, we can search directly in the correct wts
 			int annWts = Integer.parseInt(user_ann_ids[1]);

@@ -10,8 +10,6 @@ import java.io.ObjectOutputStream;
 import java.security.*;
 import java.util.Arrays;
 
-import static java.lang.Math.abs;
-
 public class PacketSigner {
 
     public static boolean verify(Packet p, PublicKey pk) {

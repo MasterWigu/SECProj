@@ -1,7 +1,5 @@
 package library;
 
-import library.Interfaces.ISocketProcessor;
-import java.security.PublicKey;
 /*
 public class SocketProcessorEmulator implements ISocketProcessor {
     Packet tempPacket;

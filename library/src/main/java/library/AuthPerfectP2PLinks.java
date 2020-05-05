@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-// Antigo SocketClient
+// Old SocketClient
 public class AuthPerfectP2PLinks {
     private static List<Integer> delivered;
 
@@ -33,8 +33,8 @@ public class AuthPerfectP2PLinks {
 
             Socket sendSocket = new Socket(receiver.getHost(), receiver.getPort());
 
-            ObjectOutputStream outStream = null;
-            ObjectInputStream inputStream = null;
+            ObjectOutputStream outStream;
+            ObjectInputStream inputStream;
             Packet response;
 
 

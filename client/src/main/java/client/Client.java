@@ -1,15 +1,11 @@
 package client;
 
-import commonClasses.Announcement;
-import commonClasses.KeyLoader;
-import commonClasses.MessageSigner;
-import commonClasses.User;
+import commonClasses.*;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import library.Exceptions.CommunicationErrorException;
 import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.ClientEndpoint;
-import commonClasses.SRData;
+import library.Exceptions.CommunicationErrorException;
 
 import java.security.KeyException;
 import java.security.PrivateKey;
@@ -46,13 +42,13 @@ class Client {
 
 
 	void login() {
-		clientEndpoint.register();
+		System.out.println(clientEndpoint.register());
 	}
 
 
 	void work() {
-		int choice = 0;
-		while (choice != 9) {
+		int choice;
+		while (true) {
 			printMenu();
 			choice = readChoice();
 			switch (choice) {
@@ -122,7 +118,6 @@ class Client {
 		while (!finish) {
 			System.out.print("Announcement id: ");
 			line = keyboardSc.nextLine();
-			//int ann = Integer.valueOf(line);
 
 			if (line.trim().equals("0")) {
 				finish = true;
@@ -150,7 +145,7 @@ class Client {
 			}
 		} catch (UserNotFoundException e) {
 			e.printStackTrace();
-			//Unpossible
+			//Impossible
 		} catch (CommunicationErrorException | InvalidAnnouncementException e) {
 			System.out.println("Communication error, please try posting again.");
 			e.printStackTrace();

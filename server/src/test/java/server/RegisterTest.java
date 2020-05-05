@@ -1,11 +1,5 @@
 package server;
 
-import commonClasses.exceptions.KeyException;
-import commonClasses.exceptions.UserNotFoundException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-
 public class RegisterTest extends ServerTestsBase{
 
 /*

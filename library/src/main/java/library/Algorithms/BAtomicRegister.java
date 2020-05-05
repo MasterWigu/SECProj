@@ -2,12 +2,12 @@ package library.Algorithms;
 
 import commonClasses.Announcement;
 import commonClasses.MessageSigner;
+import commonClasses.SRData;
 import commonClasses.User;
 import library.AuthPerfectP2PLinks;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
 import library.Packet;
-import commonClasses.SRData;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.ArrayList;

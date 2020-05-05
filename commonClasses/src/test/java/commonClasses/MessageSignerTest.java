@@ -1,12 +1,5 @@
 package commonClasses;
 
-import keyStoreCreator.KeyStoreCreator;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-
-import java.security.KeyPair;
-
 public class MessageSignerTest {
 //TODO refactor
 /*
