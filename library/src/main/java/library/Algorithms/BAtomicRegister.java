@@ -8,6 +8,7 @@ import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
 import library.Packet;
 import commonClasses.SRData;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,10 @@ public class BAtomicRegister {
         this.faults = faults;
     }
 
+    public void shutdown() {
+        threadPool.shutdown();
+    }
+
     public Packet write(Packet pack) {
 
         Packet readWtsPack = new Packet();
@@ -93,8 +98,10 @@ public class BAtomicRegister {
                 e.printStackTrace();
             }
         }
-        if(errorCount >= quorum)
+        if(errorCount >= quorum) {
+            System.out.println("Not enough valid responses for quorum!");
             return null;
+        }
 
         return ackList.get(0);
     }
@@ -112,15 +119,17 @@ public class BAtomicRegister {
         sendAllBroadcast(pack, Mode.READ);
 
         int quorum = (int) Math.ceil(((double)servers.size() + faults) / 2);
-        while (readList.size() < quorum && errorCount < quorum) {
+
+        //if we dont wait for all we can get concurrency errors later, sad
+        while (readList.size()+errorCount < servers.size() && errorCount < quorum) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        if(errorCount >= quorum) {
-            System.out.println("FUCK1!");
+        if(errorCount >= quorum || readList.size() < quorum) {
+            System.out.println("Not enough valid responses for quorum!");
             return null;
         }
 
@@ -155,20 +164,23 @@ public class BAtomicRegister {
 
 
 
-        if (writeBack && false) { //TODO remove bypass
+        if (writeBack) {
             Packet wbPack = new Packet();
             wbPack.setFunction(Packet.Func.WRITE_BACK);
+            wbPack.setAuxFunction(pack.getFunction());
 
             wbPack.setAnnouncements(maxWtsPack.getAnnouncements());
             wbPack.setWts(maxWtsPack.getWts());
 
             Packet wbResp = writeInner(wbPack, wbPack.getWts());
-            if (wbResp == null)
+            if (wbResp == null) {
                 System.out.println("Error on writeback");
                 return null;
+            }
         }
 
         //TODO remove
+        System.out.println("AAAAAA NO");
         System.out.println(maxWtsPack);
         return maxWtsPack;
     }
@@ -181,13 +193,15 @@ public class BAtomicRegister {
                 @Override
                 public Void call(){
                     Packet respPack;
+                    Packet packToSend = SerializationUtils.clone(pack); //Deep copy of pack for each thread
+                    packToSend.setNonce(); //make sure to create new nonce so every packet is different
                     try {
-                        respPack = APP2PLink.sendFunction(pack, sender, server);
+                        respPack = APP2PLink.sendFunction(packToSend, sender, server);
 
                         if (mode == Mode.WRITE)
                             receiveWriteResp(respPack);
                         else if (mode == Mode.READ)
-                            receiveReadResp(respPack, pack);
+                            receiveReadResp(respPack, packToSend);
                     } catch (CommunicationErrorException | PacketValidationException e) {
                         errorCount++;
                     }
@@ -198,14 +212,23 @@ public class BAtomicRegister {
     }
 
     private synchronized void receiveWriteResp(Packet pack) {
-        if(wts == pack.getWts())
+        if(wts == pack.getWts() || pack.getWts() == -10)
             ackList.add(pack);
+
+        if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
+            errorCount++;
+        }
     }
 
     private synchronized void receiveReadResp(Packet pack, Packet sentPack) {
-        //TODO falha no read_general, rip
-        if (rid != pack.getRid())
+        //TODO remove fuck
+        System.out.println(pack.getRid());
+        System.out.println(rid);
+        if (rid != pack.getRid()) {
+            System.out.println("FUCKFUCK!");
+
             return;
+        }
 
         if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
             errorCount++;
@@ -217,12 +240,14 @@ public class BAtomicRegister {
                 for (List<Announcement> anns : pack.getAnnouncements().values()) {
                     for (Announcement ann : anns) {
                         if (sentPack.getUser() != null) { // if read
-                            if (!MessageSigner.verify(ann, sentPack.getUser().getPk()) || ann.getBoard() !=1) {
+                            if (!MessageSigner.verify(ann, sentPack.getUser().getPk()) || ann.getBoard() !=0) {
+                                System.out.println("FUCK2!");
                                 errorCount++;
                                 return;
                             }
                         } else { // if read_general
-                            if (!MessageSigner.verify(ann, null) || ann.getBoard() != 0) {
+                            if (!MessageSigner.verify(ann, null) || ann.getBoard() != 1) {
+                                System.out.println("FUCK3!");
                                 errorCount++;
                                 return;
                             }
@@ -232,16 +257,19 @@ public class BAtomicRegister {
             }
             if (pack.getSingleAnnouncement() != null) { // if get_ann_by_id and ann found
                 if (!MessageSigner.verify(pack.getSingleAnnouncement(), null)) {
+                    System.out.println("FUCK14");
                     errorCount++;
                     return;
                 }
                 if (sentPack.getCharId() != null && !Arrays.equals(pack.getSingleAnnouncement().getId(), sentPack.getCharId())) {
+                    System.out.println("FUCK5!");
                     errorCount++;
                     return;
                 }
             }
             if (pack.getUser() != null && sentPack.getId() != -1 && pack.getFunction() == Packet.Func.GET_USER_ID) { // if get_user_by_id and user found
                 if (pack.getUser().getId() != sentPack.getId()) {
+                    System.out.println("FUCK6!");
                     errorCount++;
                     return;
                 }

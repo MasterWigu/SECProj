@@ -8,10 +8,8 @@ import library.Interfaces.ICommLib;
 import library.Packet;
 
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 import org.apache.commons.lang3.SerializationUtils;
 
 
@@ -273,6 +271,61 @@ public class DPASService implements ICommLib {
 	}
 
 	@Override
+	public void readWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException, InvalidAnnouncementException {
+		if (!personalBoards.containsKey(pk)) { // check if user exists
+			throw new UserNotFoundException();
+		}
+		User boardOwner = getUserWithPk(announcements.get(-1).get(0).getCreator().getPk());
+		if (!announcements.keySet().contains(-1) || announcements.keySet().size() != 1) {
+			throw new InvalidAnnouncementException();
+		}
+
+		int maxWts = 0;
+
+		synchronized (personalBoardLocks.get(boardOwner.getPk())) {
+			for (Announcement ann : announcements.get(-1)) {
+				if (MessageSigner.verify(ann, boardOwner.getPk())) {
+					if (!personalBoards.get(boardOwner.getPk()).contains(ann)) {
+						personalBoards.get(boardOwner.getPk()).add(ann);
+						if (ann.getWts() > maxWts) {
+							maxWts = ann.getWts();
+						}
+					}
+				}
+			}
+			if (personalWtss.get(boardOwner.getPk()) < maxWts)
+				personalWtss.put(boardOwner.getPk(), maxWts);
+		}
+		System.out.println("ReadWB done");
+	}
+
+	@Override
+	public void readGeneralWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException {
+		if (!personalBoards.containsKey(pk)) { // check if user exists
+			throw new UserNotFoundException();
+		}
+
+		int maxWts = 0;
+		synchronized (generalBoardLock) {
+			for (int wts : announcements.keySet()) {
+				for (Announcement ann : announcements.get(wts)) {
+					if (MessageSigner.verify(ann, null) && ann.getWts() == wts) {
+						if (!generalBoard.get(wts).contains(ann)) {
+							generalBoard.get(wts).add(ann);
+							if (ann.getWts() > maxWts) {
+								maxWts = ann.getWts();
+							}
+						}
+					}
+				}
+			}
+			if (generalWts < maxWts)
+				generalWts = maxWts;
+		}
+		System.out.println("ReadGeneralWB done");
+	}
+
+	@Override
 	public Announcement getAnnouncementById(char[] id, Packet packet) throws AnnouncementNotFoundException {
 		Announcement ann = getAnnouncementWithId(id);
 		if (ann.getBoard() == 1) { // if board general
@@ -292,6 +345,47 @@ public class DPASService implements ICommLib {
 		}
 		return user;
 	}
+
+	@Override
+	public void announcementByIdWb(PublicKey pk, Announcement ann) throws UserNotFoundException {
+		if (!personalBoards.containsKey(pk) || !personalBoards.containsKey(ann.getCreator().getPk())) { // check if user exists
+			return;
+		}
+		if (MessageSigner.verify(ann)) {
+			int board = ann.getBoard();
+			if (board == 1) { //General board
+				int wts = ann.getWts();
+				synchronized (generalBoardLock) {
+					if (!generalBoard.get(wts).contains(ann)) {
+						generalBoard.get(wts).add(ann);
+					}
+					if (generalWts < wts) {
+						generalWts = wts;
+					}
+				}
+			}
+			else if (board == 0) { //personal board
+				User owner = getUserWithPk(ann.getCreator().getPk());
+				synchronized (personalBoardLocks.get(owner.getPk())) {
+					if (!personalBoards.get(owner.getPk()).contains(ann)) {
+						personalBoards.get(owner.getPk()).add(ann);
+						if (personalWtss.get(owner.getPk()) < ann.getWts()) {
+							personalWtss.put(owner.getPk(), ann.getWts());
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public void userByIdWb(PublicKey pk, User user) {
+		//TODO hmmm fazer algo?
+		return;
+
+	}
+
 
 
 	private User getUserWithPk(PublicKey pk) throws UserNotFoundException {
@@ -340,7 +434,6 @@ public class DPASService implements ICommLib {
 			try {
 				user = getUserWithId(userId);
 			} catch (UserNotFoundException e) {
-				System.out.println("MERDA");
 				throw new AnnouncementNotFoundException();
 			}
 			for (Announcement ann : personalBoards.get(user.getPk())) {

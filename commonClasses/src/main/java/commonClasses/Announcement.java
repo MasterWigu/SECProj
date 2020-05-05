@@ -71,13 +71,13 @@ public class Announcement implements Serializable {
         } else {
             out += "Board: Personal\n";
         }
-        out += "Ann. Id: " + id + "\n";
+        out += "Ann. Id: " + String.valueOf(id) + "\n";
         out += "Creator Id: " + creator.getId() + "\n";
         out += "WTS: " + wts + "\n";
         out += "Refers to: ";
         if (refs != null) {
             for (Announcement a : refs) {
-                out += a.getId() + ", ";
+                out += String.valueOf(a.getId()) + ", ";
             }
             if (refs.length != 0) {
                 out = out.substring(0, out.length() - 2);
@@ -89,10 +89,19 @@ public class Announcement implements Serializable {
         return out;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        Announcement ann;
+        if(o instanceof Announcement){
+            ann = (Announcement) o;
+        } else {
+            return false;
+        }
 
-
-    public boolean equals(Announcement ann) {
-        if (!getCreator().equals(ann.getCreator())) {
+        if (id != null && ann.getId() != null && !Arrays.equals(id, ann.getId())) {
+            return false;
+        }
+        if (!getCreator().getPk().equals(ann.getCreator().getPk())) {
             return false;
         }
         if (!Arrays.equals(getMessage(), ann.getMessage())) {

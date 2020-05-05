@@ -68,8 +68,11 @@ class Client {
 				case 4:
 					printPublicBoard();
 					break;
-				default:
+				case 9:
+					clientEndpoint.shutdown();
 					return;
+				default:
+					System.out.println("Invalid choice!");
 			}
 		}
 	}

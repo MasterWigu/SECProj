@@ -29,7 +29,7 @@ public class DPASServer {
 
             ICommLib aDPASService = new DPASService(id);
 
-            ISocketProcessor processor = new ServerEndpoint(aDPASService, serverPubKey);
+            ISocketProcessor processor = new ServerEndpoint(aDPASService);
 
             SocketServer serverListener = new SocketServer(processor, registryPort, serverPrivKey, serverPubKey);
             serverListener.createWorker();

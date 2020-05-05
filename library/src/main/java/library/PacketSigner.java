@@ -36,6 +36,8 @@ public class PacketSigner {
     }
 
     public static Packet sign(Packet p, PrivateKey pk) {
+
+        p.setSign(null);
         byte[] hash = getHash(p);
         byte[] signature = null;
         try {

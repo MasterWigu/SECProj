@@ -27,6 +27,10 @@ public class ClientEndpoint {
         atomicRegister = new BAtomicRegister(client, s, faults);
     }
 
+    public void shutdown() {
+        atomicRegister.shutdown();
+    }
+
     public String register() {
         Packet request = new Packet();
 

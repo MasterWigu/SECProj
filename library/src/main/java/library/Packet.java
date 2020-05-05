@@ -70,8 +70,8 @@ public class Packet implements Serializable {
         return nonce;
     }
 
-    public void setNonce(Integer nonce) {
-        this.nonce = nonce;
+    public void setNonce() {
+        this.nonce = random.nextInt();
     }
 
     public PublicKey getReceiverPk() {

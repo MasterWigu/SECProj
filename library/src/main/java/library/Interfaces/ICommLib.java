@@ -3,6 +3,7 @@ package library.Interfaces;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import commonClasses.*;
 import commonClasses.exceptions.*;
@@ -28,4 +29,11 @@ public interface ICommLib {
 
     int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException;
 
+    void readWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException, InvalidAnnouncementException;
+
+    void readGeneralWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException;
+
+    void announcementByIdWb(PublicKey pk, Announcement ann) throws UserNotFoundException;
+
+    void userByIdWb(PublicKey pk, User user);
 }
