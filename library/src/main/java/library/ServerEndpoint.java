@@ -57,7 +57,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setMessage(post.toCharArray());
                 } catch (UserNotFoundException e) {
                     response.setFunction(USER_NOT_FOUND);
-                    response.setWts(-10);
+                    response.setWts(-1);
                 } catch (InvalidAnnouncementException e) {
                     response.setFunction(INVALID_ANN);
                     response.setWts(-1);
@@ -71,7 +71,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setMessage(postGeneral.toCharArray());
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
-                    response.setWts(-10);
+                    response.setWts(-1);
                 } catch (InvalidAnnouncementException e) {
                     response.setFunction(INVALID_ANN);
                     response.setWts(-1);
@@ -85,7 +85,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
-                    response.setWts(-10);
+                    response.setWts(-1);
                 }
                 break;
             case READ_GENERAL:
@@ -138,7 +138,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setWts(aDPASService.getChannelWts(0, pack.getUser().getPk()));
                 } catch (UserNotFoundException e) {
                     response.setFunction(USER_NOT_FOUND);
-                    response.setWts(-10);
+                    response.setWts(-1);
                 }
                 break;
             case POST_GENERAL:
@@ -147,7 +147,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setWts(aDPASService.getChannelWts(1, null));
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
-                    response.setWts(-10);
+                    response.setWts(-1);
                 }
                 break;
             default:

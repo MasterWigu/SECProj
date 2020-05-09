@@ -212,7 +212,7 @@ public class DPASService implements ICommLib {
 				return "Duplicate Announcement";
 			}
 
-			if (wts < personalWtss.get(pk))
+			if (wts <= personalWtss.get(pk))
 				throw new InvalidAnnouncementException();
 
 			if (wts == personalWtss.get(pk)+1) {
@@ -225,7 +225,7 @@ public class DPASService implements ICommLib {
 					again = false;
 					for (Announcement a : personalBoardBuffers.get(pk)) {
 						if (a.getWts() == personalWtss.get(pk)+1) {
-							personalBoards.get(creator.getPk()).add(ann);
+							personalBoards.get(creator.getPk()).add(a);
 							personalWtss.put(creator.getPk(), personalWtss.get(creator.getPk()) + 1);
 							again = true;
 						}

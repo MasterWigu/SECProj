@@ -15,6 +15,7 @@ public class Announcement implements Serializable {
 
     private byte[] signature;
 
+    //TODO remove because no usages?
     public Announcement(char[] mss, User crt, Announcement[] rs, int br, int wts1, byte[] sign) {
         message = mss;
         creator = crt;

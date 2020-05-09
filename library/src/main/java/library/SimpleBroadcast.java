@@ -1,5 +1,5 @@
 package library;
-
+//TODO remove?
 public class SimpleBroadcast {
     /*
     public static void broadcast(final Packet pack, final SRData client, ArrayList<SRData> servers){

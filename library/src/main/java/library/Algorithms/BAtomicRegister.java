@@ -73,7 +73,7 @@ public class BAtomicRegister {
         wts = readWtsPackResp.getWts()+1;
 
 
-        ackList = new ArrayList<>();
+        ackList = new ArrayList<>();    //TODO can remove?
         return writeInner(pack, wts);
     }
 
@@ -226,7 +226,7 @@ public class BAtomicRegister {
         System.out.println(rid);
         if (rid != pack.getRid()) {
             System.out.println("FUCKFUCK!");
-
+            //TODO maybe miss error count
             return;
         }
 
