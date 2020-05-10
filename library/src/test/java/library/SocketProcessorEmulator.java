@@ -1,16 +1,20 @@
 package library;
 
+import commonClasses.SRData;
 import library.Interfaces.ISocketProcessor;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class SocketProcessorEmulator implements ISocketProcessor {
     Packet tempPacket;
     boolean read = true;
     private PublicKey serverPublicKey;
+    private PrivateKey serverPrivateKey;
 
-    public SocketProcessorEmulator(PublicKey serverPK) {
-        serverPublicKey = serverPK;
+    public SocketProcessorEmulator(SRData server) {
+        serverPublicKey = server.getPubKey();
+        serverPrivateKey = server.getPrvKey();
     }
 
     @Override
@@ -19,16 +23,17 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         read = false;
         Packet response = new Packet();
         response.setFunction(packet.getFunction());
+        response.setAuxFunction(packet.getAuxFunction());
         response.setAnnouncements(packet.getAnnouncements());
         response.setUser(packet.getUser());
-        response.setSenderPk(serverPublicKey);
-        //response.setNumberOfAnnouncements(packet.getNumberOfAnnouncements());
+
         if (packet.getMessage() != null)
             response.setMessage(packet.getMessage().clone());
         response.setId(packet.getId());
-        //response.setUsername(packet.getUsername());
-        if (packet.getSign() != null)
-            response.setSign(packet.getSign().clone());
+        if (packet.getCharId() != null)
+            response.setCharId(packet.getCharId().clone());
+        response.setSingleAnnouncement(packet.getSingleAnnouncement());
+
 
         try { // Needed to ensure that the received and sent packets have different timestamps
             Thread.sleep(100);

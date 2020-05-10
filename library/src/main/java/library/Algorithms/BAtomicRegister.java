@@ -70,10 +70,14 @@ public class BAtomicRegister {
 
         Packet readWtsPackResp = read(readWtsPack, false);
 
+        if (readWtsPackResp == null) {
+            System.out.println("Read WTS error!");
+            return null;
+        }
         wts = readWtsPackResp.getWts()+1;
 
 
-        ackList = new ArrayList<>();    //TODO can remove?
+        ackList = new ArrayList<>();
         return writeInner(pack, wts);
     }
 
@@ -91,15 +95,15 @@ public class BAtomicRegister {
         sendAllBroadcast(pack, Mode.WRITE);
 
         int quorum = (int) Math.ceil(((double)servers.size() + faults) / 2);
-        while (ackList.size() < quorum && errorCount < quorum) {
+        while (ackList.size()+errorCount < servers.size() && errorCount < quorum) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        if(errorCount >= quorum) {
-            System.out.println("Not enough valid responses for quorum!");
+        if(errorCount >= quorum || ackList.size() < quorum) {
+            System.out.println("Not enough valid write responses for quorum!");
             return null;
         }
 
@@ -129,7 +133,7 @@ public class BAtomicRegister {
             }
         }
         if(errorCount >= quorum || readList.size() < quorum) {
-            System.out.println("Not enough valid responses for quorum!");
+            System.out.println("Not enough valid read responses for quorum!");
             return null;
         }
 
@@ -216,12 +220,6 @@ public class BAtomicRegister {
             ackList.add(pack);
             return;
         }
-
-        if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
-            errorCount++;
-            return;
-        }
-
         errorCount++;
     }
 
@@ -232,7 +230,6 @@ public class BAtomicRegister {
         if (rid != pack.getRid()) {
             System.out.println("FUCKFUCK!");
             errorCount++;
-            //TODO maybe miss error count
             return;
         }
 

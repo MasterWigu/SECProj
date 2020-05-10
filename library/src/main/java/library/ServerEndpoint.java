@@ -81,7 +81,7 @@ public class ServerEndpoint implements ISocketProcessor {
                 response.setFunction(READ);
                 response.setRid(packet.getRid());
                 try{
-                    HashMap<Integer, ArrayList<Announcement>> a = aDPASService.read(packet.getSenderPk(), response);
+                    HashMap<Integer, ArrayList<Announcement>> a = aDPASService.read(packet.getUser().getPk(), response);
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);

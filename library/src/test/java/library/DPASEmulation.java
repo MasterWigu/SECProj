@@ -1,6 +1,8 @@
 package library;
 
 import commonClasses.Announcement;
+import commonClasses.MessageSigner;
+import commonClasses.SRData;
 import commonClasses.User;
 import commonClasses.exceptions.*;
 import library.Interfaces.ICommLib;
@@ -14,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DPASEmulation implements ICommLib {
-    public int serverId;
+    private SRData server;
+    private SRData client1;
     public PublicKey tempPublicKey = null;
     public Announcement tempAnn;
     public Packet tempPacket;
@@ -33,8 +36,9 @@ public class DPASEmulation implements ICommLib {
 
 
     // ------
-    DPASEmulation(int id){
-        serverId = id;
+    DPASEmulation(SRData server, SRData client1){
+        this.server = server;
+        this.client1 = client1;
     }
 
     @Override
@@ -56,10 +60,17 @@ public class DPASEmulation implements ICommLib {
         tempWts = wts;
         tempAnn = announcement;
 
-        if (tempPublicKey == null)
+
+        if (Arrays.equals(tempAnn.getMessage(), "ERROR_U2".toCharArray()) && server.getId() > 2)
             throw new UserNotFoundException();
-        if (tempAnn == null || Arrays.equals(tempAnn.getMessage(), "ERROR_POST".toCharArray()))
+        else if (Arrays.equals(tempAnn.getMessage(), "ERROR_U1".toCharArray()) && server.getId() > 3)
+            throw new UserNotFoundException();
+
+        if (Arrays.equals(tempAnn.getMessage(), "ERROR_A2".toCharArray()) && server.getId() > 2)
             throw new InvalidAnnouncementException();
+        else if (Arrays.equals(tempAnn.getMessage(), "ERROR_A1".toCharArray()) && server.getId() > 3)
+            throw new InvalidAnnouncementException();
+
 
         return "PostedCreatedTest";
     }
@@ -70,9 +81,15 @@ public class DPASEmulation implements ICommLib {
         tempWts = wts;
         tempAnn = announcement;
 
-        if (tempPublicKey == null)
+
+        if (Arrays.equals(tempAnn.getMessage(), "ERROR_U2".toCharArray()) && server.getId() > 2)
             throw new UserNotFoundException();
-        if (tempAnn == null || Arrays.equals(tempAnn.getMessage(), "ERROR_POST_GENERAL".toCharArray()))
+        else if (Arrays.equals(tempAnn.getMessage(), "ERROR_U1".toCharArray()) && server.getId() > 3)
+            throw new UserNotFoundException();
+
+        if (Arrays.equals(tempAnn.getMessage(), "ERROR_A2".toCharArray()) && server.getId() > 2)
+            throw new InvalidAnnouncementException();
+        else if (Arrays.equals(tempAnn.getMessage(), "ERROR_A1".toCharArray()) && server.getId() > 3)
             throw new InvalidAnnouncementException();
 
         return "PostedGeneralCreatedTest";
@@ -83,13 +100,16 @@ public class DPASEmulation implements ICommLib {
         tempPublicKey = key;
         tempPacket = packet;
 
-        if (tempPublicKey == null)
-            throw new UserNotFoundException();
+        User u = new User(123, key);
+        Announcement ann = new Announcement("READ".toCharArray(), u, null, 0);
+        ann.setWts(1);
+        ann.setId("P0_1".toCharArray());
+        MessageSigner.sign(ann, server.getPrvKey());
 
         HashMap<Integer, ArrayList<Announcement>> tempResponse = new HashMap<>();
         ArrayList<Announcement> tempA = new ArrayList<>();
-        tempA.add(new Announcement("READ".toCharArray(), null, null, 0));
-        tempResponse.put(0, tempA);
+        tempA.add(ann);
+        tempResponse.put(-1, tempA);
 
         return tempResponse;
     }
@@ -98,10 +118,15 @@ public class DPASEmulation implements ICommLib {
     public HashMap<Integer, ArrayList<Announcement>> readGeneral(Packet packet) {
         tempPacket = packet;
 
+        Announcement ann = new Announcement(packet.getMessage(), null, null, 1);
+        ann.setWts(1);
+        ann.setId("G0_1".toCharArray());
+        MessageSigner.sign(ann, client1.getPrvKey());
+
         HashMap<Integer, ArrayList<Announcement>> tempResponse = new HashMap<>();
         ArrayList<Announcement> tempA = new ArrayList<>();
-        tempA.add(new Announcement(packet.getMessage(), null, null, 0));
-        tempResponse.put(0, tempA);
+        tempA.add(ann);
+        tempResponse.put(1, tempA);
         return tempResponse;
     }
 
@@ -136,8 +161,7 @@ public class DPASEmulation implements ICommLib {
     public int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException {
         tempPublicKey = ownerPk;
         tempBoard = board;
-
-        if (tempPublicKey == null)
+        if (board == 0 && tempPublicKey == null)
             throw new UserNotFoundException();
 
         return 2;

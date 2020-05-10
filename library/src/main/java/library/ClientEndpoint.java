@@ -53,11 +53,8 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.write(request);
 
-        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
-            throw new UserNotFoundException();
-        else if (response.getFunction() == Packet.Func.INVALID_ANN)
-            throw  new InvalidAnnouncementException();
-        else if (response.getFunction() == Packet.Func.POST)
+
+        if (response != null && response.getFunction() == Packet.Func.POST)
             return response.getMessage();
         else
             throw new CommunicationErrorException();
@@ -75,11 +72,7 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.write(request);
 
-        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
-            throw new UserNotFoundException();
-        else if (response.getFunction() == Packet.Func.INVALID_ANN)
-            throw  new InvalidAnnouncementException();
-        else if (response.getFunction() == Packet.Func.POST_GENERAL)
+        if (response != null && response.getFunction() == Packet.Func.POST_GENERAL)
             return response.getMessage();
         else
             throw new CommunicationErrorException();
