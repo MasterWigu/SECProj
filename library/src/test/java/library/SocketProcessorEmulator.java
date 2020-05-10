@@ -1,6 +1,9 @@
 package library;
 
-/*
+import library.Interfaces.ISocketProcessor;
+
+import java.security.PublicKey;
+
 public class SocketProcessorEmulator implements ISocketProcessor {
     Packet tempPacket;
     boolean read = true;
@@ -10,7 +13,6 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         serverPublicKey = serverPK;
     }
 
-/*
     @Override
     public Packet doOperation(Packet packet) {
         tempPacket = packet;
@@ -20,13 +22,13 @@ public class SocketProcessorEmulator implements ISocketProcessor {
         response.setAnnouncements(packet.getAnnouncements());
         response.setUser(packet.getUser());
         response.setSenderPk(serverPublicKey);
-        response.setNumberOfAnnouncements(packet.getNumberOfAnnouncements());
+        //response.setNumberOfAnnouncements(packet.getNumberOfAnnouncements());
         if (packet.getMessage() != null)
             response.setMessage(packet.getMessage().clone());
         response.setId(packet.getId());
-        response.setUsername(packet.getUsername());
-        if (packet.getMessageSignature() != null)
-            response.setMessageSignature(packet.getMessageSignature().clone());
+        //response.setUsername(packet.getUsername());
+        if (packet.getSign() != null)
+            response.setSign(packet.getSign().clone());
 
         try { // Needed to ensure that the received and sent packets have different timestamps
             Thread.sleep(100);
@@ -36,4 +38,4 @@ public class SocketProcessorEmulator implements ISocketProcessor {
 
         return response;
     }
-}*/
+}

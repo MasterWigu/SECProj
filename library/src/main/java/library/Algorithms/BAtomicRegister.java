@@ -212,12 +212,17 @@ public class BAtomicRegister {
     }
 
     private synchronized void receiveWriteResp(Packet pack) {
-        if(wts == pack.getWts() || pack.getWts() == -10)
+        if(wts == pack.getWts() || pack.getWts() == -10){
             ackList.add(pack);
+            return;
+        }
 
         if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
             errorCount++;
+            return;
         }
+
+        errorCount++;
     }
 
     private synchronized void receiveReadResp(Packet pack, Packet sentPack) {
@@ -226,6 +231,7 @@ public class BAtomicRegister {
         System.out.println(rid);
         if (rid != pack.getRid()) {
             System.out.println("FUCKFUCK!");
+            errorCount++;
             //TODO maybe miss error count
             return;
         }

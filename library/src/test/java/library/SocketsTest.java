@@ -1,7 +1,8 @@
 package library;
 
-/*
-public class SocketsTest {
+import org.testng.annotations.Test;
+
+/*public class SocketsTest {
     AuthPerfectP2PLinks clientSocket1;
     AuthPerfectP2PLinks clientSocket2;
     AuthPerfectP2PLinks clientSocket3;

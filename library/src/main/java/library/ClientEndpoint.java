@@ -38,7 +38,7 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.write(request);
 
-        return Arrays.toString(response.getMessage());
+        return new String(response.getMessage());
     }
 
 
