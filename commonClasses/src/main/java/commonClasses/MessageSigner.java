@@ -67,7 +67,7 @@ public class MessageSigner {
         annToSign.setSignature(sign(annToSign.getMessage(), annToSign.getCreator().getPk(), annToSign.getBoard(), annToSign.getRefs(), annToSign.getWts(), pk));
     }
 
-    public static byte[] sign(char[] msg, PublicKey cpk, int b, Announcement[] anns, int wts, PrivateKey pk) {
+    private static byte[] sign(char[] msg, PublicKey cpk, int b, Announcement[] anns, int wts, PrivateKey pk) {
 
         AnnToSign ann = new AnnToSign(msg, cpk, b, anns, wts);
         byte[] hash = getHash(ann);

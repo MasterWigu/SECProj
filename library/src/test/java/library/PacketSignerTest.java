@@ -53,7 +53,7 @@ public class PacketSignerTest {
         KeyPair keys = KeyStoreCreator.createKeyPair();
         KeyPair keysR = KeyStoreCreator.createKeyPair();
 
-        Announcement a = new Announcement("TEST".toCharArray(), new User(0, null), null, 0, 0, null);
+        Announcement a = new Announcement("TEST".toCharArray(), new User(0, null), null, 0);
         HashMap<Integer, ArrayList<Announcement>> tempMap = new HashMap<>();
         ArrayList<Announcement> tempA = new ArrayList<>();
         tempA.add(a);
@@ -149,7 +149,7 @@ public class PacketSignerTest {
         KeyPair keys = KeyStoreCreator.createKeyPair();
         KeyPair keysR = KeyStoreCreator.createKeyPair();
 
-        Announcement a = new Announcement("TEST".toCharArray(), new User(0, null), null, 0, 0, null);
+        Announcement a = new Announcement("TEST".toCharArray(), new User(0, null), null, 0);
         HashMap<Integer, ArrayList<Announcement>> tempMap = new HashMap<>();
         ArrayList<Announcement> tempA = new ArrayList<>();
         tempA.add(a);

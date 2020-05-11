@@ -114,29 +114,45 @@ public class SocketsTest {
 
         serverProcessor.read = true;
     }
-/*
-    @Test(expectedExceptions = PacketValidationException.class)
+
+    @Test
+    public void invalidArgPacket() throws CommunicationErrorException, PacketValidationException {
+        System.out.println("WRONG_ARG");
+        Packet send = new Packet();
+        send.setSenderPk(client1.getPubKey());
+        send.setReceiverPk(server.getPubKey());
+        send.setFunction(Packet.Func.REGISTER);
+        send.setAuxFunction(Packet.Func.ERROR);
+
+        Packet receive = app2p.sendFunction(send, client1, client1);
+        Assert.assertNull(receive);
+    }
+
+    // TODO not working
+    /*@Test(expectedExceptions = PacketValidationException.class)
     public void invalidResponseSign() throws CommunicationErrorException, PacketValidationException {
         System.out.println("WRONG_SIGN");
         Packet send = new Packet();
         send.setSenderPk(client1.getPubKey());
+        send.setReceiverPk(server.getPubKey());
         send.setFunction(Packet.Func.REGISTER);
         send.setAuxFunction(Packet.Func.ERROR);
 
-        app2p.sendFunction(send, client1, server);
+        Packet receive = app2p.sendFunction(send, client1, server);
     }*/
-/*
-    @Test(expectedExceptions = PacketValidationException.class)
+
+    /*@Test(expectedExceptions = PacketValidationException.class)
     public void wrongResponseSenderKey() throws CommunicationErrorException, PacketValidationException {
         System.out.println("DIFF_KEYS1");
         Packet send = new Packet();
         send.setSenderPk(client1.getPubKey());
+        send.setReceiverPk(server.getPubKey());
         send.setAuxFunction(Packet.Func.ANN_NOT_FOUND); //just to trigger error
 
         app2p.sendFunction(send, client1, server);
-    }
+    }*/
 
-    @Test(expectedExceptions = PacketValidationException.class)
+    /*@Test(expectedExceptions = PacketValidationException.class)
     public void wrongResponseReceiverKey() throws CommunicationErrorException, PacketValidationException {
         System.out.println("DIFF_KEYS2");
         Packet send = new Packet();

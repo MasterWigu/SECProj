@@ -15,14 +15,14 @@ public class Announcement implements Serializable {
 
     private byte[] signature;
 
-    public Announcement(char[] mss, User crt, Announcement[] rs, int br, int wts1, byte[] sign) {
+    /*public Announcement(char[] mss, User crt, Announcement[] rs, int br, int wts1, byte[] sign) {
         message = mss;
         creator = crt;
         board = br;
         wts = wts1;
         refs = rs;
         signature = sign;
-    }
+    }*/
 
     public Announcement(char[] mss, User crt, Announcement[] rs, int br) {
         message = mss;
