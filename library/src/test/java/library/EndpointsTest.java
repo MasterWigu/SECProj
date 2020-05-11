@@ -234,7 +234,7 @@ public class EndpointsTest {
     public void successReadGeneral() throws CommunicationErrorException {
         Announcement[] response = clientEnd1.readGeneral(123456);
 
-        AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral5".toCharArray(), response[0].getMessage());
     }
 
 
