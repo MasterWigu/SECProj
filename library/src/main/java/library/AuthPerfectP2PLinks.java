@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-// Old SocketClient
+
 public class AuthPerfectP2PLinks {
     private static List<Integer> delivered;
 

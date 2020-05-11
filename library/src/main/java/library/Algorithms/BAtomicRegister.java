@@ -131,13 +131,12 @@ public class BAtomicRegister {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //System.out.println("here");
         }
+
         if(errorCount >= quorum || readList.size() < quorum) {
             System.out.println("Not enough valid read responses for quorum!");
             return null;
         }
-
 
 
         Packet maxWtsPack = readList.get(0);
@@ -184,9 +183,6 @@ public class BAtomicRegister {
             }
         }
 
-        //TODO remove
-        System.out.println("AAAAAA NO");
-        System.out.println(maxWtsPack);
         return maxWtsPack;
     }
 
@@ -225,40 +221,27 @@ public class BAtomicRegister {
     }
 
     private synchronized void receiveReadResp(Packet pack, Packet sentPack) {
-        //TODO remove fuck
-        System.out.println(pack.getRid());
-        System.out.println(rid);
         if (rid != pack.getRid()) {
-            System.out.println("FUCKFUCK!");
             errorCount++;
             return;
         }
 
         if (pack.getFunction().equals(Packet.Func.ERROR) || pack.getFunction().equals(Packet.Func.INVALID_ANN)) {
-            System.out.println("FUCK1!");
             errorCount++;
             return;
         }
         else {
-            System.out.println("FUCKFUCK1!");
             //Verify all announcements inside packet
             if (pack.getAnnouncements() != null) { // if read or read_general
-                System.out.println("BLAH1!");
                 for (List<Announcement> anns : pack.getAnnouncements().values()) {
-                    System.out.println("BLAH2!");
                     for (Announcement ann : anns) {
-                        System.out.println("BLAH3!");
                         if (sentPack.getUser() != null) { // if read
-                            System.out.println("BLAH4!");
                             if (!MessageSigner.verify(ann, sentPack.getUser().getPk()) || ann.getBoard() !=0) {
-                                System.out.println("FUCK2!");
                                 errorCount++;
                                 return;
                             }
                         } else { // if read_general
-                            System.out.println("BLAH5!");
                             if (!MessageSigner.verify(ann, null) || ann.getBoard() != 1) {
-                                System.out.println("FUCK3!");
                                 errorCount++;
                                 return;
                             }
@@ -267,29 +250,22 @@ public class BAtomicRegister {
                 }
             }
             if (pack.getSingleAnnouncement() != null) { // if get_ann_by_id and ann found
-                System.out.println("FUCKFUCK4");
                 if (!MessageSigner.verify(pack.getSingleAnnouncement(), null)) {
-                    System.out.println("FUCK14");
                     errorCount++;
                     return;
                 }
                 if (sentPack.getCharId() != null && !Arrays.equals(pack.getSingleAnnouncement().getId(), sentPack.getCharId())) {
-                    System.out.println("FUCK5!");
                     errorCount++;
                     return;
                 }
             }
             if (pack.getUser() != null && sentPack.getId() != -1 && pack.getFunction() == Packet.Func.GET_USER_ID) { // if get_user_by_id and user found
-                System.out.println("FUCKFUCK6");
                 if (pack.getUser().getId() != sentPack.getId()) {
-                    System.out.println("FUCK6!");
                     errorCount++;
                     return;
                 }
             }
         }
-        System.out.println("FUCKFUCKFUCKFUCKFUCK");
-        System.out.println(pack);
         readList.add(pack);
     }
 }

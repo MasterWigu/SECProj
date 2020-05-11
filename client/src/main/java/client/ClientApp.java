@@ -36,9 +36,6 @@ public class ClientApp {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-
-            for (SRData srv : servers)
-                System.out.println(srv);
             // TODO define faults
             Client c = new Client(a, servers, 0);
             c.login();

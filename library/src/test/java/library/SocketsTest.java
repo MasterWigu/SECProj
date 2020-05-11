@@ -4,7 +4,6 @@ import commonClasses.SRData;
 import keyStoreCreator.KeyStoreCreator;
 import library.Exceptions.CommunicationErrorException;
 import library.Exceptions.PacketValidationException;
-import org.bouncycastle.util.Pack;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterSuite;

@@ -15,9 +15,6 @@ import org.testng.annotations.Test;
 
 import java.security.KeyPair;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 
 public class EndpointsTest {
     KeyPair client1Keys;
@@ -70,7 +67,7 @@ public class EndpointsTest {
         server1.setPort(10250);
         server1.setPrvKey(serverKeys1.getPrivate());
         server1.setPubKey(serverKeys1.getPublic());
-        serverEnd1 = new DPASEmulation(server1, client1);
+        serverEnd1 = new DPASEmulation(server1, client1, client2, client3);
         ISocketProcessor processor1 = new ServerEndpoint(serverEnd1);
         serverListener1 = new SocketServer(processor1, server1.getPort(), server1.getPrvKey(), server1.getPubKey());
         serverListener1.createWorker();
@@ -83,7 +80,7 @@ public class EndpointsTest {
         server2.setPort(10251);
         server2.setPrvKey(serverKeys2.getPrivate());
         server2.setPubKey(serverKeys2.getPublic());
-        serverEnd2 = new DPASEmulation(server2, client1);
+        serverEnd2 = new DPASEmulation(server2, client1, client2, client3);
         ISocketProcessor processor2 = new ServerEndpoint(serverEnd2);
         serverListener2 = new SocketServer(processor2, server2.getPort(), server2.getPrvKey(), server2.getPubKey());
         serverListener2.createWorker();
@@ -96,7 +93,7 @@ public class EndpointsTest {
         server3.setPort(10252);
         server3.setPrvKey(serverKeys3.getPrivate());
         server3.setPubKey(serverKeys3.getPublic());
-        serverEnd3 = new DPASEmulation(server3, client1);
+        serverEnd3 = new DPASEmulation(server3, client1, client2, client3);
         ISocketProcessor processor3 = new ServerEndpoint(serverEnd3);
         serverListener3 = new SocketServer(processor3, server3.getPort(), server3.getPrvKey(), server3.getPubKey());
         serverListener3.createWorker();
@@ -109,15 +106,15 @@ public class EndpointsTest {
         server4.setPort(10253);
         server4.setPrvKey(serverKeys4.getPrivate());
         server4.setPubKey(serverKeys4.getPublic());
-        serverEnd4 = new DPASEmulation(server4,client1);
+        serverEnd4 = new DPASEmulation(server4,client1, client2, client3);
         ISocketProcessor processor4 = new ServerEndpoint(serverEnd4);
         serverListener4 = new SocketServer(processor4, server4.getPort(), server4.getPrvKey(), server4.getPubKey());
         serverListener4.createWorker();
         servers.add(server4);
 
         clientEnd1 = new ClientEndpoint(client1Keys.getPrivate(), client1Keys.getPublic(), servers, 1);
-        clientEnd2 = new ClientEndpoint(client2Keys.getPrivate(), client1Keys.getPublic(), servers, 1);
-        clientEnd3 = new ClientEndpoint(client3Keys.getPrivate(), client1Keys.getPublic(), servers, 1);
+        clientEnd2 = new ClientEndpoint(client2Keys.getPrivate(), client2Keys.getPublic(), servers, 1);
+        clientEnd3 = new ClientEndpoint(client3Keys.getPrivate(), client3Keys.getPublic(), servers, 1);
 
 
     }
@@ -200,18 +197,37 @@ public class EndpointsTest {
 
     // READ
     @Test
-    public void successRead() throws UserNotFoundException, CommunicationErrorException {
+    public void successReadSelf() throws UserNotFoundException, CommunicationErrorException {
         User u = new User(123, client1Keys.getPublic());
         Announcement[] response = clientEnd1.read(u, 2);
         AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
+        Assert.assertEquals(response[0].getWts(), 1);
+    }
+
+    @Test
+    public void successReadOther() throws UserNotFoundException, CommunicationErrorException {
+        User u = new User(123, client1Keys.getPublic());
+        Announcement[] response = clientEnd3.read(u, 2);
+        AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
+        Assert.assertEquals(response[0].getWts(), 1);
+    }
+
+    @Test
+    public void readError1() throws UserNotFoundException, CommunicationErrorException {
+        User u = new User(123, client2Keys.getPublic());
+        Announcement[] response = clientEnd2.read(u, 2);
+        AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
+        Assert.assertEquals(response[0].getWts(), 1);
     }
 
 
-    @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound2() throws UserNotFoundException, CommunicationErrorException {
-        User u = new User(1025, client1Keys.getPublic());
+    @Test (expectedExceptions = CommunicationErrorException.class)
+    public void readError2() throws UserNotFoundException, CommunicationErrorException {
+        User u = new User(1025, client3Keys.getPublic());
         clientEnd1.read(u, 0);
+
     }
+
 
     // READ_GENERAL
     @Test
@@ -221,34 +237,56 @@ public class EndpointsTest {
         AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
     }
 
+
     // ANN_ID
-    /*@Test
+    @Test
     public void successGetAnnId() throws AnnouncementNotFoundException, CommunicationErrorException {
-        Announcement response = clientEnd1.getAnnouncementById(String.valueOf(123456).toCharArray());
+        Announcement response = clientEnd1.getAnnouncementById("123456".toCharArray());
 
-        AssertJUnit.assertArrayEquals("SuccessfulAnnouncement".toCharArray(), response.getMessage());
-    }*/
+        AssertJUnit.assertArrayEquals("TEST_ANN".toCharArray(), response.getMessage());
+    }
 
+    @Test
+    public void successGetAnnId1Error() throws AnnouncementNotFoundException, CommunicationErrorException {
+        Announcement response = clientEnd1.getAnnouncementById("111".toCharArray());
 
-    /*@Test (expectedExceptions = AnnouncementNotFoundException.class)
-    public void userNotFound3() throws AnnouncementNotFoundException, CommunicationErrorException {
-        clientEnd1.getAnnouncementById(client1Keys.getPublic(), -2);
+        AssertJUnit.assertArrayEquals("TEST_ANN".toCharArray(), response.getMessage());
+    }
+
+    @Test (expectedExceptions = AnnouncementNotFoundException.class)
+    public void successGetAnnId2Errors() throws AnnouncementNotFoundException, CommunicationErrorException {
+        clientEnd1.getAnnouncementById("222".toCharArray());
+    }
+
+    @Test (expectedExceptions = CommunicationErrorException.class)
+    public void errorGetAnnId2Errors() throws AnnouncementNotFoundException, CommunicationErrorException {
+        clientEnd1.getAnnouncementById("333".toCharArray());
     }
 
     // User_ID
     @Test
     public void successGetUser() throws UserNotFoundException, CommunicationErrorException {
-        User response = clientEnd1.getUserById(client1Keys.getPublic(), 123456);
-
-        Assert.assertEquals("SuccessfulUser", response.getUsername());
+        User response = clientEnd1.getUserById(123456);
+        Assert.assertEquals(response.getPk(), client1Keys.getPublic());
     }
 
+    @Test
+    public void successGetUser2() throws UserNotFoundException, CommunicationErrorException {
+        User response = clientEnd1.getUserById(123);
+        Assert.assertEquals(response.getPk(), client2Keys.getPublic());
+    }
 
     @Test (expectedExceptions = UserNotFoundException.class)
-    public void userNotFound4() throws UserNotFoundException, CommunicationErrorException {
-        clientEnd1.getUserById(client1Keys.getPublic(), -2);
+    public void errorNoUser1() throws UserNotFoundException, CommunicationErrorException {
+        clientEnd1.getUserById(111);
     }
 
+    @Test (expectedExceptions = CommunicationErrorException.class)
+    public void errorUserComm() throws UserNotFoundException, CommunicationErrorException {
+        clientEnd1.getUserById(444);
+    }
+
+/*
     // CONCURRENCY TEST
     @Test (invocationCount=10, threadPoolSize=3)
     public void successConcurrentPost() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {

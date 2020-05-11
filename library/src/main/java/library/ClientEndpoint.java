@@ -4,7 +4,6 @@ import commonClasses.Announcement;
 import commonClasses.SRData;
 import commonClasses.User;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.Algorithms.BAtomicRegister;
 import library.Exceptions.CommunicationErrorException;
@@ -42,7 +41,7 @@ public class ClientEndpoint {
     }
 
 
-    public char[] post(char[] message, Announcement[] refs) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public char[] post(char[] message, Announcement[] refs) throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST);
@@ -61,7 +60,7 @@ public class ClientEndpoint {
     }
 
 
-    public char[] postGeneral(char[] message, Announcement[] refs) throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public char[] postGeneral(char[] message, Announcement[] refs) throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.POST_GENERAL);
@@ -80,16 +79,14 @@ public class ClientEndpoint {
     }
 
 
-    public Announcement[] read(User user, int number) throws UserNotFoundException, CommunicationErrorException {
+    public Announcement[] read(User user, int number) throws CommunicationErrorException {
         Packet request = new Packet();
 
         request.setFunction(Packet.Func.READ);
         request.setUser(user);
 
         Packet response = atomicRegister.read(request);
-        if (response.getFunction() == Packet.Func.USER_NOT_FOUND)
-            throw new UserNotFoundException();
-        else if (response.getFunction() == Packet.Func.READ)
+        if (response != null && response.getFunction() == Packet.Func.READ)
             return selectAnnouncements(response.getAnnouncements(), number);
         else
             throw new CommunicationErrorException();
@@ -120,7 +117,9 @@ public class ClientEndpoint {
 
 
         Announcement ann;
-        if (response.getSingleAnnouncement() == null) {
+        if (response == null)
+            throw new CommunicationErrorException();
+        else if (response.getSingleAnnouncement() == null) {
             throw new AnnouncementNotFoundException();
         }
         if (response.getFunction() == Packet.Func.GET_ANN_ID) {
@@ -142,6 +141,8 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.read(request);
 
+        if (response == null)
+            throw new CommunicationErrorException();
         User user;
         if (response.getFunction() == Packet.Func.GET_USER_ID) {
             user = response.getUser();

@@ -84,7 +84,6 @@ class FileSaver {
                 System.out.println("Read general board done");
             } catch (IOException | ClassNotFoundException ex) {
                 System.out.println("No previous general board file to read from");
-                //ex.printStackTrace();
             }
 
             return generalBoardData;
@@ -140,7 +139,6 @@ class FileSaver {
                 System.out.println("Read personal boards done");
             } catch (IOException | ClassNotFoundException ex) {
                 System.out.println("No previous personal boards file to read from");
-                //ex.printStackTrace();
             }
 
             return personalBoardsData;
@@ -198,7 +196,6 @@ class FileSaver {
                 System.out.println("Read users done");
             } catch (IOException | ClassNotFoundException ex) {
                 System.out.println("No previous users file to read from");
-                //ex.printStackTrace();
             }
             return users;
         }

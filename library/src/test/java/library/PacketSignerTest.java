@@ -5,8 +5,7 @@ import commonClasses.User;
 import keyStoreCreator.KeyStoreCreator;
 
 import org.testng.Assert;
-import org.testng.AssertJUnit;
-import org.testng.annotations.Test; // TODO check import
+import org.testng.annotations.Test;
 
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class PacketSignerTest {
         p.setSenderPk(keys.getPublic());
         p.setReceiverPk(keysR.getPublic());
         p.setMessage("TEST001".toCharArray());
-        p.setAnnouncements(tempMap); // TODO careful
+        p.setAnnouncements(tempMap);
         p.setSign(null);
 
         p = PacketSigner.sign(p, keys.getPrivate());

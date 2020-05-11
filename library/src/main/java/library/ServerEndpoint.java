@@ -85,6 +85,7 @@ public class ServerEndpoint implements ISocketProcessor {
                     response.setAnnouncements(a);
                 } catch (UserNotFoundException e){
                     response.setFunction(USER_NOT_FOUND);
+                    response.setRid(-1);
                     response.setWts(-1);
                 }
                 break;

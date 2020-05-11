@@ -143,12 +143,8 @@ class Client {
 				response = clientEndpoint.post(message.toCharArray(), announcements.toArray(new Announcement[0]));
 				System.out.println(String.valueOf(response));
 			}
-		} catch (UserNotFoundException e) {
-			e.printStackTrace();
-			//Impossible
-		} catch (CommunicationErrorException | InvalidAnnouncementException e) {
+		} catch (CommunicationErrorException  e) {
 			System.out.println("Communication error, please try posting again.");
-			e.printStackTrace();
 		}
 	}
 
@@ -185,9 +181,6 @@ class Client {
 		System.out.println("------------ Printing Personal Board of user "+ user.getId() + " -------------");
 		try {
 			printAnnouncements(clientEndpoint.read(user, numAnn));
-		} catch (UserNotFoundException e) {
-			// Impossible
-			System.out.println(Arrays.toString(e.getStackTrace()));
 		} catch (CommunicationErrorException e) {
 			System.out.println("Communication error, please try again.");
 		}
