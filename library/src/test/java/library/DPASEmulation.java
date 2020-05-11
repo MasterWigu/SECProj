@@ -41,7 +41,7 @@ public class DPASEmulation implements ICommLib {
     }
 
     @Override
-    public String post(PublicKey pk, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException {
+    public synchronized String post(PublicKey pk, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException {
 
         if (Arrays.equals(announcement.getMessage(), "ERROR_U2".toCharArray()) && server.getId() > 2)
             throw new UserNotFoundException();
@@ -105,16 +105,43 @@ public class DPASEmulation implements ICommLib {
 
     @Override
     public HashMap<Integer, ArrayList<Announcement>> readGeneral(Packet packet) {
-
-        Announcement ann = new Announcement("ReadGeneral".toCharArray(), new User(123, client1.getPubKey()), null, 1);
-        ann.setWts(1);
-        ann.setId("G0_1".toCharArray());
-        MessageSigner.sign(ann, client1.getPrvKey());
-
         HashMap<Integer, ArrayList<Announcement>> tempResponse = new HashMap<>();
-        ArrayList<Announcement> tempA = new ArrayList<>();
-        tempA.add(ann);
-        tempResponse.put(1, tempA);
+
+        ArrayList<Announcement> tempA1 = new ArrayList<>();
+        Announcement ann1 = new Announcement("ReadGeneral".toCharArray(), new User(123, client1.getPubKey()), null, 1);
+        ann1.setWts(1);
+        ann1.setId("G0_1".toCharArray());
+        MessageSigner.sign(ann1, client1.getPrvKey());
+        tempA1.add(ann1);
+
+        ArrayList<Announcement> tempA2 = new ArrayList<>();
+        Announcement ann2 = new Announcement("ReadGeneral2".toCharArray(), new User(1, client1.getPubKey()), null, 1);
+        ann2.setWts(2);
+        ann2.setId("G0_2".toCharArray());
+        MessageSigner.sign(ann2, client1.getPrvKey());
+        tempA2.add(ann2);
+        Announcement ann3 = new Announcement("ReadGeneral3".toCharArray(), new User(3, client1.getPubKey()), null, 1);
+        ann3.setWts(2);
+        ann3.setId("G0_3".toCharArray());
+        MessageSigner.sign(ann3, client1.getPrvKey());
+        tempA2.add(ann3);
+        Announcement ann4 = new Announcement("ReadGeneral4".toCharArray(), new User(2, client1.getPubKey()), null, 1);
+        ann4.setWts(2);
+        ann4.setId("G0_4".toCharArray());
+        MessageSigner.sign(ann4, client1.getPrvKey());
+        tempA2.add(ann4);
+
+        ArrayList<Announcement> tempA3 = new ArrayList<>();
+        Announcement ann5 = new Announcement("ReadGeneral5".toCharArray(), new User(123, client1.getPubKey()), null, 1);
+        ann5.setWts(3);
+        ann5.setId("G0_5".toCharArray());
+        MessageSigner.sign(ann5, client1.getPrvKey());
+        tempA3.add(ann5);
+
+        tempResponse.put(1, tempA1);
+        tempResponse.put(2, tempA2);
+        tempResponse.put(3, tempA3);
+
         return tempResponse;
     }
 
@@ -166,7 +193,7 @@ public class DPASEmulation implements ICommLib {
     }
 
     @Override
-    public int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException {
+    public synchronized int getChannelWts(int board, PublicKey ownerPk) throws UserNotFoundException {
         if (board == 0 && ownerPk == null)
             throw new UserNotFoundException();
 

@@ -286,15 +286,32 @@ public class EndpointsTest {
         clientEnd1.getUserById(444);
     }
 
-/*
-    // CONCURRENCY TEST
-    @Test (invocationCount=10, threadPoolSize=3)
+
+    // CONCURRENCY TEST TODO
+    /*@Test (invocationCount=2, threadPoolSize=3)
     public void successConcurrentPost() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
-        char[] response1 = clientEnd1.post(client1Keys.getPublic(), "SUCCESS_POST1".toCharArray(), null, null);
-        char[] response2 = clientEnd2.post(client2Keys.getPublic(), "SUCCESS_POST2".toCharArray(), null, null);
-        char[] response3 = clientEnd3.post(client3Keys.getPublic(), "SUCCESS_POST3".toCharArray(), null, null);
+        char[] response1 = clientEnd1.post("SUCCESS_POST1".toCharArray(), null);
+        char[] response2 = clientEnd2.post("SUCCESS_POST2".toCharArray(), null);
+        char[] response3 = clientEnd3.post("SUCCESS_POST3".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response1);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response2);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response3);
     }*/
+
+    @Test
+    public void orderAnnouncementSuccess() throws CommunicationErrorException {
+        Announcement[] response = clientEnd1.readGeneral(5);
+        System.out.println(response[0].getMessage());
+        System.out.println(response[1].getMessage());
+        System.out.println(response[2].getMessage());
+        System.out.println(response[3].getMessage());
+        System.out.println(response[4].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral5".toCharArray(), response[0].getMessage());
+
+        AssertJUnit.assertArrayEquals("ReadGeneral3".toCharArray(), response[1].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral4".toCharArray(), response[2].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral2".toCharArray(), response[3].getMessage());
+
+        AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[4].getMessage());
+    }
 }

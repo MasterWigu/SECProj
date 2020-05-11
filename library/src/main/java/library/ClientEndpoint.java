@@ -163,7 +163,8 @@ public class ClientEndpoint {
         ArrayList<Announcement> outAnns = new ArrayList<>();
 
         ArrayList<Integer> keys = new ArrayList<>(anns.keySet());
-        Collections.sort(keys, Collections.reverseOrder());
+        //Collections.sort(keys, Collections.reverseOrder());
+        Collections.sort(keys);
 
         for (Integer key : keys) {
             List<Announcement> AnnList = anns.get(key);
