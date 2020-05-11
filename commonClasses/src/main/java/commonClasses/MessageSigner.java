@@ -63,8 +63,8 @@ public class MessageSigner {
     }
 
 
-    public static byte[] sign(Announcement annToSign, PrivateKey pk) {
-        return sign(annToSign.getMessage(), annToSign.getCreator().getPk(), annToSign.getBoard(), annToSign.getRefs(), annToSign.getWts(), pk);
+    public static void sign(Announcement annToSign, PrivateKey pk) {
+        annToSign.setSignature(sign(annToSign.getMessage(), annToSign.getCreator().getPk(), annToSign.getBoard(), annToSign.getRefs(), annToSign.getWts(), pk));
     }
 
     public static byte[] sign(char[] msg, PublicKey cpk, int b, Announcement[] anns, int wts, PrivateKey pk) {

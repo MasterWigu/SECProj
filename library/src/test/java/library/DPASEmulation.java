@@ -100,11 +100,17 @@ public class DPASEmulation implements ICommLib {
         tempPublicKey = key;
         tempPacket = packet;
 
+        System.out.println("here");
+        System.out.println(packet.getUser());
+        if (packet.getUser().getId() == 1025){
+            throw new UserNotFoundException();
+        }
+
         User u = new User(123, key);
         Announcement ann = new Announcement("READ".toCharArray(), u, null, 0);
         ann.setWts(1);
         ann.setId("P0_1".toCharArray());
-        MessageSigner.sign(ann, server.getPrvKey());
+        MessageSigner.sign(ann, client1.getPrvKey());
 
         HashMap<Integer, ArrayList<Announcement>> tempResponse = new HashMap<>();
         ArrayList<Announcement> tempA = new ArrayList<>();
@@ -118,9 +124,11 @@ public class DPASEmulation implements ICommLib {
     public HashMap<Integer, ArrayList<Announcement>> readGeneral(Packet packet) {
         tempPacket = packet;
 
-        Announcement ann = new Announcement(packet.getMessage(), null, null, 1);
+        Announcement ann = new Announcement("ReadGeneral".toCharArray(), new User(123, client1.getPubKey()), null, 1);
         ann.setWts(1);
         ann.setId("G0_1".toCharArray());
+        System.out.println(ann);
+        System.out.println(client1.getPrvKey());
         MessageSigner.sign(ann, client1.getPrvKey());
 
         HashMap<Integer, ArrayList<Announcement>> tempResponse = new HashMap<>();

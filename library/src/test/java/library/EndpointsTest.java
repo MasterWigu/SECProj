@@ -207,18 +207,19 @@ public class EndpointsTest {
     }
 
 
-    /*@Test (expectedExceptions = UserNotFoundException.class)
+    @Test (expectedExceptions = UserNotFoundException.class)
     public void userNotFound2() throws UserNotFoundException, CommunicationErrorException {
-        clientEnd1.read(client1Keys.getPublic(), -2);
-    }*/
+        User u = new User(1025, client1Keys.getPublic());
+        clientEnd1.read(u, 0);
+    }
 
     // READ_GENERAL
-    /*@Test
+    @Test
     public void successReadGeneral() throws CommunicationErrorException {
         Announcement[] response = clientEnd1.readGeneral(123456);
 
         AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
-    }*/
+    }
 
     // ANN_ID
     /*@Test

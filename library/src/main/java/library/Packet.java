@@ -62,7 +62,7 @@ public class Packet implements Serializable {
 
 
     public Packet() {
-        this.nonce = random.nextInt();
+        this.nonce = random.nextInt(); //Math.abs(random.nextInt())
         this.id = -1;
     }
 
