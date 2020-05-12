@@ -17,20 +17,12 @@ import java.security.KeyPair;
 import java.util.ArrayList;
 
 public class EndpointsTest {
-    KeyPair client1Keys;
-    KeyPair client2Keys;
-    KeyPair client3Keys;
-    KeyPair serverKeys1;
-    KeyPair serverKeys2;
-    KeyPair serverKeys3;
-    KeyPair serverKeys4;
-    DPASEmulation serverEnd1;
-    DPASEmulation serverEnd2;
-    DPASEmulation serverEnd3;
-    DPASEmulation serverEnd4;
-    ClientEndpoint clientEnd1;
-    ClientEndpoint clientEnd2;
-    ClientEndpoint clientEnd3;
+    private KeyPair client1Keys;
+    private KeyPair client2Keys;
+    private KeyPair client3Keys;
+    private ClientEndpoint clientEnd1;
+    private ClientEndpoint clientEnd2;
+    private ClientEndpoint clientEnd3;
     private SocketServer serverListener1;
     private SocketServer serverListener2;
     private SocketServer serverListener3;
@@ -38,6 +30,15 @@ public class EndpointsTest {
 
     @BeforeSuite
     public void setUp() {
+        KeyPair serverKeys1;
+        KeyPair serverKeys2;
+        KeyPair serverKeys3;
+        KeyPair serverKeys4;
+        DPASEmulation serverEnd1;
+        DPASEmulation serverEnd2;
+        DPASEmulation serverEnd3;
+        DPASEmulation serverEnd4;
+
         serverKeys1 = KeyStoreCreator.createKeyPair();
         serverKeys2 = KeyStoreCreator.createKeyPair();
         serverKeys3 = KeyStoreCreator.createKeyPair();
@@ -115,7 +116,9 @@ public class EndpointsTest {
         clientEnd1 = new ClientEndpoint(client1Keys.getPrivate(), client1Keys.getPublic(), servers, 1);
         clientEnd2 = new ClientEndpoint(client2Keys.getPrivate(), client2Keys.getPublic(), servers, 1);
         clientEnd3 = new ClientEndpoint(client3Keys.getPrivate(), client3Keys.getPublic(), servers, 1);
-
+        clientEnd1.setUserTests();
+        clientEnd2.setUserTests();
+        clientEnd3.setUserTests();
 
     }
 
@@ -130,74 +133,74 @@ public class EndpointsTest {
 
     // REGISTER
     @Test
-    public void successRegister() throws KeyException, InvalidWtsException {
+    public void successRegister() {
         String response = clientEnd1.register();
         Assert.assertEquals("UserAddedTest", response);
     }
 
     // POST
     @Test
-    public void successPost()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException  {
+    public void successPost()  throws CommunicationErrorException  {
         char[] response = clientEnd1.post("SUCCESS_POST".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
     }
 
     @Test
-    public void post1ErrorUser()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void post1ErrorUser()  throws CommunicationErrorException {
         char[] response = clientEnd1.post("ERROR_U1".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = CommunicationErrorException.class)
-    public void post2ErrorUser()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void post2ErrorUser()  throws CommunicationErrorException {
         clientEnd1.post("ERROR_U2".toCharArray(), null);
     }
 
     @Test
-    public void post1ErrorAnn()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void post1ErrorAnn()  throws CommunicationErrorException {
         char[] response = clientEnd1.post("ERROR_A1".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = CommunicationErrorException.class)
-    public void post2ErrorAnn()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void post2ErrorAnn()  throws CommunicationErrorException {
         clientEnd1.post("ERROR_A2".toCharArray(), null);
     }
 
 
     // POST GENERAL
     @Test
-    public void successPostGeneral() throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void successPostGeneral() throws CommunicationErrorException {
         char[] response = clientEnd1.postGeneral("SUCCESS_POST".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedGeneralCreatedTest".toCharArray(), response);
     }
 
     @Test
-    public void postGeneral1ErrorUser()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void postGeneral1ErrorUser()  throws CommunicationErrorException {
         char[] response = clientEnd1.postGeneral("ERROR_U1".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedGeneralCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = CommunicationErrorException.class)
-    public void postGeneral2ErrorUser()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void postGeneral2ErrorUser()  throws CommunicationErrorException {
         clientEnd1.postGeneral("ERROR_U2".toCharArray(), null);
     }
 
     @Test
-    public void postGeneral1ErrorAnn()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void postGeneral1ErrorAnn()  throws CommunicationErrorException {
         char[] response = clientEnd1.postGeneral("ERROR_A1".toCharArray(), null);
         AssertJUnit.assertArrayEquals("PostedGeneralCreatedTest".toCharArray(), response);
     }
 
     @Test (expectedExceptions = CommunicationErrorException.class)
-    public void postGeneral2ErrorAnn()  throws UserNotFoundException, InvalidAnnouncementException, CommunicationErrorException {
+    public void postGeneral2ErrorAnn()  throws CommunicationErrorException {
         clientEnd1.postGeneral("ERROR_A2".toCharArray(), null);
     }
 
 
     // READ
     @Test
-    public void successReadSelf() throws UserNotFoundException, CommunicationErrorException {
+    public void successReadSelf() throws CommunicationErrorException {
         User u = new User(123, client1Keys.getPublic());
         Announcement[] response = clientEnd1.read(u, 2);
         AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
@@ -205,7 +208,7 @@ public class EndpointsTest {
     }
 
     @Test
-    public void successReadOther() throws UserNotFoundException, CommunicationErrorException {
+    public void successReadOther() throws CommunicationErrorException {
         User u = new User(123, client1Keys.getPublic());
         Announcement[] response = clientEnd3.read(u, 2);
         AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
@@ -213,7 +216,7 @@ public class EndpointsTest {
     }
 
     @Test
-    public void readError1() throws UserNotFoundException, CommunicationErrorException {
+    public void readError1() throws CommunicationErrorException {
         User u = new User(123, client2Keys.getPublic());
         Announcement[] response = clientEnd2.read(u, 2);
         AssertJUnit.assertArrayEquals("READ".toCharArray(), response[0].getMessage());
@@ -222,7 +225,7 @@ public class EndpointsTest {
 
 
     @Test (expectedExceptions = CommunicationErrorException.class)
-    public void readError2() throws UserNotFoundException, CommunicationErrorException {
+    public void readError2() throws CommunicationErrorException {
         User u = new User(1025, client3Keys.getPublic());
         clientEnd1.read(u, 0);
 
@@ -234,7 +237,7 @@ public class EndpointsTest {
     public void successReadGeneral() throws CommunicationErrorException {
         Announcement[] response = clientEnd1.readGeneral(123456);
 
-        AssertJUnit.assertArrayEquals("ReadGeneral5".toCharArray(), response[0].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
     }
 
 
@@ -306,12 +309,12 @@ public class EndpointsTest {
         System.out.println(response[2].getMessage());
         System.out.println(response[3].getMessage());
         System.out.println(response[4].getMessage());
-        AssertJUnit.assertArrayEquals("ReadGeneral5".toCharArray(), response[0].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[0].getMessage());
 
         AssertJUnit.assertArrayEquals("ReadGeneral3".toCharArray(), response[1].getMessage());
         AssertJUnit.assertArrayEquals("ReadGeneral4".toCharArray(), response[2].getMessage());
         AssertJUnit.assertArrayEquals("ReadGeneral2".toCharArray(), response[3].getMessage());
 
-        AssertJUnit.assertArrayEquals("ReadGeneral".toCharArray(), response[4].getMessage());
+        AssertJUnit.assertArrayEquals("ReadGeneral5".toCharArray(), response[4].getMessage());
     }
 }

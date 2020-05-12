@@ -7,8 +7,6 @@ import commonClasses.User;
 import commonClasses.exceptions.*;
 import library.Interfaces.ICommLib;
 
-import javax.swing.*;
-import java.lang.reflect.Array;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +28,7 @@ public class DPASEmulation implements ICommLib {
     }
 
     @Override
-    public String register(PublicKey key, int wts) throws KeyException, InvalidWtsException {
+    public String register(PublicKey key, int wts, Packet p) throws KeyException, InvalidWtsException {
 
         if (key == null)
             throw new KeyException();
@@ -201,12 +199,12 @@ public class DPASEmulation implements ICommLib {
     }
 
     @Override
-    public void readWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException, InvalidAnnouncementException {
+    public void readWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) {
 
     }
 
     @Override
-    public void readGeneralWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements) throws UserNotFoundException {
+    public void readGeneralWb(PublicKey pk, Map<Integer, ArrayList<Announcement>> announcements)  {
 
     }
 

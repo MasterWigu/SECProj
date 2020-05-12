@@ -79,11 +79,10 @@ public class DPASService implements ICommLib {
 
 		fileSaver = FileSaver.getInstance("src\\main\\resources\\", id);
 
+		useFilesRead = true;
+		useFilesWrite = true;
 
 		loadFiles();
-
-		useFilesRead = false;
-		useFilesWrite = false;
 	}
 
 	private void loadFiles() {
@@ -129,7 +128,7 @@ public class DPASService implements ICommLib {
 
 
 	@Override
-	public String register(PublicKey pk, int wts) throws KeyException, InvalidWtsException {
+	public String register(PublicKey pk, int wts, Packet p) throws KeyException, InvalidWtsException {
 		if (wts <= 0) {
 			throw new InvalidWtsException();
 		}
@@ -150,6 +149,12 @@ public class DPASService implements ICommLib {
 				registerWts++;
 				saveUsers();
 			}
+		}
+		try {
+			p.setUser(getUserWithPk(pk));
+		} catch (UserNotFoundException e) {
+			System.out.println("Register error, user not found to return");
+			//Impossible
 		}
 		return "Successfully logged in, your id is "+ user.getId();
 	}

@@ -22,6 +22,10 @@
 
         <!-- instance number -->
         <cl.i>1</cl.i>
+        <!-- faults -->
+        <cl.f>0</cl.f>
+        <!--keystore pass-->
+        <cl.kPass>DPASsecClient</cl.kPass>
     </properties>
 
     <dependencies>
@@ -56,6 +60,8 @@
                     <mainClass>${mainclass}</mainClass>
                     <arguments>
                         <argument>${cl.i}</argument>
+                        <argument>${cl.f}</argument>
+                        <argument>${cl.kPass}${cl.i}</argument>
                     </arguments>
                 </configuration>
             </plugin>

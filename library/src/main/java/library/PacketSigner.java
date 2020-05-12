@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class PacketSigner {
 
-    public static boolean verify(Packet p, PublicKey pubK) {
+    static boolean verify(Packet p, PublicKey pubK) {
         PublicKey pk;
         if (pubK == null)
             pk = p.getSenderPk();

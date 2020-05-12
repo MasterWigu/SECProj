@@ -3,7 +3,7 @@ package library;
 public class SocketServerWorker implements Runnable {
     private SocketServer socketServer;
 
-    public SocketServerWorker(SocketServer ss) {
+    SocketServerWorker(SocketServer ss) {
         socketServer = ss;
     }
 

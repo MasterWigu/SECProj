@@ -2,7 +2,6 @@ package client;
 
 import commonClasses.*;
 import commonClasses.exceptions.AnnouncementNotFoundException;
-import commonClasses.exceptions.InvalidAnnouncementException;
 import commonClasses.exceptions.UserNotFoundException;
 import library.ClientEndpoint;
 import library.Exceptions.CommunicationErrorException;
@@ -11,7 +10,6 @@ import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,8 +20,7 @@ class Client {
 	private ClientEndpoint clientEndpoint;
 	private PrivateKey clientPrivateKey;
 
-	Client(int id, ArrayList<SRData> servers, int faults) {
-	    String keyStorePass = "DPASsecClient"+id;
+	Client(int id, ArrayList<SRData> servers, int faults, String keyStorePass) {
 	    String resourcesPath = "src\\main\\resources\\";
 		keyboardSc = new Scanner(System.in);
 

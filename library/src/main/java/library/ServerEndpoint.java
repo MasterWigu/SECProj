@@ -26,18 +26,18 @@ public class ServerEndpoint implements ISocketProcessor {
         Packet response = new Packet();
         switch (packet.getFunction()){
             case GET_WTS:
-                response = handleGetWts(packet, response);
+                handleGetWts(packet, response);
                 response.setRid(packet.getRid());
                 break;
             case WRITE_BACK:
-                response = handleWriteBack(packet, response);
+                handleWriteBack(packet, response);
                 response.setWts(packet.getWts());
                 break;
             case REGISTER:
                 response.setFunction(REGISTER);
                 response.setWts(packet.getWts());
                 try {
-                    String register = aDPASService.register(packet.getSenderPk(), packet.getWts());
+                    String register = aDPASService.register(packet.getSenderPk(), packet.getWts(), response);
                     response.setMessage(register.toCharArray());
                 } catch (KeyException e) {
                     response.setFunction(ERROR);
@@ -126,7 +126,7 @@ public class ServerEndpoint implements ISocketProcessor {
     }
 
 
-    private Packet handleGetWts(Packet pack, Packet response) {
+    private void handleGetWts(Packet pack, Packet response) {
         response.setFunction(GET_WTS);
         switch (pack.getAuxFunction()){
             case REGISTER:
@@ -154,10 +154,9 @@ public class ServerEndpoint implements ISocketProcessor {
             default:
                 response.setFunction(ERROR);
         }
-        return response;
     }
 
-    private Packet handleWriteBack(Packet pack, Packet response) {
+    private void handleWriteBack(Packet pack, Packet response) {
         response.setFunction(WRITE_BACK);
         switch (pack.getAuxFunction()) {
             case READ:
@@ -193,6 +192,5 @@ public class ServerEndpoint implements ISocketProcessor {
             default:
                 response.setFunction(ERROR);
         }
-        return response;
     }
 }

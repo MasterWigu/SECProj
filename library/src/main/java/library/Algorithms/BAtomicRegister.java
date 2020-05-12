@@ -153,7 +153,7 @@ public class BAtomicRegister {
                 if (p.getWts() == maxWtsPack.getWts() && tempAnns != null) {
                     for (Integer key : p.getAnnouncements().keySet()) {
                         if (!tempAnns.containsKey(key)) {
-                            tempAnns.put(key, new ArrayList<>());
+                            tempAnns.put(key, new ArrayList<Announcement>());
                         }
                         for (Announcement ann : p.getAnnouncements().get(key)) {
                             if (!tempAnns.get(key).contains(ann)) {
@@ -174,6 +174,8 @@ public class BAtomicRegister {
             wbPack.setAuxFunction(pack.getFunction());
 
             wbPack.setAnnouncements(maxWtsPack.getAnnouncements());
+            wbPack.setSingleAnnouncement(maxWtsPack.getSingleAnnouncement());
+            wbPack.setUser(maxWtsPack.getUser());
             wbPack.setWts(maxWtsPack.getWts());
 
             Packet wbResp = writeInner(wbPack, wbPack.getWts());

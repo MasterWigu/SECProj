@@ -24,7 +24,7 @@ public class PacketSignerTest {
         p.setReceiverPk(keysR.getPublic());
         p.setMessage("Test".toCharArray());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         Assert.assertTrue(PacketSigner.verify(p, null));
         Assert.assertTrue(PacketSigner.verify(p, keys.getPublic()));
@@ -41,7 +41,7 @@ public class PacketSignerTest {
         p.setSenderPk(keys.getPublic());
         p.setReceiverPk(keysR.getPublic());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         Assert.assertTrue(PacketSigner.verify(p, null));
         Assert.assertTrue(PacketSigner.verify(p, keys.getPublic()));
@@ -67,7 +67,7 @@ public class PacketSignerTest {
         p.setAnnouncements(tempMap);
         p.setSign(null);
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         Assert.assertTrue(PacketSigner.verify(p, null));
         Assert.assertTrue(PacketSigner.verify(p, keys.getPublic()));
@@ -84,7 +84,7 @@ public class PacketSignerTest {
         p.setReceiverPk(keysR.getPublic());
         p.setMessage("Test".toCharArray());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         Assert.assertTrue(PacketSigner.verify(p, null));
         Assert.assertTrue(PacketSigner.verify(p, keys.getPublic()));
@@ -102,7 +102,7 @@ public class PacketSignerTest {
         p.setReceiverPk(keysR.getPublic());
         p.setMessage("Test".toCharArray());
 
-        p = PacketSigner.sign(p, keys1.getPrivate());
+        PacketSigner.sign(p, keys1.getPrivate());
 
 
         Assert.assertFalse(PacketSigner.verify(p, keys2.getPublic()));
@@ -119,7 +119,7 @@ public class PacketSignerTest {
         p.setReceiverPk(keysR.getPublic());
         p.setMessage("Test".toCharArray());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         p.setMessage("notTest".toCharArray());
         Assert.assertFalse(PacketSigner.verify(p, null));
@@ -137,7 +137,7 @@ public class PacketSignerTest {
         p.setSenderPk(keys.getPublic());
         p.setReceiverPk(keysR.getPublic());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
         p.setId(1);
 
         Assert.assertFalse(PacketSigner.verify(p, null));
@@ -163,7 +163,7 @@ public class PacketSignerTest {
         p.setAnnouncements(tempMap);
         p.setSign(null);
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         p.setAnnouncements(null);
 
@@ -181,7 +181,7 @@ public class PacketSignerTest {
         p.setSenderPk(keys.getPublic());
         p.setReceiverPk(keysR.getPublic());
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         p.setUser(new User(0, null));
 
@@ -192,7 +192,6 @@ public class PacketSignerTest {
     @Test
     public void nullPublicKey() {
         KeyPair keys = KeyStoreCreator.createKeyPair();
-        KeyPair keysR = KeyStoreCreator.createKeyPair();
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
@@ -200,7 +199,7 @@ public class PacketSignerTest {
         p.setSenderPk(null);
         p.setReceiverPk(null);
 
-        p = PacketSigner.sign(p, keys.getPrivate());
+        PacketSigner.sign(p, keys.getPrivate());
 
         p.setUser(new User(0, null));
 
@@ -210,7 +209,6 @@ public class PacketSignerTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void nullPrivateKey() {
         KeyPair keys = KeyStoreCreator.createKeyPair();
-        KeyPair keysR = KeyStoreCreator.createKeyPair();
 
         Packet p = new Packet();
         p.setFunction(Packet.Func.GET_ANN_ID);
@@ -218,7 +216,7 @@ public class PacketSignerTest {
         p.setSenderPk(keys.getPublic());
         p.setReceiverPk(keys.getPublic());
 
-        p = PacketSigner.sign(p, null);
+        PacketSigner.sign(p, null);
 
         p.setUser(new User(0, null));
 
@@ -239,7 +237,7 @@ public class PacketSignerTest {
         p.setReceiverPk(keysR.getPublic());
 
 
-        p = PacketSigner.sign(p, keys2.getPrivate());
+        PacketSigner.sign(p, keys2.getPrivate());
 
         p.setUser(new User(0, null));
 

@@ -12,7 +12,7 @@ import java.util.Map;
 
 
 public interface ICommLib {
-    String register(PublicKey key, int wts) throws KeyException, InvalidWtsException;
+    String register(PublicKey key, int wts, Packet p) throws KeyException, InvalidWtsException;
 
     String post(PublicKey pk, Announcement announcement, int wts) throws UserNotFoundException, InvalidAnnouncementException;
 

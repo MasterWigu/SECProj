@@ -21,4 +21,17 @@ public class User implements Serializable {
     public int getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        User u;
+        if(o instanceof User){
+            u = (User) o;
+        } else {
+            return false;
+        }
+        if (!u.getPk().equals(publicKey))
+            return false;
+        return id == u.getId();
+    }
 }

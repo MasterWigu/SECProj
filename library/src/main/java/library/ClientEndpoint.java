@@ -16,6 +16,7 @@ import java.util.*;
 public class ClientEndpoint {
     private SRData client;
     private BAtomicRegister atomicRegister;
+    private User clientUser;
 
 
     public ClientEndpoint(PrivateKey cpk, PublicKey key, ArrayList<SRData> s, int faults){
@@ -24,6 +25,11 @@ public class ClientEndpoint {
         client.setPubKey(key);
         client.setPrvKey(cpk);
         atomicRegister = new BAtomicRegister(client, s, faults);
+    }
+
+    void setUserTests() { //just for tests
+        if (clientUser == null)
+            clientUser = new User(-1, client.getPubKey());
     }
 
     public void shutdown() {
@@ -37,6 +43,7 @@ public class ClientEndpoint {
 
         Packet response = atomicRegister.write(request);
 
+        clientUser = response.getUser();
         return new String(response.getMessage());
     }
 
@@ -46,8 +53,7 @@ public class ClientEndpoint {
 
         request.setFunction(Packet.Func.POST);
 
-        User user = new User(-1, client.getPubKey());
-        Announcement ann = new Announcement(message, user, refs, 0);
+        Announcement ann = new Announcement(message, clientUser, refs, 0);
         request.setSingleAnnouncement(ann);
 
         Packet response = atomicRegister.write(request);
@@ -65,8 +71,7 @@ public class ClientEndpoint {
 
         request.setFunction(Packet.Func.POST_GENERAL);
 
-        User user = new User(-1, client.getPubKey());
-        Announcement ann = new Announcement(message, user, refs, 1);
+        Announcement ann = new Announcement(message, clientUser, refs, 1);
         request.setSingleAnnouncement(ann);
 
         Packet response = atomicRegister.write(request);
@@ -163,8 +168,7 @@ public class ClientEndpoint {
         ArrayList<Announcement> outAnns = new ArrayList<>();
 
         ArrayList<Integer> keys = new ArrayList<>(anns.keySet());
-        //Collections.sort(keys, Collections.reverseOrder());
-        Collections.sort(keys);
+        Collections.sort(keys, Collections.reverseOrder());
 
         for (Integer key : keys) {
             List<Announcement> AnnList = anns.get(key);

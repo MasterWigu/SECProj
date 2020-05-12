@@ -16,7 +16,7 @@ public class Packet implements Serializable {
         return charId;
     }
 
-    public void setCharId(char[] charId) {
+    void setCharId(char[] charId) {
         this.charId = charId;
     }
 
@@ -66,7 +66,7 @@ public class Packet implements Serializable {
         this.id = -1;
     }
 
-    public Integer getNonce() {
+    Integer getNonce() {
         return nonce;
     }
 
@@ -74,11 +74,11 @@ public class Packet implements Serializable {
         this.nonce = random.nextInt();
     }
 
-    public PublicKey getReceiverPk() {
+    PublicKey getReceiverPk() {
         return receiverPk;
     }
 
-    public void setReceiverPk(PublicKey receiverPk) {
+    void setReceiverPk(PublicKey receiverPk) {
         this.receiverPk = receiverPk;
     }
 
@@ -118,7 +118,7 @@ public class Packet implements Serializable {
         return msg;
     }
 
-    public void setMessage(char[] msg) {
+    void setMessage(char[] msg) {
         this.msg = msg;
     }
 
@@ -138,11 +138,11 @@ public class Packet implements Serializable {
         this.user = user;
     }
 
-    public PublicKey getSenderPk() {
+    PublicKey getSenderPk() {
         return senderPk;
     }
 
-    public void setSenderPk(PublicKey key) {
+    void setSenderPk(PublicKey key) {
         this.senderPk = key;
     }
 
@@ -162,7 +162,7 @@ public class Packet implements Serializable {
         this.sign = signature;
     }
 
-    public Func getAuxFunction() {
+    Func getAuxFunction() {
         return auxFunction;
     }
 

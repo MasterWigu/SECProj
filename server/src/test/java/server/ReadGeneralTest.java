@@ -15,7 +15,7 @@ public class ReadGeneralTest extends ServerTestsBase {
 
     @BeforeMethod
     public void populateServer() throws UserNotFoundException, KeyException, AnnouncementNotFoundException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
@@ -27,7 +27,7 @@ public class ReadGeneralTest extends ServerTestsBase {
         String id1 = out.replace("Announcement successfully posted with id ", "").replace(" to general board.", "");
 
         Packet p = new Packet();
-        Announcement a1 = server.getAnnouncementById(id1.toCharArray(), p);
+        server.getAnnouncementById(id1.toCharArray(), p);
         Assert.assertEquals(p.getWts(), 1);
     }
 
@@ -42,8 +42,8 @@ public class ReadGeneralTest extends ServerTestsBase {
     }
 
     @Test
-    public void readAll2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+    public void readAll2() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
+        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(1, client2Keys.getPublic());
         Assert.assertEquals(wts, 1);
@@ -65,8 +65,8 @@ public class ReadGeneralTest extends ServerTestsBase {
     }
 
     @Test
-    public void read1of2() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+    public void read1of2() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
+        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(1, client2Keys.getPublic());
         Assert.assertEquals(wts, 1);
@@ -86,8 +86,8 @@ public class ReadGeneralTest extends ServerTestsBase {
     }
 
     @Test
-    public void readAllWithReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+    public void readAllWithReffs() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
+        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(1, client2Keys.getPublic());
         Assert.assertEquals(wts, 1);

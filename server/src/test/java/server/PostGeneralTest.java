@@ -13,12 +13,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test
     public void success() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         String out = server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -39,11 +40,12 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test
     public void successWithReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        User u = new User(id, client1Keys.getPublic());
+        User u = userPack.getUser();
         Announcement ann = new Announcement("ANN01".toCharArray(), u, null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
@@ -94,11 +96,12 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureMess() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 0);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 0);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client2Keys.getPrivate());
         ann.setWts(-1);
@@ -107,13 +110,15 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignaturePuk1() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
-        server.register(client2Keys.getPublic(), server.getRegisterWts()+1);
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
+        Packet userPack2 = new Packet();
+        server.register(client2Keys.getPublic(), server.getRegisterWts()+1, userPack2);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         server.postGeneral(client2Keys.getPublic(), ann, wts+1);
@@ -122,13 +127,15 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignaturePuk2() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
-        server.register(client2Keys.getPublic(), server.getRegisterWts()+1);
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
+        Packet userPack2 = new Packet();
+        server.register(client2Keys.getPublic(), server.getRegisterWts()+1, userPack2);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client2Keys.getPrivate());
         server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -137,12 +144,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureBoard() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 0);
+        Announcement ann = new Announcement("ANN01".toCharArray(),userPack.getUser(), null, 0);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -151,12 +159,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test(expectedExceptions = InvalidAnnouncementException.class)
     public void invalidSignatureReffs() throws UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         String out = server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -171,10 +180,10 @@ public class PostGeneralTest extends ServerTestsBase {
         int wts2 = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts2, 1);
 
-        Announcement ann2 = new Announcement("ANN02".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann2 = new Announcement("ANN02".toCharArray(), userPack.getUser(), null, 1);
         ann2.setWts(wts2+1);
         MessageSigner.sign(ann2, client1Keys.getPrivate());
-        Announcement ann3 = new Announcement("ANN02".toCharArray(), new User(id, client1Keys.getPublic()), new Announcement[] {a1}, 1);
+        Announcement ann3 = new Announcement("ANN02".toCharArray(), userPack.getUser(), new Announcement[] {a1}, 1);
         ann3.setSignature(ann2.getSignature());
         server.postGeneral(client1Keys.getPublic(), ann3, wts2+1);
     }
@@ -182,12 +191,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test
     public void duplicateAnnouncement() throws UserNotFoundException, KeyException, InvalidAnnouncementException, InvalidWtsException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -198,12 +208,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test (expectedExceptions = InvalidAnnouncementException.class)
     public void wtsMismatch() throws InvalidWtsException, UserNotFoundException, KeyException, InvalidAnnouncementException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts() + 1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts() + 1, userPack);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         server.postGeneral(client1Keys.getPublic(), ann, wts + 1);
@@ -211,12 +222,13 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test (expectedExceptions = InvalidAnnouncementException.class)
     public void invalidWts() throws InvalidWtsException, UserNotFoundException, KeyException, InvalidAnnouncementException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts() + 1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts() + 1, userPack);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         server.postGeneral(client1Keys.getPublic(), ann, -1);
@@ -224,14 +236,15 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test
     public void successConcurrent() throws InvalidWtsException, UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
-
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
+        Packet userPack2 = new Packet();
+        server.register(client2Keys.getPublic(), server.getRegisterWts()+1, userPack2);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(id, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         String out = server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -240,7 +253,7 @@ public class PostGeneralTest extends ServerTestsBase {
         Assert.assertEquals(server.getChannelWts(1, client1Keys.getPublic()), 1);
 
 
-        Announcement ann2 = new Announcement("ANN02".toCharArray(), new User(uid2, client2Keys.getPublic()), null, 1);
+        Announcement ann2 = new Announcement("ANN02".toCharArray(), userPack2.getUser(), null, 1);
         ann2.setWts(wts+1);
         MessageSigner.sign(ann2, client2Keys.getPrivate());
         String out2 = server.postGeneral(client2Keys.getPublic(), ann2, wts+1);
@@ -274,14 +287,15 @@ public class PostGeneralTest extends ServerTestsBase {
 
     @Test
     public void successConcurrent2() throws InvalidWtsException, UserNotFoundException, AnnouncementNotFoundException, KeyException, InvalidAnnouncementException {
-
-        int uid1 = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        Packet userPack = new Packet();
+        server.register(client1Keys.getPublic(), server.getRegisterWts()+1, userPack);
+        Packet userPack2 = new Packet();
+        server.register(client2Keys.getPublic(), server.getRegisterWts()+1, userPack2);
 
         int wts = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
 
-        Announcement ann = new Announcement("ANN01".toCharArray(), new User(uid1, client1Keys.getPublic()), null, 1);
+        Announcement ann = new Announcement("ANN01".toCharArray(), userPack.getUser(), null, 1);
         ann.setWts(wts+1);
         MessageSigner.sign(ann, client1Keys.getPrivate());
         String out = server.postGeneral(client1Keys.getPublic(), ann, wts+1);
@@ -293,7 +307,7 @@ public class PostGeneralTest extends ServerTestsBase {
         int wts2 = server.getChannelWts(1, client1Keys.getPublic());
         Assert.assertEquals(wts2, 1);
 
-        Announcement ann2 = new Announcement("ANN02".toCharArray(), new User(uid1, client1Keys.getPublic()), null, 1);
+        Announcement ann2 = new Announcement("ANN02".toCharArray(), userPack.getUser(), null, 1);
         ann2.setWts(wts2+1);
         MessageSigner.sign(ann2, client1Keys.getPrivate());
         String out2 = server.postGeneral(client1Keys.getPublic(), ann2, wts2+1);
@@ -309,7 +323,7 @@ public class PostGeneralTest extends ServerTestsBase {
 
 
 
-        Announcement ann3 = new Announcement("ANN03".toCharArray(), new User(uid2, client2Keys.getPublic()), null, 1);
+        Announcement ann3 = new Announcement("ANN03".toCharArray(), userPack2.getUser(), null, 1);
         ann3.setWts(wts+1);
         MessageSigner.sign(ann3, client2Keys.getPrivate());
         String out3 = server.postGeneral(client2Keys.getPublic(), ann3, wts+1);

@@ -130,7 +130,7 @@ public class KeyStoreCreator {
         ArrayList<Certificate> serverCertList = new ArrayList<>();
         KeyPair serverKeyPair;
         Certificate serverCert;
-        for (int id=1; id<=3; id++){
+        for (int id=1; id<=4; id++){
             serverKeyPair = createKeyPair();
             serverCert = createCertificate(serverKeyPair, "CN=Server"+id+"Cert");
             serverCertList.add(serverCert);
@@ -139,7 +139,7 @@ public class KeyStoreCreator {
 
         KeyPair clientKeyPair;
         Certificate clientCert;
-        for (int id=1; id<=3; id++) {
+        for (int id=1; id<=4; id++) {
             clientKeyPair = createKeyPair();
             clientCert = createCertificate(clientKeyPair, "CN=Client"+id+"Cert");
             createClientKeyStore(id, clientKeyPair.getPrivate(), clientCert, serverCertList);

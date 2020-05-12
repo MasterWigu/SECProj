@@ -15,7 +15,7 @@ public class ReadTest extends ServerTestsBase {
 
     @BeforeMethod
     public void populateServer() throws InvalidWtsException, UserNotFoundException, KeyException, AnnouncementNotFoundException, InvalidAnnouncementException {
-        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        int id = Integer.parseInt(server.register(client1Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(0, client1Keys.getPublic());
         Assert.assertEquals(wts, 0);
@@ -43,7 +43,7 @@ public class ReadTest extends ServerTestsBase {
 
     @Test
     public void readAll2() throws InvalidWtsException, UserNotFoundException, KeyException, InvalidAnnouncementException {
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(0, client2Keys.getPublic());
         Assert.assertEquals(wts, 0);
@@ -67,7 +67,7 @@ public class ReadTest extends ServerTestsBase {
 
     @Test
     public void readAllWithReffs() throws InvalidWtsException, UserNotFoundException, KeyException, InvalidAnnouncementException {
-        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1).replace("Successfully logged in, your id is ", ""));
+        int uid2 = Integer.parseInt(server.register(client2Keys.getPublic(), server.getRegisterWts()+1, new Packet()).replace("Successfully logged in, your id is ", ""));
 
         int wts = server.getChannelWts(0, client2Keys.getPublic());
         Assert.assertEquals(wts, 0);

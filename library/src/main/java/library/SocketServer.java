@@ -64,7 +64,7 @@ public class SocketServer {
         }
     }
 
-    public void listenWork() {
+    private void listenWork() {
         try {
             Socket tempSocket = serverSocket.accept();
             ObjectOutputStream out = new ObjectOutputStream(tempSocket.getOutputStream());

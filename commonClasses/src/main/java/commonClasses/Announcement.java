@@ -64,29 +64,29 @@ public class Announcement implements Serializable {
     }
 
     public String toString() {
-        String out ="";
-        out += "----------- Announcement -----------\n";
+        StringBuilder out = new StringBuilder();
+        out.append("----------- Announcement -----------\n");
         if (board == 1) {
-            out += "Board: General\n";
+            out.append("Board: General\n");
         } else {
-            out += "Board: Personal\n";
+            out.append("Board: Personal\n");
         }
-        out += "Ann. Id: " + String.valueOf(id) + "\n";
-        out += "Creator Id: " + creator.getId() + "\n";
-        out += "WTS: " + wts + "\n";
-        out += "Refers to: ";
+        out.append("Ann. Id: ").append(String.valueOf(id)).append("\n");
+        out.append("Creator Id: ").append(creator.getId()).append("\n");
+        out.append("WTS: ").append(wts).append("\n");
+        out.append("Refers to: ");
         if (refs != null) {
             for (Announcement a : refs) {
-                out += String.valueOf(a.getId()) + ", ";
+                out.append(String.valueOf(a.getId())).append(", ");
             }
             if (refs.length != 0) {
-                out = out.substring(0, out.length() - 2);
+                out = new StringBuilder(out.substring(0, out.length() - 2));
             }
         }
-        out += "\n";
-        out += "Message:\n    " + String.valueOf(message) + "\n";
-        out += "--------- End Announcement ---------\n";
-        return out;
+        out.append("\n");
+        out.append("Message:\n    ").append(String.valueOf(message)).append("\n");
+        out.append("--------- End Announcement ---------\n");
+        return out.toString();
     }
 
     @Override

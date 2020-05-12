@@ -11,8 +11,15 @@ public class ClientApp {
 
     public static void main(String[] args) {
         try {
-            String b = args[0];
-            int a = Integer.parseInt(b);
+            //args = id, faults, keystoreKey
+            String arg1 = args[0];
+            int id = Integer.parseInt(arg1);
+
+            String arg2 = args[1];
+            int faults = Integer.parseInt(arg2);
+
+            String keyStoreKey = args[2];
+
 
             ArrayList<SRData> servers = new ArrayList<>();
             try {
@@ -36,8 +43,7 @@ public class ClientApp {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            // TODO define faults
-            Client c = new Client(a, servers, 0);
+            Client c = new Client(id, servers, faults, keyStoreKey);
             c.login();
             c.work();
         } catch (Exception e) {

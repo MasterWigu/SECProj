@@ -113,56 +113,16 @@
 			</plugins>
 		</pluginManagement>
 
-		<plugins>
-			<!-- JMeter -->
-			<plugin>
-				<groupId>com.lazerycode.jmeter</groupId>
-				<artifactId>jmeter-maven-plugin</artifactId>
-				<version>${version.com.lazerycode.jmeter}</version>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>jmeter-tests</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jmeter</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<jmeterVersion>${jmeter.version}</jmeterVersion>
-					<testFilesDirectory>jmeter/tests/</testFilesDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 
 	<dependencies>
 
 		<!-- Tests -->
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.8</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<version>${version.org.jmockit.jmockit}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jgroups</groupId>
-			<artifactId>jgroups</artifactId>
-			<version>${org.jgroups.version}</version>
 		</dependency>
 
 		<!-- Logging -->

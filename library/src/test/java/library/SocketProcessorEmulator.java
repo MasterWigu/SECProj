@@ -1,21 +1,10 @@
 package library;
 
-import commonClasses.SRData;
 import library.Interfaces.ISocketProcessor;
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 public class SocketProcessorEmulator implements ISocketProcessor {
     Packet tempPacket;
     boolean read = true;
-    private PublicKey serverPublicKey;
-    private PrivateKey serverPrivateKey;
-
-    public SocketProcessorEmulator(SRData server) {
-        serverPublicKey = server.getPubKey();
-        serverPrivateKey = server.getPrvKey();
-    }
 
     @Override
     public Packet doOperation(Packet packet) {

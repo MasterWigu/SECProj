@@ -14,12 +14,11 @@ import java.security.KeyPair;
 import java.util.Arrays;
 
 public class SocketsTest {
-    AuthPerfectP2PLinks app2p;
-    SRData server;
-    SRData client1;
-    SRData client2;
-    SocketServer serverListener;
-    SocketProcessorEmulator serverProcessor;
+    private AuthPerfectP2PLinks app2p;
+    private SRData server;
+    private SRData client1;
+    private SocketServer serverListener;
+    private SocketProcessorEmulator serverProcessor;
 
     private boolean packetEq(Packet p1, Packet p2) {
         if (p2.getFunction() != p1.getFunction())
@@ -58,13 +57,7 @@ public class SocketsTest {
         client1.setPubKey(client1Keys.getPublic());
         client1.setPrvKey(client1Keys.getPrivate());
 
-        client2 = new SRData();
-        KeyPair client2Keys = KeyStoreCreator.createKeyPair();
-        client2.setPubKey(client2Keys.getPublic());
-        client2.setPrvKey(client2Keys.getPrivate());
-
-
-        serverProcessor = new SocketProcessorEmulator(server);
+        serverProcessor = new SocketProcessorEmulator();
         serverListener = new SocketServer(serverProcessor, 10240, server.getPrvKey(), server.getPubKey());
         serverListener.createWorker();
 
@@ -127,38 +120,4 @@ public class SocketsTest {
         Packet receive = app2p.sendFunction(send, client1, client1);
         Assert.assertNull(receive);
     }
-
-    // TODO not working
-    /*@Test(expectedExceptions = PacketValidationException.class)
-    public void invalidResponseSign() throws CommunicationErrorException, PacketValidationException {
-        System.out.println("WRONG_SIGN");
-        Packet send = new Packet();
-        send.setSenderPk(client1.getPubKey());
-        send.setReceiverPk(server.getPubKey());
-        send.setFunction(Packet.Func.REGISTER);
-        send.setAuxFunction(Packet.Func.ERROR);
-
-        Packet receive = app2p.sendFunction(send, client1, server);
-    }*/
-
-    /*@Test(expectedExceptions = PacketValidationException.class)
-    public void wrongResponseSenderKey() throws CommunicationErrorException, PacketValidationException {
-        System.out.println("DIFF_KEYS1");
-        Packet send = new Packet();
-        send.setSenderPk(client1.getPubKey());
-        send.setReceiverPk(server.getPubKey());
-        send.setAuxFunction(Packet.Func.ANN_NOT_FOUND); //just to trigger error
-
-        app2p.sendFunction(send, client1, server);
-    }*/
-
-    /*@Test(expectedExceptions = PacketValidationException.class)
-    public void wrongResponseReceiverKey() throws CommunicationErrorException, PacketValidationException {
-        System.out.println("DIFF_KEYS2");
-        Packet send = new Packet();
-        send.setSenderPk(client1.getPubKey());
-        send.setAuxFunction(Packet.Func.USER_NOT_FOUND); //just to trigger error
-
-        app2p.sendFunction(send, client1, server);
-    }*/
 }

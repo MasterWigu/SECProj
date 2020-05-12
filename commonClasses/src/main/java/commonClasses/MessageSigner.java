@@ -79,7 +79,6 @@ public class MessageSigner {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
             System.out.println("Crypto error signing announcement");
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
             System.out.println("Invalid private key!");
         }
 

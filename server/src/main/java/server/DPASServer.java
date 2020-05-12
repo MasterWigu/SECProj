@@ -15,12 +15,13 @@ import java.security.PublicKey;
 
 public class DPASServer {
     public static void main(String[] args){
-        String b = args[0];
-        int id = Integer.parseInt(b);
+        String arg1 = args[0];
+        int id = Integer.parseInt(arg1);
+
+        String keyStorePass = args[1];
 
         int registryPort = 10250+id;
         System.out.println("Main OK");
-        String keyStorePass = "DPASsecServer"+id;
         String resourcesPath = "src\\main\\resources\\";
 
         try{
