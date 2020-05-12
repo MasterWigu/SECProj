@@ -1,7 +1,12 @@
 package server;
 
+import commonClasses.Announcement;
+import commonClasses.User;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+
 public class AnnUserCmp {
-/*
+
     public void annCmp(Announcement a1, Announcement a2) {
         Assert.assertEquals(a1.getId(), a2.getId());
         AssertJUnit.assertArrayEquals(a1.getMessage(), a2.getMessage());
@@ -13,13 +18,12 @@ public class AnnUserCmp {
             }
         }
         Assert.assertEquals(a1.getBoard(), a2.getBoard());
-        Assert.assertEquals(a1.getTimestamp(), a2.getTimestamp());
+        Assert.assertEquals(a1.getWts(), a2.getWts());
         userCmp(a1.getCreator(), a2.getCreator());
     }
 
     public void userCmp(User u1, User u2) {
         Assert.assertEquals(u1.getId(), u2.getId());
         Assert.assertEquals(u1.getPk(), u2.getPk());
-        Assert.assertEquals(u1.getUsername(), u2.getUsername());
-    }*/
+    }
 }

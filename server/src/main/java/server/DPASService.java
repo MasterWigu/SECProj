@@ -206,11 +206,26 @@ public class DPASService implements ICommLib {
 				throw new InvalidAnnouncementException();
 			}
 
-			String id = "P" + creator.getId() + "_" + (personalBoards.get(creator.getPk()).size() + 1);
+			if (ann.getRefs() != null)
+				for (Announcement a : ann.getRefs()) {
+					if (!MessageSigner.verify(ann)) {
+						throw new InvalidAnnouncementException();
+					}
+					try {
+						getAnnouncementWithId(a.getId());
+					} catch (AnnouncementNotFoundException e) {
+						throw new InvalidAnnouncementException();
+					}
+				}
+
+			String id = "P" + creator.getId() + "_" + wts;
 			ann.setId(id.toCharArray());
 			if (checkRepeatedAnn(ann)) {
 				return "Duplicate Announcement";
 			}
+
+			if (wts != ann.getWts())
+				throw new InvalidAnnouncementException();
 
 			if (wts <= personalWtss.get(pk))
 				throw new InvalidAnnouncementException();
