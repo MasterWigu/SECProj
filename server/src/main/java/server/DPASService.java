@@ -263,6 +263,13 @@ public class DPASService implements ICommLib {
 			throw new UserNotFoundException();
 		}
 
+		if (wts != ann.getWts())
+			throw new InvalidAnnouncementException();
+
+		if (wts <= 0)
+			throw new InvalidAnnouncementException();
+
+
 		User creator = getUserWithPk(ann.getCreator().getPk());
 		synchronized (generalBoardLock) {
 			ann.setCreator(creator);
